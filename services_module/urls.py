@@ -14,7 +14,8 @@ urlpatterns = [
     path('getting_financial/', GettingFinancialView.as_view(), name='getting-financial'),
     path('calculate_payment/', CalculatePaymentView.as_view(), name='calculate-payment'),
     path('user_service/', UserServicesView.as_view(), name='user-service'),
-    path('manage_artist/', ManageArtistTeamView.as_view(), name='manage_artist_team'),
+    path('manage_artist/', ManageArtistTeamView.as_view(), name='manage-artist-team'),
+    path('active_artist/', ActiveArtistView.as_view(), name='active-artist'),
 
     # Post URLs
     path('posts/', PostAPIView.as_view(), name='post-list-create'),

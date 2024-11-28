@@ -129,6 +129,28 @@ class ManagingFinancialView(APIView):
         return total_income or 0
 
 
+class ActiveArtistView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        if hasattr(user, 'saloon'):
+            saloon = SaloonModel.objects.filter(saloon=user).first()
+            print(saloon.pk)
+            artists = ArtistModel.objects.filter(saloon_artists_id=saloon.pk)
+            active_artists = {}
+            artists = list(artists)
+            for artist in artists:
+                if VisitingTimeModel.objects.filter(artist=artist, suggested_date=now().date()).first():
+                    active_artists.update({str(artist): 'active'})
+                    artists.remove(artist)
+            for deactive_artisit in artists:
+                active_artists.update({str(deactive_artisit): 'deactive'})
+            return Response(active_artists, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "User does not have a valid artist or saloon profile."}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+
 class GettingFinancialView(APIView):
     permission_classes = [IsAuthenticated]
 
