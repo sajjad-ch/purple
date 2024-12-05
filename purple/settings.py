@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-90xmq_rm1dl9g2cvwbtfa@+96yg@yjhi=vlq+%uz9%8v-j7#2z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -39,15 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # 3rd party modules
     'rest_framework',
+    "corsheaders",
+    "channels",
+    
+    # local
     'account_module',
     'services_module',
+    'ChatAPI',
     'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -74,7 +83,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'purple.wsgi.application'
+ASGI_APPLICATION = "purple.asgi.application"
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -155,9 +173,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 
-CORS_ALLOWED_HOSTS = ['http://5.75.202.75:8000', '*']
-CORS_ALLOW_ALL_ORIGIN = True
+# CORS_ALLOWED_HOSTS = ['http://5.75.202.75:8000', '*']
+# CORS_ALLOW_ALL_ORIGIN = True
+
+# CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+# CORS_ALLOWED_ORIGINS = ['http://5.75.202.75:8000', '*']
+# CSRF_TRUSTED_ORIGINS = ['http://5.75.202.75:8000', '*']
+CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins (for development only)
 
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
-CORS_ALLOWED_ORIGINS = ['http://5.75.202.75:8000', '*']
-# CSRF_TRUSTED_ORIGINS = ['http://5.75.202.75:8000', '*']
+

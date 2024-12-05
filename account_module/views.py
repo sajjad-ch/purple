@@ -5,12 +5,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import SignUpSerializer, KeySerializer, ProfileSerializer, FollowSerializer, \
-    CustomTokenObtainPairSerializer, ProfileUpdateSerializer, SaloonProfileSerializer, ArtistProfileSerializer
+    CustomTokenObtainPairSerializer, ProfileUpdateSerializer, SaloonProfileSerializer, ArtistProfileSerializer, UserSerializerChat
 from .utils import send_verify_code_SMS
 from .models import User, NormalUserFollow, SaloonFollow, ArtistFollow, SaloonModel, ArtistModel
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import api_view
 
 
 class HomeAPIView(APIView):
@@ -203,3 +204,10 @@ class FollowView(APIView):
                 return Response({'error': 'Not following this user.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': 'User type not recognized.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def user_list(request, ):
+    users = User.objects.all().order_by('username')
+    serializer = UserSerializerChat(instance=users, many=True)
+    return Response(serializer.data)

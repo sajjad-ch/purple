@@ -390,3 +390,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             artist.save()
 
         return instance
+
+
+class UserSerializerChat(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username']

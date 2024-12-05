@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account_module.urls')),
     path('service/', include('services_module.urls')),
+    path('conversations/', include('ChatAPI.urls'))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
