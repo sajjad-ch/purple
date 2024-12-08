@@ -5,6 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from .utils import random_code
 
+# encryption library
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend 
 
 class AccountManager(BaseUserManager):
     def create_user(self, phone_number, username, password=None):
@@ -41,6 +45,8 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='Images/', default='default/avatar.jpg/')
     last_login = models.DateTimeField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
+    public_key = models.TextField(blank=True, null=True)
+    private_key = models.TextField(blank=True, null=True)
 
     groups = models.ManyToManyField(
         Group,
@@ -72,7 +78,31 @@ class User(AbstractUser):
         self.key = random_code()
         self.code_generated_at = datetime.now()
         self.save()
+    
+    def generate_keys(self):
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend()
+        )
+        public_key = private_key.public_key()
 
+        # Serialize keys to store as text
+        self.private_key = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        ).decode('utf-8')
+
+        self.public_key = public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        ).decode('utf-8')
+
+    def save(self, *args, **kwargs):
+        if not self.private_key or not self.public_key:
+            self.generate_keys()
+        super().save(*args, **kwargs)
 
 class NormalUserModel(models.Model):
     normal_user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='normal_user')

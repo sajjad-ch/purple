@@ -38,7 +38,8 @@ class SignUpAPIView(APIView):
             user, created = User.objects.get_or_create(phone_number=phone_number)
             if user:
                 user.generate_verification_code()
-                user.is_active = False
+                if created:
+                    user.is_active = False
                 user.save()
                 sms_state = send_verify_code_SMS(phone_number, user.key)
                 if sms_state:
@@ -47,19 +48,19 @@ class SignUpAPIView(APIView):
                                     headers={'location': redirect})
                 else:
                     return Response({'message': 'verify code didn\'t send'}, status=status.HTTP_400_BAD_REQUEST)
-            if created or not user.is_active:
-                user.generate_verification_code()
-                user.is_active = False
-                user.save()
-                sms_state = send_verify_code_SMS(phone_number, user.key)
-                if sms_state:
-                    redirect = 'http://127.0.0.1:8000/account/verify/'
-                    return Response({'message': 'verify code sent'}, status=status.HTTP_200_OK,
-                                    headers={'location': redirect})
-                else:
-                    return Response({'message': 'verify code didn\'t send'}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({'message': 'this user already exists and is active'}, status=status.HTTP_400_BAD_REQUEST)
+            # if created or not user.is_active:
+            #     user.generate_verification_code()
+            #     user.is_active = False
+            #     user.save()
+            #     sms_state = send_verify_code_SMS(phone_number, user.key)
+            #     if sms_state:
+            #         redirect = 'http://127.0.0.1:8000/account/verify/'
+            #         return Response({'message': 'verify code sent'}, status=status.HTTP_200_OK,
+            #                         headers={'location': redirect})
+            #     else:
+            #         return Response({'message': 'verify code didn\'t send'}, status=status.HTTP_400_BAD_REQUEST)
+            # else:
+            #     return Response({'message': 'this user already exists and is active'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -79,7 +80,7 @@ class VerifyKeyView(APIView):
             user = get_object_or_404(User, phone_number=phone_number)
 
             if user.key == key and user.code_generated_at and (
-                    timezone.now() - user.code_generated_at).total_seconds() < 300:
+                    timezone.now() - user.code_generated_at).total_seconds() < 150:
                 user.is_active = True
                 user.last_login = timezone.now()
                 user.save()
