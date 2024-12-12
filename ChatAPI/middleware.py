@@ -4,6 +4,7 @@ from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.conf import settings
 from channels.middleware import BaseMiddleware
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @database_sync_to_async
@@ -21,26 +22,43 @@ def get_user_from_jwt(token):
         return AnonymousUser()
     except Exception:
         return AnonymousUser()
-
+    
 
 class JWTAuthMiddleware(BaseMiddleware):
-    """
-    Custom middleware to authenticate WebSocket connections using JWT.
-    """
-
+    
     async def __call__(self, scope, receive, send):
-        headers = dict(scope['headers'])
-        if b'authorization' in headers:
-            try:
-                # Extract the token from the "Authorization" header
-                token_name, token_key = headers[b'authorization'].decode().split()
-                if token_name.lower() == "bearer":  # Ensure the header uses "Bearer" scheme
-                    scope['user'] = await get_user_from_jwt(token_key)
-                else:
-                    scope['user'] = AnonymousUser()
-            except ValueError:
-                scope['user'] = AnonymousUser()  # Handle improperly formatted headers
-        else:
-            scope['user'] = AnonymousUser()  # No auth header found
+    
+        token = self.get_token_from_scope(scope)
+        
+        if token != None:
+            user_id = await self.get_user_from_token(token) 
+            if user_id:
+                scope['user_id'] = user_id
 
+            else:
+                scope['error'] = 'Invalid token'
+
+        if token == None:
+            scope['error'] = 'provide an auth token'    
+    
+                
         return await super().__call__(scope, receive, send)
+
+    def get_token_from_scope(self, scope):
+        headers = dict(scope.get("headers", []))
+        
+        auth_header = headers.get(b'authorization', b'').decode('utf-8')
+        
+        if auth_header.startswith('Bearer '):
+            return auth_header.split(' ')[1]
+        
+        else:
+            return None
+        
+    @database_sync_to_async
+    def get_user_from_token(self, token):
+            try:
+                access_token = AccessToken(token)
+                return access_token['user_id']
+            except:
+                return None

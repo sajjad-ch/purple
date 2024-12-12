@@ -14,7 +14,7 @@ def start_convo(request):
     data = request.data
     username = data.pop('username')
     try:
-        participant = User.objects.get(username=username)
+        participant = User.objects.get(phone_number=username)
     except User.DoesNotExist:
         return Response({'message': 'You cannot chat with a non existent user'})
 

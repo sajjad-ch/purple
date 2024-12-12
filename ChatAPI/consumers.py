@@ -3,7 +3,9 @@ import json
 import secrets
 from datetime import datetime
 
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.generic.websocket import WebsocketConsumer
 from django.core.files.base import ContentFile
 
@@ -43,114 +45,82 @@ def decrypt_message(private_key_pem, ciphertext):
     )
     return plaintext.decode()
 
-class ChatConsumer(WebsocketConsumer):
-    def connect(self):
+
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
 
+        await self.channel_layer.group_add(
+                self.room_group_name, self.channel_name
+            )
+        await self.accept()
 
-        async_to_sync(self.channel_layer.group_add)(
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
-        self.accept()
 
-    
-    def disconnect(self, code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name, self.channel_name
-        )
-
-    def receive(self, text_data=None, bytes_data=None):
-        text_data_json = json.loads(text_data)
-        message = text_data_json.get("message")
-        recipient_username = text_data_json.get("recipient")
-        recipient = User.objects.get(username=recipient_username)
-        encrypted_message = encrypt_message(recipient.public_key, message)
-        text_data_json["message"] = encrypted_message.hex()
-
-        # chat_type = {"type": "chat_message"}
-        # return_dict = {**chat_type, **text_data_json}
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {"type": "chat_message", **text_data_json}
-        )
-
-    def chat_message(self, event):
-        text_data_json = event.copy()
-        text_data_json.pop("type")
-        encrypted_message = text_data_json["message"]
-        attachment = text_data_json.get("attachment")
-        
-        # TODO must be tested
-        # receiver = self.scope["user"]
-        receiver = User.objects.get(username=self.scope['user'])
+    async def receive(self, text_data=None, bytes_data=None):
+        print(text_data)
         try:
-            decrypted_message = decrypt_message(receiver.private_key, encrypted_message)
+            text_data_json = json.loads(text_data)
+            message = text_data_json.get("message")
+            recipient_username = text_data_json.get("recipient")
+            recipient = await sync_to_async(User.objects.get)(phone_number=recipient_username)
+            encrypted_message = encrypt_message(recipient.public_key, message)
+
+            text_data_json["message"] = encrypted_message.hex()
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {"type": "chat_message", **text_data_json},
+            )
+        except User.DoesNotExist:
+            await self.send(
+                text_data=json.dumps({"error": "Recipient not found"})
+            )
         except Exception as e:
-            self.send(
-                text_data=json.dumps({"error": "Failed to decrypt message", "details": str(e)})
+            await self.send(
+                text_data=json.dumps({"error": "Failed to process message", "details": str(e)})
             )
-            return
 
-        
-        text_data_json["message"] = decrypted_message
-        conversation = Conversation.objects.get(id=int(self.room_name))
-        sender = self.scope['user']
+    async def chat_message(self, event):
+        try:
+            encrypted_message = event["message"]
+            attachment = event.get("attachment")
 
-        if attachment:
-            file_str, file_ext = attachment["data"], attachment["format"]
+            recipient_username = event.get("recipient")
+            receiver = await sync_to_async(User.objects.get)(phone_number=recipient_username)
+            decrypted_message = decrypt_message(receiver.private_key, encrypted_message)
+            sender = self.scope["user_id"]
+            sender_user = await sync_to_async(User.objects.get)(id=sender)
+            conversation = await sync_to_async(Conversation.objects.get)(id=int(self.room_name))
 
-            file_data = ContentFile(
-                base64.b64decode(file_str), name=f"{secrets.token_hex(8)}.{file_ext}"
+            if attachment:
+                file_str, file_ext = attachment["data"], attachment["format"]
+                file_data = ContentFile(
+                    base64.b64decode(file_str), name=f"{secrets.token_hex(8)}.{file_ext}"
+                )
+                _message = await sync_to_async(Message.objects.create)(
+                    sender=sender_user,
+                    attachment=file_data,
+                    text=decrypted_message,
+                    conversation_id=conversation,
+                )
+            else:
+                _message = await sync_to_async(Message.objects.create)(
+                    sender=sender_user,
+                    text=decrypted_message,
+                    conversation_id=conversation,
+                )
+
+            serializer = MessageSerializer(instance=_message)
+            await self.send(
+                text_data=json.dumps(serializer.data)
             )
-            _message = Message.objects.create(
-                sender=sender,
-                attachment=file_data,
-                text=decrypted_message,
-                conversation_id=conversation
+        except Exception as e:
+            await self.send(
+                text_data=json.dumps({"error": "Failed to process received message", "details": str(e)})
             )
-        else:
-            _message = Message.objects.create(
-                sender=sender,
-                text=decrypted_message,
-                conversation_id=conversation
-            )
-        
-        serializer = MessageSerializer(instance=_message)
-        self.send(
-            text_data=json.dumps(serializer.data)
-        )
-    # def chat_message(self, event):
-    #     text_data_json = event.copy()
-    #     text_data_json.pop("type")
-    #     message, attachment = (
-    #         text_data_json["message"],
-    #         text_data_json.get("attachment"),
-    #     )
-    #     conversation = Conversation.objects.get(id=int(self.room_name))
-    #     sender = self.scope['user']
-
-    #     if attachment:
-    #         file_str, file_ext = attachment["data"], attachment["format"]
-
-    #         file_data = ContentFile(
-    #             base64.b64decode(file_str), name=f"{secrets.token_hex(8)}.{file_ext}"
-    #         )
-    #         _message = Message.objects.create(
-    #             sender=sender,
-    #             attachment=file_data,
-    #             text=message,
-    #             conversation_id=conversation
-    #         )
-    #     else:
-    #         _message = Message.objects.create(
-    #             sender=sender,
-    #             text=message,
-    #             conversation_id=conversation
-    #         )
-    #     serializer = MessageSerializer(instance=_message)
-    #     self.send(
-    #         text_data=json.dumps(
-    #             serializer.data
-    #         )
-    #     )
