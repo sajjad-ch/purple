@@ -14,5 +14,6 @@ urlpatterns = [
     path('saloon_profile/<int:user_id>/', views.ViewSaloonProfile.as_view(), name='saloon-profile'),
     path('artist_profile/<int:user_id>/', views.ViewArtistProfile.as_view(), name='artist-profile'),
     path('follow/<int:user_id>/', views.FollowView.as_view(), name='follow'),
+    path('key_setter/', views.PublicAndPrivateKeySetter.as_view(), name='key-setter'),
     path('', views.user_list, name='user_list')
 ]

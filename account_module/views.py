@@ -12,6 +12,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view
+import json
 
 
 class HomeAPIView(APIView):
@@ -80,8 +81,8 @@ class VerifyKeyView(APIView):
             user = get_object_or_404(User, phone_number=phone_number)
 
             if user.key == key and user.code_generated_at and (
-                    timezone.now() - user.code_generated_at).total_seconds() < 150:
-                user.is_active = True
+                    timezone.now() - user.code_generated_at).total_seconds() < 120:
+                # user.is_active = True
                 user.last_login = timezone.now()
                 user.save()
                 refresh = RefreshToken.for_user(user)
@@ -106,11 +107,28 @@ class ProfileView(APIView):
 
     def post(self, request):
         user = request.user
+        queried_user = User.objects.filter(user=user).first()
         serializer = ProfileUpdateSerializer(user, data=request.data)
         if serializer.is_valid():
+            queried_user.is_active = True
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PublicAndPrivateKeySetter(APIView):
+    def post(self, request):
+        private_key = request.data['private_key']
+        public_key = request.data['public_key']
+        user = User.objects.filter(user=request.user).first()
+        if private_key and public_key:
+            user.private_key = private_key
+            user.public_key = public_key
+            user.save()
+            return Response('Keys are set.', status=status.HTTP_201_CREATED)
+        else:
+            return Response('There are no keys to save.', status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ViewSaloonProfile(APIView):
@@ -212,3 +230,19 @@ def user_list(request, ):
     users = User.objects.all().order_by('username')
     serializer = UserSerializerChat(instance=users, many=True)
     return Response(serializer.data)
+
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth.models import AnonymousUser
+from jwt import decode as jwt_decode, exceptions as jwt_exceptions
+def is_authenticated(token):
+    try:
+        # Decode the token
+        validated_token = JWTAuthentication().get_validated_token(token)
+        # Get the user from the token
+        user = JWTAuthentication().get_user(validated_token)
+        return user
+    except jwt_exceptions.InvalidTokenError:
+        return AnonymousUser()
+    except Exception:
+        return AnonymousUser()

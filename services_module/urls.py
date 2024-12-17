@@ -25,6 +25,10 @@ urlpatterns = [
     path('stories/', StoryAPIView.as_view(), name='story-list-create'),
     path('stories/<int:pk>/', StoryAPIView.as_view(), name='story-detail-update-delete'),
 
+    # Highlight  URLs
+    path('highlights/', HighlightAPIView.as_view(), name='highlight-list-create'),
+    path('highlights/<int:pk>/', HighlightAPIView.as_view(), name='highlight-detail-update-delete'),
+
     # Like URLs
     path('posts/<int:post_id>/like/', LikeAPIView.as_view(), name='like-post'),
     path('posts/<int:post_id>/unlike/', LikeAPIView.as_view(), name='unlike-post'),

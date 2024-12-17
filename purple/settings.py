@@ -191,3 +191,4 @@ CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins (for development only)
 
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
 
+SITE_ID = 1

@@ -479,12 +479,10 @@ class StoryAPIView(APIView):
 
     def post(self, request):
         user = request.user
-        print(user)
         if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
             return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = StorySerializerPost(data=request.data, context={'request': request})
         if serializer.is_valid():
-            print('im in')
             story_content = serializer.validated_data['story_content']
             file_extension = str(story_content.name).split('.')[-1].lower()
 
@@ -551,6 +549,89 @@ class StoryAPIView(APIView):
             return Response({'error': 'You do not have permission to delete this story.'}, status=status.HTTP_403_FORBIDDEN)
 
         story.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class HighlightAPIView(APIView):
+    def get(self, request):
+        user = request.user
+        if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
+            return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
+        highlights = HighlightModel.objects.filter(user=user)
+        serializer: HighlightSerializerGet = HighlightSerializerGet(highlights, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user  = request.user
+        if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
+            return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
+        highlight_serializer: HighlightSerializerPost = HighlightSerializerPost(data=request.data, context={'request': request})
+        if highlight_serializer.is_valid():
+            highlight_content = highlight_serializer.validated_data['highlight_content']
+            file_extension = str(highlight_content.name).split('.')[-1].lower()
+
+            if file_extension in ('png', 'jpg', 'jpeg'):
+                image = Image.open(highlight_content)
+                width, height = image.size
+                if width != height:
+                    return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
+            elif file_extension in ('mp4', 'mpeg', 'mpg'):
+                try:
+                    # Create a temporary file
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.' + file_extension) as temp_file:
+                        for chunk in highlight_content.chunks():
+                            temp_file.write(chunk)
+                        temp_file_path = temp_file.name
+
+                    # Use VideoFileClip to check the duration and size
+                    clip = VideoFileClip(temp_file_path)
+                    duration = clip.duration
+                    width, height = clip.size
+                    clip.close()
+
+                    # Remove the temporary file
+                    os.remove(temp_file_path)
+
+                    if duration > 60:
+                        return Response({'error': 'Video duration should be less than 10 seconds.'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+                    if width != 600 or height != 1068:
+                        return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
+                except Exception as e:
+                    return Response({'error': f'An error occurred while processing the video: {str(e)}'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
+            highlight_serializer.save(user=user)
+            return Response(highlight_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(highlight_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        try:
+            updated_highlight = HighlightModel.objects.get(pk=pk)
+        except HighlightModel.DoesNotExist:
+            return Response({'error': 'Highlight not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if updated_highlight.user != request.user:
+            return Response({'error': 'You do not have permission to edit this Highlight.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = HighlightSerializerPost(updated_highlight, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        user = request.user
+        try:
+            deleted_highlight = HighlightModel.objects.get(pk=pk)
+        except PostModel.DoesNotExist:
+            return Response({'error': 'Story not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if deleted_highlight.user != user:
+            return Response({'error': 'You do not have permission to delete this story.'}, status=status.HTTP_403_FORBIDDEN)
+
+        deleted_highlight.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

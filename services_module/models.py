@@ -68,6 +68,19 @@ class StoryModel(models.Model):
         return f"{self.user} created a story on {self.created.date()}"
 
 
+class HighlightModel(models.Model):
+    user = models.ForeignKey(User, verbose_name='کاربر', on_delete=models.CASCADE)
+    highlight_content = models.FileField(upload_to='highlights/', verbose_name='محتوای هایلایت')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
+
+    class Meta:
+        verbose_name = 'هایلایت'
+        verbose_name_plural = 'هایلایت ها'
+
+    def __str__(self):
+        return f"{self.user} created a highlight on {self.created.date()}"
+
+
 class ServiceModel(models.Model):
     service_code = models.PositiveIntegerField(primary_key=True, verbose_name='کد محصول')
     service_name = models.CharField(max_length=40, verbose_name='نام خدمت')

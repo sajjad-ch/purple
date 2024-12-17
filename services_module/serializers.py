@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from account_module.models import ArtistModel, SaloonModel, User
 from .models import PostModel, StoryModel, VisitingTimeModel, WalletModel, \
-    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel
+    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -55,6 +55,26 @@ class StorySerializerPost(serializers.ModelSerializer):
     class Meta:
         model = StoryModel
         fields = ['story_content']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class HighlightSerializerGet(serializers.ModelSerializer):
+    class Meta:
+        model = HighlightModel
+        fields = ['highlight_content', 'user', 'created']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class HighlightSerializerPost(serializers.ModelSerializer):
+    class Meta:
+        model = HighlightModel
+        fields = ['highlight_content']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

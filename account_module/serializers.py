@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from services_module.models import UserServicesModel, VisitingTimeModel
+from services_module.models import UserServicesModel, VisitingTimeModel, HighlightModel
 from .models import User, NormalUserModel, SaloonModel, ArtistModel
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-import re
+import re, json
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.urls import reverse
-from services_module.serializers import PostSerializerGet
+from services_module.serializers import PostSerializerGet, HighlightSerializerGet
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -156,7 +156,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'first_name', 'last_name', 'username', 'phone_number', 'age', 'profile_picture',
-            'normal_user', 'saloon', 'artist', 'average_ranks', 'posts'
+            'normal_user', 'saloon', 'artist', 'average_ranks', 'posts', 'city', 'birth_date'
         ]
 
     # def get_posts(self, user):
@@ -184,7 +184,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 else:
                     avg_rank = 0
 
-                average_ranks[service.service_name] = avg_rank
+                average_ranks[service.service_id] = avg_rank
 
             return average_ranks
 
@@ -217,10 +217,17 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
     ranks = serializers.SerializerMethodField()
     follow_url = serializers.SerializerMethodField()
     unfollow_url = serializers.SerializerMethodField()
+    highlights = serializers.SerializerMethodField()
 
     class Meta:
         model = SaloonModel
         fields = "__all__"
+
+    def get_highlights(self, obj):
+        highlishts = HighlightModel.objects.filter(user=obj.saloon_id)
+        print(highlishts)
+        serialized_highlights = HighlightSerializerGet(highlishts, many=True)
+        return serialized_highlights.data
 
     def get_follow_url(self, obj):
         request = self.context.get('request')
@@ -274,10 +281,17 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     ranks = serializers.SerializerMethodField()
     follow_url = serializers.SerializerMethodField()
     unfollow_url = serializers.SerializerMethodField()
+    highlights = serializers.SerializerMethodField()
+
 
     class Meta:
         model = ArtistModel
         fields = "__all__"
+
+    def get_highlights(self, obj):
+        highlishts = HighlightModel.objects.filter(user=obj.artist_id)
+        serialized_highlights = HighlightSerializerGet(highlishts, many=True)
+        return serialized_highlights.data
 
     def get_follow_url(self, obj):
         request = self.context.get('request')
@@ -352,7 +366,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'phone_number', 'age', 'profile_picture', 'normal_user', 'saloon', 'artist']
+        fields = ['first_name', 'last_name', 'username', 'phone_number', 'age', 'profile_picture', 'normal_user', 'saloon', 'artist', 'city', 'birth_date']
 
     def update(self, instance, validated_data):
         # Update User fields
@@ -361,6 +375,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         instance.username = validated_data.get('username', instance.username)
         instance.phone_number = validated_data.get('phone_number', instance.phone_number)
         instance.age = validated_data.get('age', instance.age)
+        instance.city = validated_data.get('city', instance.city)
+        instance.birth_date = validated_data.get('birth_date', instance.birth_date)
         instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
         instance.save()
 
