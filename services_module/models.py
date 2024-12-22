@@ -196,7 +196,12 @@ class SliderModel(models.Model):
     slider_picture = models.FileField(upload_to='slider_images/', verbose_name='تصویر اسلایدر')
     slider_text = models.CharField(max_length=100, verbose_name='متن اسلایدر')
     is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         verbose_name = 'اسلایدر'
         verbose_name_plural = 'اسلایدر ها'
+
+    def __str__(self):
+        return f"This slider was created at {self.created_at}"

@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from moviepy.editor import VideoFileClip
 from PIL import Image
 from django.utils import timezone
-
+from rest_framework.pagination import LimitOffsetPagination
 # Create your views here.
 
 
@@ -447,7 +447,7 @@ class StoryAPIView(APIView):
             followed_by_normal_user = NormalUserFollow.objects.filter(
                 follower=user.normal_user.pk
             ).values_list('followed_user', flat=True)
-            posts = StoryModel.objects.filter(
+            stories = StoryModel.objects.filter(
                 user__in=list(followed_by_normal_user),
                 created__gte=current_time - timedelta(hours=24)  # Filter out stories older than 24 hours
             )
@@ -458,7 +458,7 @@ class StoryAPIView(APIView):
             followed_saloons = SaloonFollow.objects.filter(
                 follower=user.artist.pk
             ).values_list('followed_user', flat=True)
-            posts = StoryModel.objects.filter(
+            stories = StoryModel.objects.filter(
                 user__in=(list(followed_artists) + list(followed_saloons)),
                 created__gte=current_time - timedelta(hours=24)  # Filter out stories older than 24 hours
             )
@@ -469,12 +469,14 @@ class StoryAPIView(APIView):
             followed_saloons = SaloonFollow.objects.filter(
                 follower=user.saloon.pk
             ).values_list('followed_user', flat=True)
-            posts = StoryModel.objects.filter(
+            stories = StoryModel.objects.filter(
                 user__in=(list(followed_artists) + list(followed_saloons)),
                 created__gte=current_time - timedelta(hours=24)  # Filter out stories older than 24 hours
             )
+        paginator = LimitOffsetPagination()
+        result_stories = paginator.paginate_queryset(stories, request)
 
-        serializer = StorySerializerGet(posts, many=True)
+        serializer = StorySerializerGet(result_stories, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):

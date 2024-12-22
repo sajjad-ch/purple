@@ -42,9 +42,19 @@ class PostSerializerPost(serializers.ModelSerializer):
 
 
 class StorySerializerGet(serializers.ModelSerializer):
+    first_name = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
     class Meta:
         model = StoryModel
-        fields = ['story_content', 'user']
+        fields = ['story_content', 'first_name', 'profile_picture']
+
+    def get_profile_picture(self, obj):
+        profile_picture = obj.user.profile_picture
+        return profile_picture
+
+    def get_first_name(self, obj):
+        first_name = obj.user.first_name
+        return first_name
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
