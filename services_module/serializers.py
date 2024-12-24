@@ -49,7 +49,7 @@ class StorySerializerGet(serializers.ModelSerializer):
         fields = ['story_content', 'first_name', 'profile_picture']
 
     def get_profile_picture(self, obj):
-        profile_picture = obj.user.profile_picture
+        profile_picture = obj.user.profile_picture.url
         return profile_picture
 
     def get_first_name(self, obj):

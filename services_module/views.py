@@ -1,5 +1,7 @@
 import tempfile
 import os
+from itertools import groupby
+from operator import itemgetter
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now, timedelta
 from django.db.models import Sum
@@ -473,11 +475,27 @@ class StoryAPIView(APIView):
                 user__in=(list(followed_artists) + list(followed_saloons)),
                 created__gte=current_time - timedelta(hours=24)  # Filter out stories older than 24 hours
             )
-        paginator = LimitOffsetPagination()
-        result_stories = paginator.paginate_queryset(stories, request)
+        purple_stories = StoryModel.objects.filter(user__first_name='بنفش')
+        all_stories = stories.union(purple_stories)
+        all_stories.order_by('-created')
+        serializer = StorySerializerGet(all_stories, many=True, context={'request': request})
+        serialized_data = serializer.data
 
-        serializer = StorySerializerGet(result_stories, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Group stories by user (first_name and profile_picture)
+        grouped_stories = []
+        sorted_data = sorted(serialized_data, key=itemgetter('first_name', 'profile_picture'))
+        for key, group in groupby(sorted_data, key=itemgetter('first_name', 'profile_picture')):
+            grouped_stories.append({
+                'first_name': key[0],
+                'profile_picture': key[1],
+                'stories': [story.get('story_content') for story in group]
+            })
+
+        # Pagination
+        paginator = LimitOffsetPagination()
+        paginated_stories = paginator.paginate_queryset(grouped_stories, request)
+
+        return Response(paginated_stories, status=status.HTTP_200_OK)
 
     def post(self, request):
         user = request.user
