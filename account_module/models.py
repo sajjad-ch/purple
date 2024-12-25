@@ -49,6 +49,7 @@ class User(AbstractUser):
     birth_date = models.DateField(verbose_name='تاریخ تولد', null=True, blank=True)
     public_key = models.TextField(blank=True, null=True)
     private_key = models.TextField(blank=True, null=True)
+    status = models.CharField(choices=[('online', 'online'), ('offline', 'offline')], max_length=10, default='offline', blank=True, null=True, verbose_name='آنلاین / آفلاین (0/1)')
 
     groups = models.ManyToManyField(
         Group,

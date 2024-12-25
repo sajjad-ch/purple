@@ -50,7 +50,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
-
+        user_id = self.scope['user_id']
+        await self.update_user_status(user_id, 'online')
         await self.channel_layer.group_add(
                 self.room_group_name, self.channel_name
             )
@@ -58,9 +59,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
+        user = self.scope['user_id']
+        await self.update_user_status(user, 'offline')
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
+
+    @database_sync_to_async
+    def update_user_status(self, user_id, status):
+        user = User.objects.filter(id=user_id).first()
+        user.status = status
+        user.save()
 
     async def receive(self, text_data=None, bytes_data=None):
         print(text_data)
