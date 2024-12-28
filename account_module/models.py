@@ -121,12 +121,18 @@ class NormalUserModel(models.Model):
     def get_following_count(self):
         return NormalUserFollow.objects.filter(follower=self).count()
 
-
+rank_choices = (
+    ("A+", "A+"),
+    ("A", "A"),
+    ("B+", "B+"),
+    ("B", "B"),
+)
 class SaloonModel(models.Model):
     saloon = models.OneToOneField(User, on_delete=models.CASCADE, related_name='saloon')
     name = models.CharField(max_length=255, verbose_name='نام سالن')
     management = models.CharField(max_length=255, verbose_name='مدیریت')
     address = models.CharField(max_length=255, verbose_name='آدرس')
+    saloon_rank = models.CharField(choices=rank_choices, max_length=10, verbose_name='رنک سالن')
 
     class Meta:
         verbose_name = 'سالن'

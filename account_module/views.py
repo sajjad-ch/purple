@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import SignUpSerializer, KeySerializer, ProfileSerializer, FollowSerializer, \
     CustomTokenObtainPairSerializer, ProfileUpdateSerializer, SaloonProfileSerializer, ArtistProfileSerializer, UserSerializerChat
 from .utils import send_verify_code_SMS
-from .models import User, NormalUserFollow, SaloonFollow, ArtistFollow, SaloonModel, ArtistModel
+from .models import User, NormalUserFollow, SaloonFollow, ArtistFollow, SaloonModel, ArtistModel, NormalUserModel
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -37,6 +37,7 @@ class SignUpAPIView(APIView):
         if serializer.is_valid():
             phone_number = serializer.validated_data['phone_number']
             user, created = User.objects.get_or_create(phone_number=phone_number)
+            normal_user = NormalUserModel.objects.create(user=request.user, interests='')
             if user:
                 user.generate_verification_code()
                 if created:

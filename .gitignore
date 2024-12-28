@@ -7,7 +7,10 @@ __pycache__/
 *.pyo
 
 # Logs
+logs/
 *.log
+*.out
+*.err
 
 # Environment variables
 .env
@@ -17,3 +20,21 @@ build/
 dist/
 *.egg-info/
 *.json
+
+# Celery PID files
+*.pid
+
+# Celery Beat schedule database
+celerybeat-schedule
+celerybeat-schedule.*
+
+# Cache and temp files
+__pycache__/
+*.py[cod]
+*.pyo
+*.swp
+*.swo
+
+# Environment files
+.env
+*.lock

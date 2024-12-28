@@ -9,7 +9,7 @@ from django.utils.timezone import now
 class SliderSeralizer(serializers.ModelSerializer):
     class Meta:
         model = SliderModel
-        fields = "__all__"
+        fields = ['slider_picture', 'created_at']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -94,10 +94,12 @@ class HighlightSerializerPost(serializers.ModelSerializer):
 class ArtistVisitsSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     profile_url = serializers.SerializerMethodField()
+    average_ranks = serializers.SerializerMethodField()
+    ranks = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtistModel
-        fields = ['id', 'artist', 'url', 'profile_url']
+        fields = ['id', 'artist', 'url', 'profile_url', 'average_ranks', 'ranks']
 
     def get_url(self, obj):
         request = self.context.get('request')
@@ -108,15 +110,50 @@ class ArtistVisitsSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         path = reverse('artist-profile', kwargs={'user_id': obj.id})
         return request.build_absolute_uri(path)
+    
+    def get_average_ranks(self, user):
+        if hasattr(user, 'artist'):
+            services = UserServicesModel.objects.filter(artist__artist_id=user.artist).all()
 
+            average_ranks = {}
+            total_sum = 0
+            total_count = 0
+
+            for service in services:
+                visits = VisitingTimeModel.objects.filter(artist=user).all()
+                ranks = [visit.rank.rank for visit in visits if visit.rank is not None]
+                if ranks:
+                    avg_rank = sum(ranks) / len(ranks)
+                else:
+                    avg_rank = 0
+
+                average_ranks[str(service.service)] = avg_rank
+
+                # Accumulate the total sum and count for calculating the overall average
+                total_sum += avg_rank
+                total_count += 1
+
+                total_average = total_sum / total_count if total_count > 0 else 0
+
+                # Add total_average to the result dictionary
+                average_ranks['total_average'] = total_average
+
+            return average_ranks
+        return None
+
+    def get_ranks(self, obj):
+        visits = VisitingTimeModel.objects.filter(artist=obj).all()
+        return [{"rank": visit.rank.rank, "text": visit.text} for visit in visits if visit.rank is not None]
 
 class SaloonVisitsSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     profile_url = serializers.SerializerMethodField()
+    average_ranks = serializers.SerializerMethodField()
+    ranks = serializers.SerializerMethodField()
 
     class Meta:
         model = SaloonModel
-        fields = ['id', 'name', 'management', 'url', 'profile_url']
+        fields = ['id', 'name', 'management', 'url', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks']
 
     def get_url(self, obj):
         request = self.context.get('request')
@@ -128,6 +165,39 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
         path = reverse('saloon-profile', kwargs={'user_id': obj.id})
         return request.build_absolute_uri(path)
 
+    def get_average_ranks(self, user):
+        if hasattr(user, 'saloon'):
+            services = UserServicesModel.objects.filter(saloon__saloon_id=user.saloon).all()
+
+            average_ranks = {}
+            total_sum = 0
+            total_count = 0
+
+            for service in services:
+                visits = VisitingTimeModel.objects.filter(saloon=user).all()
+                ranks = [visit.rank.rank for visit in visits if visit.rank is not None]
+                if ranks:
+                    avg_rank = sum(ranks) / len(ranks)
+                else:
+                    avg_rank = 0
+
+                average_ranks[str(service.service)] = avg_rank
+
+                # Accumulate the total sum and count for calculating the overall average
+                total_sum += avg_rank
+                total_count += 1
+
+                total_average = total_sum / total_count if total_count > 0 else 0
+
+                # Add total_average to the result dictionary
+                average_ranks['total_average'] = total_average
+
+            return average_ranks
+        return None
+
+    def get_ranks(self, obj):
+        visits = VisitingTimeModel.objects.filter(saloon=obj).all()
+        return [{"rank": visit.rank.rank, "text": visit.text} for visit in visits if visit.rank is not None]
 
 class VisitingTimeSerializerGet(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
@@ -265,10 +335,12 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 class FilterSaloonSerializer(serializers.Serializer):
     saloon_name = serializers.CharField(max_length=30, required=False)
+    service = serializers.CharField(max_length=30, required=False)
 
 
 class FilterArtisitSerializer(serializers.Serializer):
     artist_name = serializers.CharField(max_length=30, required=False)
+    service = serializers.CharField(max_length=30, required=False)
 
 
 class WalletSerializer(serializers.ModelSerializer):

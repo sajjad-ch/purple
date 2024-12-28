@@ -1018,10 +1018,24 @@ class FilterSaloonAPIView(APIView):
     def post(self, request):
         serializer = FilterSaloonSerializer(data=request.data)
         if serializer.is_valid():
-            saloon_name = serializer.validated_data['saloon_name']
-            saloons = SaloonModel.objects.all()
-            if saloon_name:
+            saloon_name = serializer.data.get('saloon_name')
+            service = serializer.data.get('service')
+            if saloon_name and service:
+                saloons_ids = UserServicesModel.objects.filter(service__service_name=service).values_list('saloon', flat=True).distinct()
+                saloons = SaloonModel.objects.filter(name__icontains=saloon_name, id__in=saloons_ids).distinct()
+                saloon_serializer = SaloonVisitsSerializer(saloons, many=True, context={'request': request})
+                return Response(saloon_serializer.data, status=status.HTTP_200_OK)
+            elif saloon_name == None:
+                saloons = SaloonModel.objects.all()
+                saloon_serializer = SaloonVisitsSerializer(saloons, many=True, context={'request': request})
+                return Response(saloon_serializer.data, status=status.HTTP_200_OK)
+            elif saloon_name:
                 saloons = SaloonModel.objects.filter(name__icontains=saloon_name).all()
+                saloon_serializer = SaloonVisitsSerializer(saloons, many=True, context={'request': request})
+                return Response(saloon_serializer.data, status=status.HTTP_200_OK)
+            elif service:
+                saloons_ids = UserServicesModel.objects.filter(service__service_name=service).values_list('saloon', flat=True).distinct()
+                saloons = SaloonModel.objects.filter(id__in=saloons_ids).all()
                 saloon_serializer = SaloonVisitsSerializer(saloons, many=True, context={'request': request})
                 return Response(saloon_serializer.data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -1036,11 +1050,25 @@ class FilterArtistAPIView(APIView):
     def post(self, request):
         serializer = FilterArtisitSerializer(data=request.data)
         if serializer.is_valid():
-            artist_name = serializer.validated_data['artist_name']
-            artists = ArtistModel.objects.all()
-            if artist_name:
+            artist_name = serializer.data.get('artist_name')
+            service = serializer.data.get('service')
+            if artist_name and service:
+                artists_ids = UserServicesModel.objects.filter(service__service_name=service).values_list('artist', flat=True).distinct()
+                artists = ArtistModel.objects.filter(artist__first_name__icontains=artist_name, id__in=artists_ids).distinct()
+                artist_serializer = ArtistVisitsSerializer(artists, many=True, context={'request': request})
+                return Response(artist_serializer.data, status=status.HTTP_200_OK)
+            elif artist_name:
                 artists = ArtistModel.objects.filter(artist__first_name__icontains=artist_name).all()
                 artist_serializer = ArtistVisitsSerializer(artists, many=True, context={'request': request})
+                return Response(artist_serializer.data, status=status.HTTP_200_OK)
+            elif artist_name == None:
+                artists = ArtistModel.objects.all()
+                artist_serializer = ArtistVisitsSerializer(artists, many=True, context={'request': request})
+                return Response(artist_serializer.data, status=status.HTTP_200_OK)
+            elif service:
+                artists_ids = UserServicesModel.objects.filter(service__service_name=service).values_list('artist', flat=True).distinct()
+                artsits = ArtistModel.objects.filter(id__in=artists_ids).all()
+                artist_serializer = ArtistVisitsSerializer(artsits, many=True, context={'request': request})
                 return Response(artist_serializer.data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

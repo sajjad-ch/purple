@@ -225,7 +225,6 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
 
     def get_highlights(self, obj):
         highlishts = HighlightModel.objects.filter(user=obj.saloon_id)
-        print(highlishts)
         serialized_highlights = HighlightSerializerGet(highlishts, many=True)
         return serialized_highlights.data
 
@@ -249,8 +248,7 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
 
             for service in services:
                 visits = VisitingTimeModel.objects.filter(saloon=user).all()
-                for visit in visits:
-                    print(visit)
+
                 ranks = [visit.rank.rank for visit in visits if visit.rank is not None]
                 if ranks:
                     avg_rank = sum(ranks) / len(ranks)
@@ -304,7 +302,7 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(path)
 
     def get_average_ranks(self, user):
-        if hasattr(user, 'saloon'):
+        if hasattr(user, 'artist'):
             services = UserServicesModel.objects.filter(artist__artist_id=user.artist).all()
 
             average_ranks = {}
