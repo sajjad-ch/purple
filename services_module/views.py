@@ -817,14 +817,14 @@ class GetConfirmVisitAPIView(APIView):
     def get(self, request):
         user = request.user
         if hasattr(user, 'artist'):
-            user_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk).all()
+            user_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk).all().order_by('-suggested_date')
             if user_visiting_time:
                 serializer = VisitingTimeSerializerGet(user_visiting_time, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'You don\'t have any new visiting time.'}, status=status.HTTP_404_NOT_FOUND)
         elif hasattr(user, 'saloon'):
-            user_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk).all()
+            user_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk).all().order_by('-suggested_date')
             if user_visiting_time:
                 serializer = VisitingTimeSerializerGet(user_visiting_time, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
