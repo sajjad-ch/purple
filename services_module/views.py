@@ -305,7 +305,7 @@ class ManageArtistTeamView(APIView):
     def post(self, request):
         serializer = ManageArtistTeamSerializer(data=request.data)
         if serializer.is_valid():
-            artist_id = serializer.validated_data['artist_id']
+            artist_id = serializer.data.get('artist_id')
             artist = ArtistModel.objects.get(pk=artist_id)
             saloon = request.user.saloon
 
