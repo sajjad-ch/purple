@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 from .utils import random_code
 from account_module.models import ArtistModel, SaloonModel
+from django.core.validators import MaxValueValidator, MinValueValidator 
+
 User = get_user_model()
 
 times = (
@@ -84,23 +86,40 @@ class HighlightModel(models.Model):
 class ServiceModel(models.Model):
     service_code = models.PositiveIntegerField(primary_key=True, verbose_name='کد محصول')
     service_name = models.CharField(max_length=40, verbose_name='نام خدمت')
-
-    def __str__(self):
-        return f"{self.service_name} + {self.service_code}"
-
-
-class UserServicesModel(models.Model):
-    service = models.ForeignKey(ServiceModel, on_delete=models.CASCADE, verbose_name='کد محصول', related_name='code')
-    suggested_time = models.PositiveIntegerField(verbose_name='زمان پیشنهادی خدمت')
-    artist = models.ForeignKey(ArtistModel, verbose_name='artist', null=True, blank=True, on_delete=models.CASCADE)
-    saloon = models.ForeignKey(SaloonModel, verbose_name='saloon', null=True, blank=True, on_delete=models.CASCADE)
+    service_icon = models.FileField(upload_to='service_icons/', verbose_name='تصویر لاین اصلی خدمت', null=True, blank=True)
 
     class Meta:
         verbose_name = 'خدمت'
         verbose_name_plural = 'خدمت ها'
 
     def __str__(self):
-        return f"{self.service} {self.artist} {self.saloon}"
+        return f"{self.service_name} + {self.service_code}"
+
+
+class SupServiceModel(models.Model):
+    service = models.ForeignKey(ServiceModel, on_delete=models.CASCADE, verbose_name='خدمت')
+    supservice_name = models.CharField(max_length=128, verbose_name='نام زیر خدمت')
+
+    class Meta:
+        verbose_name = 'زیر خدمت'
+        verbose_name_plural = 'زیر خدمت ها'
+
+    def __str__(self):
+        return f'{self.supservice_name} is under {self.service.service_name}'
+
+
+class UserServicesModel(models.Model):
+    supservice = models.ForeignKey(SupServiceModel, on_delete=models.CASCADE, verbose_name='کد محصول', related_name='code', null=True, blank=True)
+    artist = models.ForeignKey(ArtistModel, verbose_name='هنرمند', null=True, blank=True, on_delete=models.CASCADE)
+    suggested_time = models.PositiveIntegerField(verbose_name='زمان پیشنهادی خدمت')
+    suggested_price =  models.PositiveIntegerField(verbose_name='قیمت بیعانه', validators=[MinValueValidator(100000), MaxValueValidator(1000000)], default=100000)
+
+    class Meta:
+        verbose_name = 'خدمت هنرمند'
+        verbose_name_plural = 'خدمات هنرمندان'
+
+    def __str__(self):
+        return f"{self.supservice} {self.artist}"
 
 
 class RankModel(models.Model):

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from account_module.models import ArtistModel, SaloonModel, User
 from .models import PostModel, StoryModel, VisitingTimeModel, WalletModel, \
-    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel
+    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel, SupServiceModel
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -62,9 +62,10 @@ class StorySerializerGet(serializers.ModelSerializer):
 
 
 class StorySerializerPost(serializers.ModelSerializer):
+    duration = serializers.IntegerField()
     class Meta:
         model = StoryModel
-        fields = ['story_content']
+        fields = ['story_content', 'duration']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -93,13 +94,23 @@ class HighlightSerializerPost(serializers.ModelSerializer):
 
 class ArtistVisitsSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
+    artist_name = serializers.SerializerMethodField()
+    GetSupservicesFromArtist = serializers.SerializerMethodField()
     profile_url = serializers.SerializerMethodField()
     average_ranks = serializers.SerializerMethodField()
     ranks = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtistModel
-        fields = ['id', 'artist', 'url', 'profile_url', 'average_ranks', 'ranks']
+        fields = ['id', 'artist', 'artist_name', 'url', 'GetSupservicesFromArtist', 'profile_url', 'average_ranks', 'ranks']
+
+    def get_artist_name(self, obj):
+        return obj.artist.first_name + ' ' + obj.artist.last_name
+
+    def get_GetSupservicesFromArtist(self, obj):
+        request = self.context.get('request')
+        path = reverse('artist-service', kwargs={'artist_id': obj.id})
+        return request.build_absolute_uri(path)
 
     def get_url(self, obj):
         request = self.context.get('request')
@@ -127,7 +138,7 @@ class ArtistVisitsSerializer(serializers.ModelSerializer):
                 else:
                     avg_rank = 0
 
-                average_ranks[str(service.service)] = avg_rank
+                average_ranks[str(service.supservice)] = avg_rank
 
                 # Accumulate the total sum and count for calculating the overall average
                 total_sum += avg_rank
@@ -147,13 +158,25 @@ class ArtistVisitsSerializer(serializers.ModelSerializer):
 
 class SaloonVisitsSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
+    saloonDetailForArtistAndServices = serializers.SerializerMethodField()
+    GetAllServicesFromSaloon = serializers.SerializerMethodField()
     profile_url = serializers.SerializerMethodField()
     average_ranks = serializers.SerializerMethodField()
     ranks = serializers.SerializerMethodField()
 
     class Meta:
         model = SaloonModel
-        fields = ['id', 'name', 'management', 'url', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks']
+        fields = ['id', 'name', 'management', 'url', 'saloonDetailForArtistAndServices', 'GetAllServicesFromSaloon', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks']
+
+    def get_saloonDetailForArtistAndServices(self, obj):
+        request = self.context.get('request')
+        path = reverse('saloon-artists', kwargs={'saloon_id': obj.id})
+        return request.build_absolute_uri(path)
+
+    def get_GetAllServicesFromSaloon(self, obj):
+        request = self.context.get('request')
+        path = reverse('saloon-service', kwargs={'saloon_id': obj.id})
+        return request.build_absolute_uri(path)
 
     def get_url(self, obj):
         request = self.context.get('request')
@@ -167,7 +190,7 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
 
     def get_average_ranks(self, user):
         if hasattr(user, 'saloon'):
-            services = UserServicesModel.objects.filter(saloon__saloon_id=user.saloon).all()
+            services = UserServicesModel.objects.filter(artist__saloon_artists=user.saloon.id).all()
 
             average_ranks = {}
             total_sum = 0
@@ -181,7 +204,7 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
                 else:
                     avg_rank = 0
 
-                average_ranks[str(service.service)] = avg_rank
+                average_ranks[str(service.supservice)] = avg_rank
 
                 # Accumulate the total sum and count for calculating the overall average
                 total_sum += avg_rank
@@ -219,7 +242,7 @@ class SaloonVisitingTimeSerializerPost(serializers.ModelSerializer):
 
     class Meta:
         model = VisitingTimeModel
-        fields = ['user', 'saloon', 'service', 'suggested_time', 'suggested_date', 'exact_time', 'status']
+        fields = ['user', 'saloon', 'artist', 'service', 'suggested_time', 'suggested_date', 'exact_time', 'status']
 
     def create(self, validated_data):
         validated_data['status'] = 'waiting for confirmation'
@@ -234,7 +257,7 @@ class ArtistVisitingTimeSerializerPost(serializers.ModelSerializer):
 
     class Meta:
         model = VisitingTimeModel
-        fields = ['user', 'artist', 'service', 'suggested_time', 'suggested_date', 'exact_time', 'status']
+        fields = ['user', 'artist', 'saloon', 'service', 'suggested_time', 'suggested_date', 'exact_time', 'status']
 
     def create(self, validated_data):
         validated_data['status'] = 'waiting for confirmation'
@@ -400,6 +423,13 @@ class UserServiceSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("This service is already provided by the saloon.")
 
         return data
+
+
+class SupServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupServiceModel
+        fields = ['service', 'supservice_name']
+
 
 
 class HandigVisitSerializer(serializers.ModelSerializer):

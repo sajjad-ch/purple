@@ -206,7 +206,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 else:
                     avg_rank = 0
 
-                average_ranks[str(service.service)] = avg_rank
+                average_ranks[str(service.supservice)] = avg_rank
 
             return average_ranks
         return None
@@ -275,6 +275,7 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
 
 
 class ArtistProfileSerializer(serializers.ModelSerializer):
+    artist_name = serializers.SerializerMethodField()
     average_ranks = serializers.SerializerMethodField()
     ranks = serializers.SerializerMethodField()
     follow_url = serializers.SerializerMethodField()
@@ -285,6 +286,9 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArtistModel
         fields = "__all__"
+
+    def get_artist_name(self, obj):
+        return obj.artist.first_name + ' ' + obj.artist.last_name
 
     def get_highlights(self, obj):
         highlishts = HighlightModel.objects.filter(user=obj.artist_id)
@@ -318,7 +322,7 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
                 else:
                     avg_rank = 0
 
-                average_ranks[str(service.service)] = avg_rank
+                average_ranks[str(service.supservice)] = avg_rank
 
                 # Accumulate the total sum and count for calculating the overall average
                 total_sum += avg_rank

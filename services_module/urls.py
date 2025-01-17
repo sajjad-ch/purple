@@ -34,6 +34,9 @@ urlpatterns = [
     path('posts/<int:post_id>/unlike/', LikeAPIView.as_view(), name='unlike-post'),
 
     # Visiting Time URLs
+    path('visits/select-artist/<int:saloon_id>/', GetAllArtistsFromSaloon.as_view(), name='saloon-artists'),
+    path('visits/select-service/<int:saloon_id>/', GetAllServicesFromSaloon.as_view(), name='saloon-service'),
+    path('visits/select-supservice/<int:artist_id>/', GetSupservicesFromArtist.as_view(), name='artist-service'),
     path('visits/requesting/saloon/', SaloonVisitsAPIView.as_view(), name='saloons'),
     path('visits/requesting/artist/', ArtistVisitsAPIView.as_view(), name='artists'),
     path('visits-saloon/<int:user_id>/request/', RequestVisitingTimeSaloonAPIView.as_view(), name='request-visiting-time-saloon'),
