@@ -82,7 +82,6 @@ class VerifyKeyView(APIView):
 
             if user.key == key and user.code_generated_at and (
                     timezone.now() - user.code_generated_at).total_seconds() < 120:
-                user.is_active = False
                 user.last_login = timezone.now()
                 user.save()
                 refresh = RefreshToken.for_user(user)

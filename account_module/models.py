@@ -40,6 +40,7 @@ class AccountManager(BaseUserManager):
 class User(AbstractUser):
     username = models.CharField(unique=True, max_length=10, verbose_name='کد ملی', null=True, blank=True)
     phone_number = models.CharField(unique=True, max_length=11, verbose_name='شماره همراه')
+    is_active = models.BooleanField(default=False, verbose_name='فعال / غیرفعال (0/1)')
     key = models.CharField(max_length=6, blank=True, null=True)
     code_generated_at = models.DateTimeField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='Images/', default='default/avatar.jpg/')
