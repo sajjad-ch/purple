@@ -245,8 +245,8 @@ def is_authenticated(request, token):
             validated_token = JWTAuthentication().get_validated_token(token)
             # Get the user from the token
             user = JWTAuthentication().get_user(validated_token)
-            return user
+            return Response({'message': 'validate user'}, status=status.HTTP_200_OK)
         except jwt_exceptions.InvalidTokenError:
-            return AnonymousUser()
+            return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
-            return AnonymousUser()
+            return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
