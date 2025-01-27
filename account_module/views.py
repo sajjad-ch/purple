@@ -82,11 +82,12 @@ class VerifyKeyView(APIView):
 
             if user.key == key and user.code_generated_at and (
                     timezone.now() - user.code_generated_at).total_seconds() < 120:
-                # user.is_active = True
+                user.is_active = True
                 user.last_login = timezone.now()
                 user.save()
                 refresh = RefreshToken.for_user(user)
-                return Response({'success': 'Phone number verified',
+                return Response({'is_active': user.is_active,
+                                 'success': 'Phone number verified',
                                  'access': str(refresh.access_token),
                                  'refresh': str(refresh)}, status=status.HTTP_200_OK)
             else:
