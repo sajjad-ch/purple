@@ -37,7 +37,6 @@ class SignUpAPIView(APIView):
         if serializer.is_valid():
             phone_number = serializer.validated_data['phone_number']
             user, created = User.objects.get_or_create(phone_number=phone_number)
-            normal_user = NormalUserModel.objects.create(user=request.user, interests='')
             if user:
                 user.generate_verification_code()
                 if created:
@@ -100,6 +99,8 @@ class ProfileView(APIView):
 
     def get(self, request):
         user = request.user
+        normal_user = NormalUserModel.objects.create(normal_user=request.user, interests='')
+        normal_user.save()
         serializer = ProfileSerializer(user)
         if serializer:
             return Response(serializer.data)
