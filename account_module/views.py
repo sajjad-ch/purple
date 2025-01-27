@@ -236,14 +236,17 @@ def user_list(request, ):
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth.models import AnonymousUser
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
-def is_authenticated(token):
-    try:
-        # Decode the token
-        validated_token = JWTAuthentication().get_validated_token(token)
-        # Get the user from the token
-        user = JWTAuthentication().get_user(validated_token)
-        return user
-    except jwt_exceptions.InvalidTokenError:
-        return AnonymousUser()
-    except Exception:
-        return AnonymousUser()
+
+@api_view(['POST'])
+def is_authenticated(request, token):
+    if request.method == 'POST':
+        try:
+            # Decode the token
+            validated_token = JWTAuthentication().get_validated_token(token)
+            # Get the user from the token
+            user = JWTAuthentication().get_user(validated_token)
+            return user
+        except jwt_exceptions.InvalidTokenError:
+            return AnonymousUser()
+        except Exception:
+            return AnonymousUser()
