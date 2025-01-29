@@ -109,7 +109,7 @@ class ProfileView(APIView):
     def post(self, request):
         user_phone_number = request.data.get('phone_number')
         queried_user = User.objects.filter(phone_number=user_phone_number).first()
-        serializer = ProfileUpdateSerializer(user_phone_number, data=request.data)
+        serializer = ProfileUpdateSerializer(queried_user, data=request.data)
         if serializer.is_valid():
             normal_user = NormalUserModel.objects.create(normal_user=queried_user, interests='')
             normal_user.save()
