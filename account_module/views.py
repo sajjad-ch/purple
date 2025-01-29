@@ -99,19 +99,20 @@ class ProfileView(APIView):
 
     def get(self, request):
         user = request.user
-        normal_user = NormalUserModel.objects.create(normal_user=request.user, interests='')
-        normal_user.save()
-        serializer = ProfileSerializer(user)
-        if serializer:
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if user.is_authenticated:
+            serializer = ProfileSerializer(user)
+            if serializer:
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         user_phone_number = request.data.get('phone_number')
         queried_user = User.objects.filter(phone_number=user_phone_number).first()
         serializer = ProfileUpdateSerializer(user_phone_number, data=request.data)
         if serializer.is_valid():
+            normal_user = NormalUserModel.objects.create(normal_user=queried_user, interests='')
+            normal_user.save()
             queried_user.is_active = True
             serializer.save()
             return Response(serializer.data)
