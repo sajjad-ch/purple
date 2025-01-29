@@ -180,6 +180,19 @@ class ArtistModel(models.Model):
         return ArtistFollow.objects.filter(follower=self).count()
 
 
+class UnregisteredUser(models.Model):
+    phone_number = models.CharField(max_length=11, verbose_name='شماره همراه', unique=True)
+    first_name = models.CharField(max_length=255, verbose_name='نام')
+    last_name = models.CharField(max_length=255, verbose_name='نام خانوادگی')
+
+    class Meta:
+        verbose_name = 'کاربر ثبت نام نشده'
+        verbose_name_plural = 'کاربران ثبت نام نشده'
+
+    def __str__(self):
+        return f"{self.phone_number}"
+
+
 class NormalUserFollow(models.Model):
     follower = models.ForeignKey(NormalUserModel, related_name='following', on_delete=models.CASCADE)
     followed_user = models.ForeignKey(User, related_name='normal_followers', on_delete=models.CASCADE)

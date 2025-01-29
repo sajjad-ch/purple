@@ -108,9 +108,9 @@ class ProfileView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        user = request.user
-        queried_user = User.objects.filter(user=user).first()
-        serializer = ProfileUpdateSerializer(user, data=request.data)
+        user_phone_number = request.data.get('phone_number')
+        queried_user = User.objects.filter(phone_number=user_phone_number).first()
+        serializer = ProfileUpdateSerializer(user_phone_number, data=request.data)
         if serializer.is_valid():
             queried_user.is_active = True
             serializer.save()
@@ -239,7 +239,7 @@ from django.contrib.auth.models import AnonymousUser
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 
 @api_view(['POST'])
-def is_authenticated(request, token):
+def verify_authenticattion(request, token):
     if request.method == 'POST':
         try:
             # Decode the token

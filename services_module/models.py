@@ -140,7 +140,8 @@ class RankModel(models.Model):
 
 
 class VisitingTimeModel(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='user')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='user', null=True, blank=True)
+    unregistered_user = models.ForeignKey('account_module.UnregisteredUser', on_delete=models.CASCADE, verbose_name='کاربر ثبت نام نشده', null=True, blank=True)
     artist = models.ForeignKey('account_module.ArtistModel', on_delete=models.CASCADE, verbose_name='هنرمند', null=True, blank=True)
     saloon = models.ForeignKey('account_module.SaloonModel', on_delete=models.CASCADE, verbose_name='سالن', null=True, blank=True)
     service = models.ForeignKey(UserServicesModel, on_delete=models.CASCADE, verbose_name='نام خدمت', null=True, blank=True)
