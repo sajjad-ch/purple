@@ -52,12 +52,24 @@ class PostModel(models.Model):
         return f"{self.user} created a post on {self.created.date()}"
 
 
+class TagsModel(models.Model):
+    tag_name = models.CharField(max_length=128, verbose_name='نام تگ')
+
+    class Meta:
+        verbose_name = 'تگ'
+        verbose_name_plural = 'تگ ها'
+
+    def __str__(self):
+        return f"{self.tag_name}"
+    
+
 class StoryModel(models.Model):
     user = models.ForeignKey(User, verbose_name='کاربر', on_delete=models.CASCADE)
     story_content = models.FileField(upload_to='stories/', verbose_name='محتوای استوری')
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     duration = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='گذشته از')
     reply = models.CharField(max_length=255, null=True, blank=True)
+    tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها')
 
     class Meta:
         verbose_name = 'استوری'
@@ -85,7 +97,8 @@ class HighlightModel(models.Model):
 
 class ServiceModel(models.Model):
     service_code = models.PositiveIntegerField(primary_key=True, verbose_name='کد محصول')
-    service_name = models.CharField(max_length=40, verbose_name='نام خدمت')
+    service_name_en = models.CharField(max_length=40, verbose_name='نام خدمت به انگلیسی', null=True, blank=True)
+    service_name_fa = models.CharField(max_length=40, verbose_name='نام خدمت به انگلیسی', null=True, blank=True)
     service_icon = models.FileField(upload_to='service_icons/', verbose_name='تصویر لاین اصلی خدمت', null=True, blank=True)
 
     class Meta:

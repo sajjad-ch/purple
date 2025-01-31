@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from account_module.models import ArtistModel, SaloonModel, User
 from .models import PostModel, StoryModel, VisitingTimeModel, WalletModel, \
-    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel, SupServiceModel
+    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel, SupServiceModel, TagsModel
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -9,7 +9,7 @@ from django.utils.timezone import now
 class SliderSeralizer(serializers.ModelSerializer):
     class Meta:
         model = SliderModel
-        fields = ['slider_picture', 'created_at']
+        fields = ['slider_picture', 'slider_text']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ServiceModel
-        fields = ['service_code', 'service_name', 'url']
+        fields = ['service_code', 'service_name_en', 'service_name_en', 'service_icon', 'url']
 
     def get_url(self, obj):
         request = self.context.get('request')
@@ -42,18 +42,18 @@ class PostSerializerPost(serializers.ModelSerializer):
 
 
 class StorySerializerGet(serializers.ModelSerializer):
-    first_name = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
     class Meta:
         model = StoryModel
-        fields = ['story_content', 'first_name', 'profile_picture']
+        fields = ['story_content', 'name', 'profile_picture']
 
     def get_profile_picture(self, obj):
         profile_picture = obj.user.profile_picture.url
         return profile_picture
 
-    def get_first_name(self, obj):
-        first_name = obj.user.first_name
+    def get_name(self, obj):
+        first_name = f'{obj.user.first_name} {obj.user.last_name}'
         return first_name
 
     def create(self, validated_data):
@@ -446,3 +446,9 @@ class ManageArtistTeamSerializer(serializers.Serializer):
         if not ArtistModel.objects.filter(pk=value).exists():
             raise serializers.ValidationError("Artist does not exist.")
         return value
+
+
+class TagsModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TagsModel
+        fields = "__all__"
