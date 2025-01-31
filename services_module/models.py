@@ -43,6 +43,7 @@ class PostModel(models.Model):
     caption = models.TextField(blank=True, verbose_name='توضیحات متن')
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     likes = models.PositiveIntegerField(default=0, verbose_name='تعداد لایک ها')
+    tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها')
 
     class Meta:
         verbose_name = 'پست'
@@ -69,7 +70,7 @@ class StoryModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     duration = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='گذشته از')
     reply = models.CharField(max_length=255, null=True, blank=True)
-    tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها')
+    
 
     class Meta:
         verbose_name = 'استوری'

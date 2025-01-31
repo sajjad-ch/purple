@@ -483,8 +483,8 @@ class StoryAPIView(APIView):
 
         # Group stories by user (first_name and profile_picture)
         grouped_stories = []
-        sorted_data = sorted(serialized_data, key=itemgetter('first_name', 'profile_picture'))
-        for key, group in groupby(sorted_data, key=itemgetter('first_name', 'profile_picture')):
+        sorted_data = sorted(serialized_data, key=itemgetter('name', 'profile_picture'))
+        for key, group in groupby(sorted_data, key=itemgetter('name', 'profile_picture')):
             grouped_stories.append({
                 'first_name': key[0],
                 'profile_picture': key[1],
