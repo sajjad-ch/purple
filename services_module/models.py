@@ -99,7 +99,7 @@ class HighlightModel(models.Model):
 class ServiceModel(models.Model):
     service_code = models.PositiveIntegerField(primary_key=True, verbose_name='کد محصول')
     service_name_en = models.CharField(max_length=40, verbose_name='نام خدمت به انگلیسی', null=True, blank=True)
-    service_name_fa = models.CharField(max_length=40, verbose_name='نام خدمت به انگلیسی', null=True, blank=True)
+    service_name_fa = models.CharField(max_length=40, verbose_name='نام خدمت به فارسی', null=True, blank=True)
     service_icon = models.FileField(upload_to='service_icons/', verbose_name='تصویر لاین اصلی خدمت', null=True, blank=True)
 
     class Meta:
@@ -107,7 +107,7 @@ class ServiceModel(models.Model):
         verbose_name_plural = 'خدمت ها'
 
     def __str__(self):
-        return f"{self.service_name} + {self.service_code}"
+        return f"{self.service_name_fa} + {self.service_code}"
 
 
 class SupServiceModel(models.Model):
@@ -119,7 +119,7 @@ class SupServiceModel(models.Model):
         verbose_name_plural = 'زیر خدمت ها'
 
     def __str__(self):
-        return f'{self.supservice_name} is under {self.service.service_name}'
+        return f'{self.supservice_name} is under {self.service.service_name_fa}'
 
 
 class UserServicesModel(models.Model):

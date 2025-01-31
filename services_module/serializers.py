@@ -17,7 +17,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ServiceModel
-        fields = ['service_code', 'service_name_en', 'service_name_en', 'service_icon', 'url']
+        fields = ['service_code', 'service_name_en', 'service_name_fa', 'service_icon', 'url']
 
     def get_url(self, obj):
         request = self.context.get('request')
