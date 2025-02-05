@@ -99,10 +99,12 @@ class ArtistVisitsSerializer(serializers.ModelSerializer):
     profile_url = serializers.SerializerMethodField()
     average_ranks = serializers.SerializerMethodField()
     ranks = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
+    saloon_name = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtistModel
-        fields = ['id', 'artist', 'artist_name', 'url', 'GetSupservicesFromArtist', 'profile_url', 'average_ranks', 'ranks']
+        fields = ['id', 'artist', 'artist_name', 'url', 'GetSupservicesFromArtist', 'profile_url', 'average_ranks', 'ranks', 'profile_picture', 'saloon_name']
 
     def get_artist_name(self, obj):
         return obj.artist.first_name + ' ' + obj.artist.last_name
@@ -122,6 +124,12 @@ class ArtistVisitsSerializer(serializers.ModelSerializer):
         path = reverse('artist-profile', kwargs={'user_id': obj.id})
         return request.build_absolute_uri(path)
     
+    def get_profile_picture(self, obj):
+        return obj.artist.profile_picture.url
+
+    def get_saloon_name(self, obj):
+        return str(obj.saloon_artists)
+
     def get_average_ranks(self, user):
         if hasattr(user, 'artist'):
             services = UserServicesModel.objects.filter(artist__artist_id=user.artist).all()
@@ -163,10 +171,11 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
     profile_url = serializers.SerializerMethodField()
     average_ranks = serializers.SerializerMethodField()
     ranks = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = SaloonModel
-        fields = ['id', 'name', 'management', 'url', 'saloonDetailForArtistAndServices', 'GetAllServicesFromSaloon', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks']
+        fields = ['id', 'name', 'management', 'url', 'saloonDetailForArtistAndServices', 'GetAllServicesFromSaloon', 'profile_picture', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks']
 
     def get_saloonDetailForArtistAndServices(self, obj):
         request = self.context.get('request')
@@ -187,6 +196,9 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         path = reverse('saloon-profile', kwargs={'user_id': obj.id})
         return request.build_absolute_uri(path)
+    
+    def get_profile_picture(self, obj):
+        return obj.saloon.profile_picture.url
 
     def get_average_ranks(self, user):
         if hasattr(user, 'saloon'):
