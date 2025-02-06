@@ -220,6 +220,9 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
     follow_url = serializers.SerializerMethodField()
     unfollow_url = serializers.SerializerMethodField()
     highlights = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
+    follower_count = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = SaloonModel
@@ -240,9 +243,27 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
         path = reverse('follow', kwargs={'user_id': obj.saloon_id})
         return request.build_absolute_uri(path)
 
+    def get_profile_picture(self, obj):
+        return obj.saloon.profile_picture.url
+
+    def get_follower_count(self, obj):
+        return obj.get_follower_count()
+
+    def get_comments(self, obj):
+        comments = {}
+        visits = VisitingTimeModel.objects.filter(saloon=obj).all()
+        for visit in visits:
+            print(visit.service)
+            comments.update({'commenter': visit.user.username,
+                              'commenter_profile_picture': visit.user.profile_picture.url,
+                              'comment': visit.text,
+                              'rate': visit.rank.rank,
+                              'service': visit.service.supservice.supservice_name})
+        return comments
+
     def get_average_ranks(self, user):
         if hasattr(user, 'saloon'):
-            services = UserServicesModel.objects.filter(saloon__saloon_id=user.saloon).all()
+            services = UserServicesModel.objects.filter(artist__saloon_artists=user.saloon.id).all()
 
             average_ranks = {}
             total_sum = 0
@@ -283,7 +304,9 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     follow_url = serializers.SerializerMethodField()
     unfollow_url = serializers.SerializerMethodField()
     highlights = serializers.SerializerMethodField()
-
+    profile_picture = serializers.SerializerMethodField()
+    follower_count = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtistModel
@@ -306,6 +329,19 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         path = reverse('follow', kwargs={'user_id': obj.artist_id})
         return request.build_absolute_uri(path)
+
+    def get_profile_picture(self, obj):
+        return obj.artist.profile_picture.url
+
+    def get_follower_count(self, obj):
+        return obj.get_follower_count()
+
+    def get_comments(self, obj):
+        comments = {}
+        visits = VisitingTimeModel.objects.filter(artist=obj).all()
+        for visit in visits:
+            comments.update({'commenter': visit.user.username, 'commenter_profile_picture': visit.user.profile_picture.url, 'comment': visit.text, 'rate': visit.rank.rank, 'service': visit.service.supservice.supservice_name})
+        return comments
 
     def get_average_ranks(self, user):
         if hasattr(user, 'artist'):

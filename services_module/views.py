@@ -710,6 +710,8 @@ class ArtistVisitsAPIView(APIView):
 
 # TODO: Make URL for these three new Logic and we should add the supservice and artsit that do the supservice in the visitingtime card.
 class GetAllArtistsFromSaloon(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, saloon_id):
         saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
         if saloon_artists:
@@ -721,6 +723,8 @@ class GetAllArtistsFromSaloon(APIView):
 
 
 class GetAllServicesFromSaloon(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, saloon_id):
         saloon_artist = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
         if saloon_artist:
@@ -735,6 +739,8 @@ class GetAllServicesFromSaloon(APIView):
 
 
 class GetSupservicesFromArtist(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, artist_id):
         artist = ArtistModel.objects.filter(id=artist_id).first()
         if artist:
