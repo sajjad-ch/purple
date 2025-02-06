@@ -87,6 +87,7 @@ class HighlightModel(models.Model):
     user = models.ForeignKey(User, verbose_name='کاربر', on_delete=models.CASCADE)
     highlight_content = models.FileField(upload_to='highlights/', verbose_name='محتوای هایلایت')
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
+    text = models.TextField(verbose_name='توضیحات متن', null=True, blank=True)
 
     class Meta:
         verbose_name = 'هایلایت'

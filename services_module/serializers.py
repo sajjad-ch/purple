@@ -75,7 +75,7 @@ class StorySerializerPost(serializers.ModelSerializer):
 class HighlightSerializerGet(serializers.ModelSerializer):
     class Meta:
         model = HighlightModel
-        fields = ['highlight_content', 'user', 'created']
+        fields = ['highlight_content', 'user', 'created', 'text']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

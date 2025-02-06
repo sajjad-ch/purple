@@ -250,11 +250,11 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
         return obj.get_follower_count()
 
     def get_comments(self, obj):
-        comments = {}
+        comments = []
         visits = VisitingTimeModel.objects.filter(saloon=obj).all()
         for visit in visits:
             print(visit.service)
-            comments.update({'commenter': visit.user.username,
+            comments.append({'commenter': visit.user.username,
                               'commenter_profile_picture': visit.user.profile_picture.url,
                               'comment': visit.text,
                               'rate': visit.rank.rank,
@@ -337,10 +337,14 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
         return obj.get_follower_count()
 
     def get_comments(self, obj):
-        comments = {}
+        comments = []
         visits = VisitingTimeModel.objects.filter(artist=obj).all()
         for visit in visits:
-            comments.update({'commenter': visit.user.username, 'commenter_profile_picture': visit.user.profile_picture.url, 'comment': visit.text, 'rate': visit.rank.rank, 'service': visit.service.supservice.supservice_name})
+            comments.append({'commenter': visit.user.username,
+                             'commenter_profile_picture': visit.user.profile_picture.url,
+                             'comment': visit.text,
+                             'rate': visit.rank.rank,
+                             'service': visit.service.supservice.supservice_name})
         return comments
 
     def get_average_ranks(self, user):
