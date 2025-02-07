@@ -437,6 +437,106 @@ class PostAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ProfilePostAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        current_user = request.user
+        user = get_object_or_404(User, pk=user_id)
+        if hasattr(user, 'saloon'):
+            if SaloonFollow.objects.filter(follower=user.saloon.pk, followed_user=current_user.pk).exists():
+                posts = PostModel.objects.filter(user=user).all()
+                serializer = PostSerializerGet(posts, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'You don\'t follow this saloon'}, status=status.HTTP_400_BAD_REQUEST)
+        if hasattr(user, 'artist'):
+            if ArtistFollow.objects.filter(follower=user.saloon.pk, followed_user=current_user.pk).exists():
+                posts = PostModel.objects.filter(user=user).all()
+                serializer = PostSerializerGet(posts, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'You don\'t follow this artist'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class CertificateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        posts = PostModel.objects.none()
+        print(user)
+        if hasattr(user, 'normal_user'):
+            print('I am a normal user')
+            followed_by_normal_user = NormalUserFollow.objects.filter(follower=user.normal_user.pk).values_list('followed_user', flat=True)
+            posts = PostModel.objects.filter(user__in=list(followed_by_normal_user), is_certificate=True)
+        elif hasattr(user, 'artist'):
+            print('I am an artisit')
+            followed_artists = ArtistFollow.objects.filter(follower=user.artist.pk).values_list('followed_user', flat=True)
+            followed_saloons = SaloonFollow.objects.filter(follower=user.artist.pk).values_list('followed_user', flat=True)
+            posts = PostModel.objects.filter(user__in=(list(followed_artists) + list(followed_saloons)), is_certificate=True)
+        elif hasattr(user, 'saloon'):
+            print('I am saloon')
+            followed_artists = ArtistFollow.objects.filter(follower=user.saloon.pk).values_list('followed_user', flat=True)
+            followed_saloons = SaloonFollow.objects.filter(follower=user.saloon.pk).values_list('followed_user', flat=True)
+            posts = PostModel.objects.filter(user__in=(list(followed_artists) + list(followed_saloons)), is_certificate=True)
+
+        serializer = PostSerializerGet(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = request.user
+        if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
+            return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = PostSerializerPost(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            post_content = serializer.validated_data['post_content']
+            file_extension = str(post_content.name).split('.')[-1].lower()
+
+            if file_extension in ('png', 'jpg', 'jpeg'):
+                image = Image.open(post_content)
+                width, height = image.size
+                if width != height:
+                    return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        user = request.user
+        try:
+            post = PostModel.objects.get(pk=pk)
+        except PostModel.DoesNotExist:
+            return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if post.user != user:
+            return Response({'error': 'You do not have permission to edit this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = PostSerializerPost(post, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        user = request.user
+        try:
+            post = PostModel.objects.get(pk=pk)
+        except PostModel.DoesNotExist:
+            return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if post.user != user:
+            return Response({'error': 'You do not have permission to delete this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 class StoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

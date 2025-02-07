@@ -44,6 +44,7 @@ class PostModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     likes = models.PositiveIntegerField(default=0, verbose_name='تعداد لایک ها')
     tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها')
+    is_certificate = models.BooleanField(default=False, verbose_name='گواهی نامه')
 
     class Meta:
         verbose_name = 'پست'
@@ -113,14 +114,17 @@ class ServiceModel(models.Model):
 
 class SupServiceModel(models.Model):
     service = models.ForeignKey(ServiceModel, on_delete=models.CASCADE, verbose_name='خدمت')
-    supservice_name = models.CharField(max_length=128, verbose_name='نام زیر خدمت')
+    supservice_name_en = models.CharField(max_length=40, verbose_name='نام زیر خدمت به انگلیسی', null=True, blank=True)
+    supservice_name_fa = models.CharField(max_length=40, verbose_name='نام زیر خدمت به فارسی', null=True, blank=True)
+    supservice_icon = models.FileField(upload_to='supservice_icons/', verbose_name='تصویر زیر خدمت', null=True, blank=True)
+
 
     class Meta:
         verbose_name = 'زیر خدمت'
         verbose_name_plural = 'زیر خدمت ها'
 
     def __str__(self):
-        return f'{self.supservice_name} is under {self.service.service_name_fa}'
+        return f'{self.supservice_name_fa} is under {self.service.service_name_fa}'
 
 
 class UserServicesModel(models.Model):

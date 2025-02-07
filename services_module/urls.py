@@ -20,6 +20,11 @@ urlpatterns = [
     # Post URLs
     path('posts/', PostAPIView.as_view(), name='post-list-create'),
     path('posts/<int:pk>/', PostAPIView.as_view(), name='post-detail-update-delete'),
+    path('profile_posts/<int:user_id>/', ProfilePostAPIView.as_view(), name='profile-post'),
+
+    # Certificate URLs
+    path('certificates/', CertificateAPIView.as_view(), name='certificate-list-create'),
+    path('certificates/<int:pk>/', CertificateAPIView.as_view(), name='certificate-detail-update-delete'),
 
     # Story URLs
     path('stories/', StoryAPIView.as_view(), name='story-list-create'),

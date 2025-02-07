@@ -440,7 +440,7 @@ class UserServiceSerializer(serializers.ModelSerializer):
 class SupServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SupServiceModel
-        fields = ['service', 'supservice_name']
+        fields = "__all__"
 
 
 
