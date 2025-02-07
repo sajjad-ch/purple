@@ -258,7 +258,7 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
                               'commenter_profile_picture': visit.user.profile_picture.url,
                               'comment': visit.text,
                               'rate': visit.rank.rank,
-                              'service': visit.service.supservice.supservice_name})
+                              'service': visit.service.supservice.supservice_name_fa})
         return comments
 
     def get_average_ranks(self, user):
@@ -344,7 +344,7 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
                              'commenter_profile_picture': visit.user.profile_picture.url,
                              'comment': visit.text,
                              'rate': visit.rank.rank,
-                             'service': visit.service.supservice.supservice_name})
+                             'service': visit.service.supservice.supservice_name_fa})
         return comments
 
     def get_average_ranks(self, user):
