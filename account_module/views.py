@@ -228,6 +228,27 @@ class FollowView(APIView):
             return Response({'error': 'User type not recognized.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CheckFollowAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        is_saloon = request.data.get('is_saloon')
+        current_user = request.user
+        followed = request.data.get('id')
+        if is_saloon:
+            follow_instance = SaloonFollow.objects.filter(follower=int(followed), followed_user=current_user.pk)
+            if follow_instance.exists():
+                return Response({'is_following': True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'is_following': False}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            follow_instance = ArtistFollow.objects.filter(follower=int(followed), followed_user=current_user.pk)
+            if follow_instance.exists():           
+                return Response({'is_following': True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'is_following': False}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 def user_list(request, ):
     users = User.objects.all().order_by('username')

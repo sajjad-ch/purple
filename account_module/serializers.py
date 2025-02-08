@@ -225,20 +225,10 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     follower_count = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    is_follow = serializers.SerializerMethodField()
-
 
     class Meta:
         model = SaloonModel
         fields = "__all__"
-    
-    def get_is_follow(self, obj):
-        request = self.context.get('request')
-        current_user = request.user
-        if SaloonFollow.objects.filter(follower=obj.pk, followed_user=current_user.pk).exists():
-            return True
-        else:
-            return False
 
     def get_highlights(self, obj):
         highlishts = HighlightModel.objects.filter(user=obj.saloon_id)
@@ -319,19 +309,10 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     follower_count = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    is_follow = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtistModel
         fields = "__all__"
-
-    def get_is_follow(self, obj):
-        request = self.context.get('request')
-        current_user = request.user
-        if ArtistFollow.objects.filter(follower=obj.pk, followed_user=current_user.pk).exists():
-            return True
-        else:
-            return False
 
     def get_artist_name(self, obj):
         return obj.artist.first_name + ' ' + obj.artist.last_name
