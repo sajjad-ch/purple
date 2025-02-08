@@ -232,10 +232,10 @@ class CheckFollowAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        is_saloon = request.data.get('is_saloon')
+        is_saloon: str = request.data.get('is_saloon')
         current_user = request.user
         followed = request.data.get('id')
-        if is_saloon:
+        if is_saloon.lower() == 'true':
             follow_instance = SaloonFollow.objects.filter(follower=int(followed), followed_user=current_user.pk)
             if follow_instance.exists():
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
