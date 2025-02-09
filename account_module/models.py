@@ -145,11 +145,8 @@ class SaloonModel(models.Model):
         return f"{self.name}"
 
     def get_follower_count(self):
-        return (
-                ArtistFollow.objects.filter(followed_user=self.saloon.pk).count() +
-                SaloonFollow.objects.filter(followed_user=self.saloon.pk).count() +
-                NormalUserFollow.objects.filter(followed_user=self.saloon.pk).count()
-        )
+        return SaloonFollow.objects.filter(follower=self).count()
+
 
     def get_following_count(self):
         return SaloonFollow.objects.filter(follower=self).count()
@@ -170,11 +167,8 @@ class ArtistModel(models.Model):
         return f"{self.artist}"
 
     def get_follower_count(self):
-        return (
-                ArtistFollow.objects.filter(followed_user=self.artist.pk).count() +
-                SaloonFollow.objects.filter(followed_user=self.artist.pk).count() +
-                NormalUserFollow.objects.filter(followed_user=self.artist.pk).count()
-        )
+        return ArtistFollow.objects.filter(followed_user=self).count()
+        
 
     def get_following_count(self):
         return ArtistFollow.objects.filter(follower=self).count()
