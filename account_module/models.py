@@ -142,7 +142,7 @@ class SaloonModel(models.Model):
         verbose_name_plural = 'سالن‌ها'
 
     def __str__(self):
-        return f"{self.saloon}"
+        return f"{self.name}"
 
     def get_follower_count(self):
         return (
@@ -208,8 +208,8 @@ class NormalUserFollow(models.Model):
 
 
 class SaloonFollow(models.Model):
-    follower = models.ForeignKey(SaloonModel, related_name='following', on_delete=models.CASCADE)
-    followed_user = models.ForeignKey(User, related_name='saloon_followers', on_delete=models.CASCADE)
+    follower = models.ForeignKey(SaloonModel, related_name='following', on_delete=models.CASCADE, verbose_name='سالن دنبال شده')
+    followed_user = models.ForeignKey(User, related_name='saloon_followers', on_delete=models.CASCADE, verbose_name='دنبال کننده سالن')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -218,12 +218,12 @@ class SaloonFollow(models.Model):
         unique_together = ('follower', 'followed_user')
 
     def __str__(self):
-        return f"{self.follower.name} follows {self.followed_user}"
+        return f"{self.followed_user} follows {self.follower.name}"
 
 
 class ArtistFollow(models.Model):
-    follower = models.ForeignKey(ArtistModel, related_name='following', on_delete=models.CASCADE)
-    followed_user = models.ForeignKey(User, related_name='artist_followers', on_delete=models.CASCADE)
+    follower = models.ForeignKey(ArtistModel, related_name='following', on_delete=models.CASCADE, verbose_name='هنرمند دنبال شده')
+    followed_user = models.ForeignKey(User, related_name='artist_followers', on_delete=models.CASCADE, verbose_name='دنبال کننده هنرمند')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -232,4 +232,4 @@ class ArtistFollow(models.Model):
         unique_together = ('follower', 'followed_user')
 
     def __str__(self):
-        return f"{self.follower.artist} follows {self.followed_user}"
+        return f" {self.followed_user} follows {self.follower.artist}"

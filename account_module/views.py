@@ -241,7 +241,7 @@ class CheckFollowAPIView(APIView):
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
             else:
                 return Response({'is_following': False}, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        elif is_saloon.lower() == 'false':
             follow_instance = ArtistFollow.objects.filter(follower=int(followed), followed_user=current_user.pk)
             if follow_instance.exists():           
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
