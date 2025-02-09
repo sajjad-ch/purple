@@ -25,6 +25,8 @@ urlpatterns = [
     # Certificate URLs
     path('certificates/', CertificateAPIView.as_view(), name='certificate-list-create'),
     path('certificates/<int:pk>/', CertificateAPIView.as_view(), name='certificate-detail-update-delete'),
+    path('profile_certificates/<int:user_id>/', ProfileCertificateAPIView.as_view(), name='profile-certificates'),
+
 
     # Story URLs
     path('stories/', StoryAPIView.as_view(), name='story-list-create'),
