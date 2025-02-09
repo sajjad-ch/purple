@@ -210,7 +210,7 @@ class FollowView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         follower_user = request.user
-        if hasattr(followed_user, 'normal_user'):
+        if hasattr(followed_user, 'normal_user') and not NormalUserModel.objects.filter(normal_user=followed_user).exists():
             normal_user = NormalUserModel.objects.filter(normal_user=followed_user).first()
             follow_instance = NormalUserFollow.objects.filter(follower=normal_user,
                                                               followed_user=follower_user)
@@ -221,7 +221,7 @@ class FollowView(APIView):
                 return Response({'error': 'Not following this user.'}, status=status.HTTP_400_BAD_REQUEST)
 
         elif hasattr(followed_user, 'saloon'):
-            saloon = SaloonModel.objects.filter(saloon=followed_user).first()
+            saloon = SaloonModel.objects.filter(saloon=followed_user.id).first()
             follow_instance = SaloonFollow.objects.filter(follower=saloon,
                                                           followed_user=follower_user)
             if follow_instance.exists():
