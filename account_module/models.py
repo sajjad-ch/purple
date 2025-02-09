@@ -167,7 +167,7 @@ class ArtistModel(models.Model):
         return f"{self.artist}"
 
     def get_follower_count(self):
-        return ArtistFollow.objects.filter(followed_user=self).count()
+        return ArtistFollow.objects.filter(follower=self).count()
         
 
     def get_following_count(self):
