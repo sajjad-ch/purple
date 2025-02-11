@@ -413,11 +413,18 @@ class ManagingPaymentSerializer(serializers.Serializer):
 
 
 class UserServiceSerializer(serializers.ModelSerializer):
-    service_name = serializers.ReadOnlyField(source='service.service_name')
+    service_name_fa = serializers.SerializerMethodField()
+    service_name_en = serializers.SerializerMethodField()
 
     class Meta:
         model = UserServicesModel
-        fields = ['service', 'service_name', 'suggested_time']
+        fields = ['supservice', 'service_name_fa', 'service_name_en', 'suggested_time', 'suggested_price']
+
+    def get_service_name_fa(self, obj):
+        return obj.supservice.supservice_name_fa
+    
+    def get_service_name_en(self, obj):
+        return obj.supservice.supservice_name_en
 
     def validate(self, data):
         user = self.context['request'].user

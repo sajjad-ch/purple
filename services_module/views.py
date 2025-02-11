@@ -48,8 +48,7 @@ class ServiceFilterArtistView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, service_code):
-        services = UserServicesModel.objects.filter(service__service_code=service_code, artist__isnull=False,
-                                                    saloon__isnull=True)
+        services = UserServicesModel.objects.filter(supservice__service__service_code=service_code, artist__isnull=False)
         if not services.exists():
             return Response({'error': 'No artists found with this service.'}, status=status.HTTP_404_NOT_FOUND)
         artists = ArtistModel.objects.filter(pk__in=services.values_list('artist__pk', flat=True)).distinct()
@@ -885,9 +884,9 @@ class GetSupserviceFromServiceAndSaloon(APIView):
     def get(self, request, saloon_id, service_id):
         saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
         if saloon_artists:
-            supservices = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice__service__service_code=service_id)
-            if supservices:
-                serializer = SupServiceSerializer(supservices, many=True, context={'request': request})
+            usersupservices = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice__service__service_code=service_id)
+            if usersupservices:
+                serializer = UserServiceSerializer(usersupservices, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
@@ -899,7 +898,8 @@ class GetArtistFromSaloonAndSupservice(APIView):
     def get(self, request, saloon_id, supservice_id):
         saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
         if saloon_artists:
-            artists = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice=supservice_id)
+            artists_id = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice=supservice_id).values_list('artist', flat=True).distinct()
+            artists = ArtistModel.objects.filter(id__in=artists_id).all()
             if artists:
                 serializer = ArtistProfileSerializer(artists, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
