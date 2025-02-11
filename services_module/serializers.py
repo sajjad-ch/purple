@@ -438,9 +438,14 @@ class UserServiceSerializer(serializers.ModelSerializer):
 
 
 class SupServiceSerializer(serializers.ModelSerializer):
+    suggested_price = serializers.SerializerMethodField()
     class Meta:
         model = SupServiceModel
         fields = "__all__"
+    
+    def get_suggested_price(self, obj):
+        supservice = UserServicesModel.objects.filter(supservice=obj).first()
+        return supservice.suggested_price if supservice else None
 
 
 

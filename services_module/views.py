@@ -859,6 +859,8 @@ class GetAllServicesFromSaloon(APIView):
                     services = ServiceModel.objects.filter(service_code__in=services)
                     serializer = ServiceSerializer(services, many=True, context={'request': request})
                     return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'No supservice found'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)        
 
 
@@ -873,7 +875,59 @@ class GetSupservicesFromArtist(APIView):
                 supservices = SupServiceModel.objects.filter(id__in=supservices)
                 serializer = SupServiceSerializer(supservices, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'No supservices found in this artist.'}, status=status.HTTP_404_NOT)
         return Response({'error': 'No services found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetSupserviceFromServiceAndSaloon(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, saloon_id, service_id):
+        saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
+        if saloon_artists:
+            supservices = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice__service__service_code=service_id)
+            if supservices:
+                serializer = SupServiceSerializer(supservices, many=True, context={'request': request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetArtistFromSaloonAndSupservice(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, saloon_id, supservice_id):
+        saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
+        if saloon_artists:
+            artists = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice=supservice_id)
+            if artists:
+                serializer = ArtistProfileSerializer(artists, many=True, context={'request': request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'No artists found with this supservice.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'No artists found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetServiceFromArtist(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, artist_id):
+        services_id = UserServicesModel.objects.filter(artist=artist_id).values_list('supservice__service', flat=True).distinct()
+        if services_id:
+            services = ServiceModel.objects.filter(id__in=services_id).all()
+            serializer = ServiceSerializer(services, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'error': 'No services found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetSupserviceFromArtistAndService(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, artist_id, service_id):
+        supservices = UserServicesModel.objects.filter(artist=artist_id, supservice__service__service_code=service_id)
+        if supservices:
+            serializer = SupServiceSerializer(supservices, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'error': 'No supservices found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class RequestVisitingTimeSaloonAPIView(APIView):
