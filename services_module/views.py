@@ -838,7 +838,7 @@ class GetAllArtistsFromSaloon(APIView):
     def get(self, request, saloon_id):
         saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
         if saloon_artists:
-            artists = ArtistModel.objects.filter(id__in=saloon_artists)
+            artists = ArtistModel.objects.filter(saloon_artists__in=saloon_artists)
             serializer = ArtistProfileSerializer(artists, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:

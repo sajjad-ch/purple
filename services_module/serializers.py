@@ -415,10 +415,14 @@ class ManagingPaymentSerializer(serializers.Serializer):
 class UserServiceSerializer(serializers.ModelSerializer):
     service_name_fa = serializers.SerializerMethodField()
     service_name_en = serializers.SerializerMethodField()
+    supservice_icon = serializers.SerializerMethodField()
 
     class Meta:
         model = UserServicesModel
-        fields = ['supservice', 'service_name_fa', 'service_name_en', 'suggested_time', 'suggested_price']
+        fields = ['supservice', 'service_name_fa', 'service_name_en', 'suggested_time', 'suggested_price', 'supservice_icon']
+
+    def get_supservice_icon(self, obj):
+        return obj.supservice.supservice_icon.url
 
     def get_service_name_fa(self, obj):
         return obj.supservice.supservice_name_fa
