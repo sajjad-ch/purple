@@ -896,7 +896,7 @@ class GetArtistFromSaloonAndSupservice(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, saloon_id, supservice_id):
-        saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
+        saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('id', flat=True)
         if saloon_artists:
             artists_id = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice=supservice_id).values_list('artist', flat=True).distinct()
             artists = ArtistModel.objects.filter(id__in=artists_id).all()
@@ -913,7 +913,7 @@ class GetServiceFromArtist(APIView):
     def get(self, request, artist_id):
         services_id = UserServicesModel.objects.filter(artist=artist_id).values_list('supservice__service', flat=True).distinct()
         if services_id:
-            services = ServiceModel.objects.filter(id__in=services_id).all()
+            services = ServiceModel.objects.filter(service_code__in=services_id).all()
             serializer = ServiceSerializer(services, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({'error': 'No services found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
