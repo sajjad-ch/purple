@@ -971,8 +971,8 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         artist = ArtistModel.objects.filter(artist_id=artist_id).only('artist_id').first()
         data['artist'] = artist
         supservice_name = request.data.get('supservice')
-        supservice = SupServiceModel.objects.filter(supservice_name=supservice_name).only('supservice_name').first()
-        data['supservice'] = supservice
+        supservice = SupServiceModel.objects.filter(service__service_code=supservice_name).only('id').first()
+        data['service'] = supservice
         if 'exact_time' not in data or data['exact_time'] == '':
             data['exact_time'] = None
         # TODO: The serializer must be convert so I can get the artist for the saloon or the saloon for the artist
@@ -1011,7 +1011,7 @@ class RequestVisitingTimeArtistAPIView(APIView):
                     'id': user.id,
                     'username': user.username,
                 },
-                'service': int(),
+                'supservice': int(),
                 'suggested_time': '',
                 'suggested_hour': '',
                 'suggested_date': '',
