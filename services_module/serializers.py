@@ -269,7 +269,7 @@ class ArtistVisitingTimeSerializerPost(serializers.ModelSerializer):
 
     class Meta:
         model = VisitingTimeModel
-        fields = ['user', 'artist', 'saloon', 'service', 'suggested_time', 'suggested_date', 'exact_time', 'status']
+        fields = ['user', 'artist', 'saloon', 'service', 'suggested_time', 'suggested_hour', 'suggested_date', 'exact_time', 'status']
 
     def create(self, validated_data):
         validated_data['status'] = 'waiting for confirmation'

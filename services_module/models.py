@@ -165,6 +165,7 @@ class VisitingTimeModel(models.Model):
     saloon = models.ForeignKey('account_module.SaloonModel', on_delete=models.CASCADE, verbose_name='سالن', null=True, blank=True)
     service = models.ForeignKey(UserServicesModel, on_delete=models.CASCADE, verbose_name='نام خدمت', null=True, blank=True)
     suggested_time = models.CharField(choices=times, max_length=10, verbose_name='زمان پیشنهادی', null=True, blank=True)
+    suggested_hour = models.TimeField(verbose_name='ساعت پیشنهادی', null=True, blank=True)
     suggested_date = models.DateField(verbose_name='تاریخ پیشنهادی', null=True, blank=True)
     exact_time = models.DateTimeField(null=True, blank=True, verbose_name='زمان دقیق نوبت')
     action = models.CharField(max_length=10, null=True, blank=True)

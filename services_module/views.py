@@ -1013,6 +1013,7 @@ class RequestVisitingTimeArtistAPIView(APIView):
                 },
                 'service': int(),
                 'suggested_time': '',
+                'suggested_hour': '',
                 'suggested_date': '',
                 'exact_time': '',
                 'status': '',
