@@ -923,8 +923,9 @@ class GetSupserviceFromArtistAndService(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, artist_id, service_id):
-        supservices = UserServicesModel.objects.filter(artist=artist_id, supservice__service__service_code=service_id)
-        if supservices:
+        supservices_ids = UserServicesModel.objects.filter(artist=artist_id, supservice__service__service_code=service_id).values_list('supservice', flat=True)
+        if supservices_ids:
+            supservices = SupServiceModel.objects.filter(id__in=supservices_ids).all()
             serializer = SupServiceSerializer(supservices, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({'error': 'No supservices found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
