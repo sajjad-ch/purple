@@ -967,8 +967,9 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         data = request.data.copy()
         data['user'] = user.id
         data['saloon'] = user_id
-        artist_id = request.data.get('artist')
-        artist = ArtistModel.objects.filter(artist_id=artist_id).only('artist_id').first()
+        saloon = request.data.get('saloon')
+        artist_id = saloon.get('artist')
+        artist = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
         supservice_name = request.data.get('supservice')
         supservice = SupServiceModel.objects.filter(service__service_code=supservice_name).only('id').first()
