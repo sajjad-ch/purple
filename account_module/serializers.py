@@ -255,10 +255,10 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
         comments = []
         visits = VisitingTimeModel.objects.filter(saloon=obj).all()
         for visit in visits:
-            print(visit.service)
+            print(visit.rank)
             comments.append({'commenter': visit.user.username,
                               'commenter_profile_picture': visit.user.profile_picture.url,
-                              'comment': visit.text,
+                              'comment': visit.text if visit.text else '',
                               'rate': visit.rank.rank,
                               'service': visit.service.supservice.supservice_name_fa})
         return comments
@@ -344,7 +344,7 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
         for visit in visits:
             comments.append({'commenter': visit.user.username,
                              'commenter_profile_picture': visit.user.profile_picture.url,
-                             'comment': visit.text,
+                             'comment': visit.text if visit.text else '',
                              'rate': visit.rank.rank,
                              'service': visit.service.supservice.supservice_name_fa})
         return comments
