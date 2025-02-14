@@ -4,6 +4,7 @@ from datetime import datetime
 from .utils import random_code
 from account_module.models import ArtistModel, SaloonModel
 from django.core.validators import MaxValueValidator, MinValueValidator 
+from django_jalali.db import models as jmodels
 
 User = get_user_model()
 
@@ -166,12 +167,12 @@ class VisitingTimeModel(models.Model):
     service = models.ForeignKey(UserServicesModel, on_delete=models.CASCADE, verbose_name='نام خدمت', null=True, blank=True)
     suggested_time = models.CharField(choices=times, max_length=10, verbose_name='زمان پیشنهادی', null=True, blank=True)
     suggested_hour = models.TimeField(verbose_name='ساعت پیشنهادی', null=True, blank=True)
-    suggested_date = models.DateField(verbose_name='تاریخ پیشنهادی', null=True, blank=True)
-    exact_time = models.DateTimeField(null=True, blank=True, verbose_name='زمان دقیق نوبت')
+    suggested_date = jmodels.jDateField(verbose_name='تاریخ پیشنهادی', null=True, blank=True)
+    exact_time = jmodels.jDateTimeField(null=True, blank=True, verbose_name='زمان دقیق نوبت')
     action = models.CharField(max_length=10, null=True, blank=True)
     status = models.CharField(choices=status, max_length=25, verbose_name='وضعیت نوبت', null=True, blank=True)
-    confirmation_time = models.DateTimeField(null=True, blank=True, verbose_name='زمان تایید')
-    payment_due_time = models.DateTimeField(null=True, blank=True, verbose_name='مهلت پرداخت')
+    confirmation_time = jmodels.jDateTimeField(null=True, blank=True, verbose_name='زمان تایید')
+    payment_due_time = jmodels.jDateTimeField(null=True, blank=True, verbose_name='مهلت پرداخت')
     price = models.IntegerField(verbose_name='قیمت بیعانه', null=True, blank=True)
     rank = models.ForeignKey(RankModel, on_delete=models.CASCADE, verbose_name='امتیاز دهی', null=True, blank=True)
     text = models.TextField(verbose_name='متن نظردهی', null=True, blank=True)
@@ -205,8 +206,8 @@ class DiscountModel(models.Model):
     discount_type = models.CharField(choices=discounts, max_length=20, verbose_name='نوع تخفیف')
     discount_code = models.CharField(unique=True, max_length=8, verbose_name='کد تخفیف')
     percentage = models.IntegerField(verbose_name='درصد تخفیف')
-    start_date = models.DateTimeField(verbose_name='تاریخ شروع')
-    end_date = models.DateTimeField(verbose_name='تاریخ اتمام')
+    start_date = jmodels.jDateTimeField(verbose_name='تاریخ شروع')
+    end_date = jmodels.jDateTimeField(verbose_name='تاریخ اتمام')
 
     class Meta:
         verbose_name = 'تخفیف'

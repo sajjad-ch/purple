@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
 from .utils import random_code
+from django_jalali.db import models as jmodels
 
 # encryption library
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -47,7 +48,7 @@ class User(AbstractUser):
     last_login = models.DateTimeField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     city = models.CharField(max_length=128, null=True, blank=True)
-    birth_date = models.DateField(verbose_name='تاریخ تولد', null=True, blank=True)
+    birth_date = jmodels.jDateField(verbose_name='تاریخ تولد', null=True, blank=True)
     public_key = models.TextField(blank=True, null=True)
     private_key = models.TextField(blank=True, null=True)
     status = models.CharField(choices=[('online', 'online'), ('offline', 'offline')], max_length=10, default='offline', blank=True, null=True, verbose_name='آنلاین / آفلاین (0/1)')
