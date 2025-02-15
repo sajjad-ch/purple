@@ -1,5 +1,5 @@
 import tempfile
-import os
+import os, json
 from itertools import groupby
 from operator import itemgetter
 from django.shortcuts import get_object_or_404
@@ -931,6 +931,31 @@ class GetSupserviceFromArtistAndService(APIView):
         return Response({'error': 'No supservices found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class UserConfirmedVisitingTimeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
+            visits = VisitingTimeModel.objects.filter(user=user, status='confirmed').all()
+            serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'error': 'Only normal users can see their confirmed visits.'}, status=status.HTTP_403_FORBIDDEN)
+
+
+class UserOtherVisitingTimeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
+            visits = VisitingTimeModel.objects.filter(user=user, status='waiting for confirmation' or 'rejected' or'waiting for deposit').all()
+            serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Only normal users can see their other visits.'}, status=status.HTTP_403_FORBIDDEN)
+
+
 class RequestVisitingTimeSaloonAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -967,13 +992,13 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         data = request.data.copy()
         data['user'] = user.id
         data['saloon'] = user_id
-        saloon = request.data.get('saloon')
+        saloon = json.loads(request.data.get('saloon'))
         artist_id = saloon.get('artist')
         artist = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
-        supservice_name = request.data.get('supservice')
-        supservice = SupServiceModel.objects.filter(service__service_code=supservice_name).only('id').first()
-        data['service'] = supservice
+        supservice_name = request.data.get('service')
+        supservice = SupServiceModel.objects.filter(id=supservice_name).first()
+        data['service'] = supservice.id
         if 'exact_time' not in data or data['exact_time'] == '':
             data['exact_time'] = None
         # TODO: The serializer must be convert so I can get the artist for the saloon or the saloon for the artist
