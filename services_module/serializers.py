@@ -236,6 +236,9 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
 
 class VisitingTimeSerializerGet(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
+    saloon_name = serializers.SerializerMethodField()
+    artist_name = serializers.SerializerMethodField()
+    service_name = serializers.SerializerMethodField()
 
     class Meta:
         model = VisitingTimeModel
@@ -245,6 +248,18 @@ class VisitingTimeSerializerGet(serializers.ModelSerializer):
         request = self.context.get('request')
         path = reverse('post_confirm_visit', kwargs={'visit_id': obj.id})
         return request.build_absolute_uri(path)
+
+    def get_saloon_name(self, obj):
+        if obj.saloon:
+            return obj.saloon.name
+    
+    def get_artist_name(self, obj):
+        if obj.artist != None:
+            return obj.artist.artist.first_name + ' ' + obj.artist.artist.last_name
+    
+    def get_service_name(self, obj):
+        if obj.service != None:
+            return obj.service.supservice.supservice_name_fa
 
 
 class SaloonVisitingTimeSerializerPost(serializers.ModelSerializer):
