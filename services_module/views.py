@@ -1005,13 +1005,16 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         data = request.data.copy()
         data['user'] = user.id
         data['saloon'] = user_id
-        saloon = json.loads(request.data.get('saloon'))
+        saloon = request.data.get('saloon')
         artist_id = saloon.get('artist')
         artist = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
         supservice_name = request.data.get('service')
-        supservice = SupServiceModel.objects.filter(id=supservice_name).first()
-        data['service'] = supservice.id
+        supservice = UserServicesModel.objects.filter(supservice=supservice_name).first()
+        if supservice != None:
+            data['service'] = supservice.supservice.id
+        else:
+            data['service'] = None
         if 'exact_time' not in data or data['exact_time'] == '':
             data['exact_time'] = None
         # TODO: The serializer must be convert so I can get the artist for the saloon or the saloon for the artist
@@ -1230,7 +1233,7 @@ class GradeNotificationAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, visit_id):
-        visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='confirmed')
+        visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='completed')
         user = request.user
 
         if visit.user != user:

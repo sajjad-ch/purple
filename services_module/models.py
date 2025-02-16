@@ -126,7 +126,7 @@ class SupServiceModel(models.Model):
         verbose_name_plural = 'زیر خدمت ها'
 
     def __str__(self):
-        return f'{self.supservice_name_fa} is under {self.service.service_name_fa}'
+        return f'{self.supservice_name_fa} {self.pk} is under {self.service.service_name_fa}'
 
 
 class UserServicesModel(models.Model):
