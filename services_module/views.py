@@ -956,6 +956,19 @@ class UserOtherVisitingTimeAPIView(APIView):
             return Response({'error': 'Only normal users can see their other visits.'}, status=status.HTTP_403_FORBIDDEN)
 
 
+class UserCompletedVisitingTimeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
+            visits = VisitingTimeModel.objects.filter(user=user, status='completed').all()
+            serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Only normal users can see their completed visits.'}, status=status.HTTP_403_FORBIDDEN)
+
+
 class RequestVisitingTimeSaloonAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -21,6 +21,7 @@ status = (
     ('confirmed', 'تایید شده'),
     ('rejected', 'رد شده'),
     ('waiting for deposit', 'در انتظار بیعانه'),
+    ('completed', 'تکمیل شده'),
     ('deleted', 'حذف شده'),
 )
 

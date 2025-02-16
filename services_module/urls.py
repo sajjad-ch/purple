@@ -54,6 +54,7 @@ urlpatterns = [
     path('visits-artist/<int:user_id>/request/', RequestVisitingTimeArtistAPIView.as_view(), name='request-visiting-time-artist'),
     path('confirmed-visits-user/', UserConfirmedVisitingTimeAPIView.as_view(), name='user-confirmed-visiting-time'),
     path('other-visits-user/', UserOtherVisitingTimeAPIView.as_view(), name='user-other-visiting-time'),
+    path('completed-visits-user/', UserCompletedVisitingTimeAPIView.as_view(), name='user-completed-visiting-time'),
     path('visits/', GetConfirmVisitAPIView.as_view(), name='confirm-visit'),
     path('visits/<int:visit_id>/confirm/', PostConfirmVisitAPIView.as_view(), name='post_confirm_visit'),
 
