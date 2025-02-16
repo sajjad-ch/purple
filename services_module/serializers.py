@@ -259,7 +259,7 @@ class VisitingTimeSerializerGet(serializers.ModelSerializer):
     
     def get_service_name(self, obj):
         if obj.service != None:
-            return obj.service.supservice.supservice_name_fa
+            return obj.service.supservice_name_fa
 
 
 class SaloonVisitingTimeSerializerPost(serializers.ModelSerializer):

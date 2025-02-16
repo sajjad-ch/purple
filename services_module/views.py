@@ -1011,6 +1011,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         data['artist'] = artist
         supservice_name = request.data.get('service')
         supservice = SupServiceModel.objects.filter(id=supservice_name).first()
+        print(supservice)
         if supservice != None:
             data['service'] = supservice.id
         else:

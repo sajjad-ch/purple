@@ -255,12 +255,11 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
         comments = []
         visits = VisitingTimeModel.objects.filter(saloon=obj).all()
         for visit in visits:
-            print(visit.rank)
             comments.append({'commenter': visit.user.username,
                               'commenter_profile_picture': visit.user.profile_picture.url,
                               'comment': visit.text if visit.text else '',
                               'rate': visit.rank.rank if visit.rank else 0,
-                              'service': visit.service.supservice.supservice_name_fa if visit.service else ''})
+                              'service': visit.service.service.service_name_fa if visit.service else ''})
         return comments
 
     def get_average_ranks(self, user):
@@ -346,7 +345,7 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
                              'commenter_profile_picture': visit.user.profile_picture.url,
                              'comment': visit.text if visit.text else '',
                              'rate': visit.rank.rank if visit.rank else 0,
-                             'service': visit.service.supservice.supservice_name_fa if visit.service else ''})
+                             'service': visit.service.service.service_name_fa if visit.service else ''})
         return comments
 
     def get_average_ranks(self, user):
