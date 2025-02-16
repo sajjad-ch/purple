@@ -165,7 +165,7 @@ class VisitingTimeModel(models.Model):
     unregistered_user = models.ForeignKey('account_module.UnregisteredUser', on_delete=models.CASCADE, verbose_name='کاربر ثبت نام نشده', null=True, blank=True)
     artist = models.ForeignKey('account_module.ArtistModel', on_delete=models.CASCADE, verbose_name='هنرمند', null=True, blank=True)
     saloon = models.ForeignKey('account_module.SaloonModel', on_delete=models.CASCADE, verbose_name='سالن', null=True, blank=True)
-    service = models.ForeignKey(UserServicesModel, on_delete=models.CASCADE, verbose_name='نام خدمت', null=True, blank=True)
+    service = models.ForeignKey(SupServiceModel, on_delete=models.CASCADE, verbose_name='نام خدمت', null=True, blank=True)
     suggested_time = models.CharField(choices=times, max_length=10, verbose_name='زمان پیشنهادی', null=True, blank=True)
     suggested_hour = models.TimeField(verbose_name='ساعت پیشنهادی', null=True, blank=True)
     suggested_date = jmodels.jDateField(verbose_name='تاریخ پیشنهادی', null=True, blank=True)

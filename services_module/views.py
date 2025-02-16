@@ -1010,9 +1010,9 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         artist = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
         supservice_name = request.data.get('service')
-        supservice = UserServicesModel.objects.filter(supservice=supservice_name).first()
+        supservice = SupServiceModel.objects.filter(id=supservice_name).first()
         if supservice != None:
-            data['service'] = supservice.supservice.id
+            data['service'] = supservice.id
         else:
             data['service'] = None
         if 'exact_time' not in data or data['exact_time'] == '':
