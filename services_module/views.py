@@ -781,6 +781,13 @@ class HighlightAPIView(APIView):
 class LikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request, post_id):
+        post = get_object_or_404(PostModel, id=post_id)
+        if LikeModel.objects.filter(post=post, user=request.user).exists():
+            return Response({'liked': True}, status=status.HTTP_200_OK)
+        return Response({'liked': False}, status=status.HTTP_400_BAD_REQUEST)
+
+
     def post(self, request, post_id):
         post = get_object_or_404(PostModel, id=post_id)
         user = request.user
