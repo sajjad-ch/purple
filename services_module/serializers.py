@@ -39,8 +39,11 @@ class PostSerializerGet(serializers.ModelSerializer):
         return profile_picture
     
     def get_name(self, obj):
-        return obj.user.first_name + ' ' + obj.user.last_name
-    
+        if hasattr(obj.user, 'artist'):
+            return obj.user.first_name + ' ' + obj.user.last_name
+        elif hasattr(obj.user, 'saloon'):
+            return obj.user.saloon.name
+
     def get_likes(self, obj):
         return LikeModel.objects.filter(post=obj).count()
         
