@@ -469,14 +469,14 @@ class ProfileCertificateAPIView(APIView):
         user = get_object_or_404(User, pk=user_id)
         if hasattr(user, 'saloon'):
             if SaloonFollow.objects.filter(follower=user.saloon.pk, followed_user=current_user.pk).exists():
-                posts = PostModel.objects.filter(user=user).all()
+                posts = PostModel.objects.filter(user=user, is_certificate=True).all()
                 serializer = PostSerializerGet(posts, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'error': 'You don\'t follow this saloon'}, status=status.HTTP_400_BAD_REQUEST)
         if hasattr(user, 'artist'):
             if ArtistFollow.objects.filter(follower=user.artist.pk, followed_user=current_user.pk).exists():
-                posts = PostModel.objects.filter(user=user).all()
+                posts = PostModel.objects.filter(user=user, is_certificate=True).all()
                 serializer = PostSerializerGet(posts, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:

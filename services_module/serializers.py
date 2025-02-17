@@ -32,7 +32,7 @@ class PostSerializerGet(serializers.ModelSerializer):
 
     class Meta:
         model = PostModel
-        fields = ['post_content', 'caption', 'user', 'name', 'profile_picture', 'likes']
+        fields = ['id', 'post_content', 'caption', 'user', 'name', 'profile_picture', 'likes']
     
     def get_profile_picture(self, obj):
         profile_picture = obj.user.profile_picture.url
