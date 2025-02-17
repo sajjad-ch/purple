@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from account_module.models import ArtistModel, SaloonModel, User
 from .models import PostModel, StoryModel, VisitingTimeModel, WalletModel, \
-    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel, SupServiceModel, TagsModel
+    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel, SupServiceModel, TagsModel, LikeModel
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -26,9 +26,24 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 class PostSerializerGet(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+
     class Meta:
         model = PostModel
-        fields = ['post_content', 'caption', 'user']
+        fields = ['post_content', 'caption', 'user', 'name', 'profile_picture', 'likes']
+    
+    def get_profile_picture(self, obj):
+        profile_picture = obj.user.profile_picture.url
+        return profile_picture
+    
+    def get_name(self, obj):
+        return obj.user.first_name + ' ' + obj.user.last_name
+    
+    def get_likes(self, obj):
+        return LikeModel.objects.filter(post=obj).count()
+        
 
 
 class PostSerializerPost(serializers.ModelSerializer):
