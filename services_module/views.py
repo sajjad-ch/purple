@@ -778,6 +778,12 @@ class HighlightAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ReturnLikeAPIView(APIView):
+    def get(self, request, post_id):
+        post = PostModel.objects.filter(id=post_id).first()
+        return Response({'like_amount': post.likes}, status=status.HTTP_200_OK)
+
+
 class LikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

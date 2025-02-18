@@ -21,6 +21,7 @@ urlpatterns = [
     path('posts/', PostAPIView.as_view(), name='post-list-create'),
     path('posts/<int:pk>/', PostAPIView.as_view(), name='post-detail-update-delete'),
     path('profile_posts/<int:user_id>/', ProfilePostAPIView.as_view(), name='profile-post'),
+    path('posts/posts-likes/<int:post_id>', ReturnLikeAPIView.as_view(), name='post-likes'),
 
     # Certificate URLs
     path('certificates/', CertificateAPIView.as_view(), name='certificate-list-create'),
