@@ -1023,10 +1023,11 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         artist = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
         supservice_name = request.data.get('service')
+        price = UserServicesModel.objects.filter(artist=artist, supservice=supservice_name).first().price
         supservice = SupServiceModel.objects.filter(id=supservice_name).first()
-        print(supservice)
         if supservice != None:
             data['service'] = supservice.id
+            data['price'] = price
         else:
             data['service'] = None
         if 'exact_time' not in data or data['exact_time'] == '':
@@ -1104,21 +1105,60 @@ class GetConfirmVisitAPIView(APIView):
 
     def get(self, request):
         user = request.user
+        dates = list(request.data.get('dates'))
         if hasattr(user, 'artist'):
-            user_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk).all().order_by('-suggested_date')
-            if user_visiting_time:
-                serializer = VisitingTimeSerializerGet(user_visiting_time, many=True, context={'request': request})
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({'message': 'You don\'t have any new visiting time.'}, status=status.HTTP_404_NOT_FOUND)
+            user_morning_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='morning').all().order_by('-suggested_date')
+            if user_morning_visiting_time:
+                morning_serializer = VisitingTimeSerializerGet(user_morning_visiting_time, many=True, context={'request': request})
+            user_noon_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='noon').all().order_by('-suggested_date')
+            if user_noon_visiting_time:
+                noon_serializer = VisitingTimeSerializerGet(user_noon_visiting_time, many=True, context={'request': request})
+            user_evening_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='evening').all().order_by('-suggested_date')
+            if user_evening_visiting_time:
+                evening_serializer = VisitingTimeSerializerGet(user_evening_visiting_time, many=True, context={'request': request})
+            user_night_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='night').all().order_by('-suggested_date')
+            if user_night_visiting_time:
+                night_serializer = VisitingTimeSerializerGet(user_night_visiting_time, many=True, context={'request': request})
+            queries = user_morning_visiting_time | user_noon_visiting_time | user_evening_visiting_time | user_night_visiting_time
+            waiting_for_confirmation_number = 0
+            rejected_number = 0
+            confirmed_number = 0
+            for visit in queries:
+                if visit.status == 'waiting for confirmation':
+                    waiting_for_confirmation_number += 1
+                elif visit.status == 'confirmed':
+                    confirmed_number += 1
+                elif visit.status == 'rejected':
+                    rejected_number += 1
+
+            return Response({'morning': morning_serializer.data, 'noon': noon_serializer.data, 'evening': evening_serializer.data, 'night': night_serializer.data, 'waiting_for_confirmation_number': waiting_for_confirmation_number, 'rejected_number': rejected_number, 'confirmed_number': confirmed_number}, status=status.HTTP_200_OK)
+
         elif hasattr(user, 'saloon'):
-            user_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk).all().order_by('-suggested_date')
-            if user_visiting_time:
-                serializer = VisitingTimeSerializerGet(user_visiting_time, many=True, context={'request': request})
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({'message': 'You don\'t have any new visiting time.'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'error': 'Only artists and saloons can see their visiting time.'}, status=status.HTTP_403_FORBIDDEN)
+            user_morning_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='morning').all().order_by('-suggested_date')
+            if user_morning_visiting_time:
+                morning_serializer = VisitingTimeSerializerGet(user_morning_visiting_time, many=True, context={'request': request})
+            user_noon_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='noon').all().order_by('-suggested_date')
+            if user_noon_visiting_time:
+                noon_serializer = VisitingTimeSerializerGet(user_noon_visiting_time, many=True, context={'request': request})
+            user_evening_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='evening').all().order_by('-suggested_date')
+            if user_evening_visiting_time:
+                evening_serializer = VisitingTimeSerializerGet(user_evening_visiting_time, many=True, context={'request': request})
+            user_night_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='night').all().order_by('-suggested_date')
+            if user_night_visiting_time:
+                night_serializer = VisitingTimeSerializerGet(user_night_visiting_time, many=True, context={'request': request})
+            queries = user_morning_visiting_time | user_noon_visiting_time | user_evening_visiting_time | user_night_visiting_time
+            waiting_for_confirmation_number = 0
+            rejected_number = 0
+            confirmed_number = 0
+            for visit in queries:
+                if visit.status == 'waiting for confirmation':
+                    waiting_for_confirmation_number += 1
+                elif visit.status == 'confirmed':
+                    confirmed_number += 1
+                elif visit.status == 'rejected':
+                    rejected_number += 1
+
+            return Response({'morning': morning_serializer.data, 'noon': noon_serializer.data, 'evening': evening_serializer.data, 'night': night_serializer.data, 'waiting_for_confirmation_number': waiting_for_confirmation_number, 'rejected_number': rejected_number, 'confirmed_number': confirmed_number}, status=status.HTTP_200_OK)
 
 
 class PostConfirmVisitAPIView(APIView):
