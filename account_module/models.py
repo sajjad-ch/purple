@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
-from .utils import random_code
+from .utils import send_verification_code
 from django_jalali.db import models as jmodels
 
 # encryption library
@@ -82,7 +82,7 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name}"
 
     def generate_verification_code(self):
-        self.key = random_code()
+        self.key = send_verification_code()
         self.code_generated_at = datetime.now()
         self.save()
     

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import SignUpSerializer, KeySerializer, ProfileSerializer, FollowSerializer, \
     CustomTokenObtainPairSerializer, ProfileUpdateSerializer, SaloonProfileSerializer, ArtistProfileSerializer, UserSerializerChat
-from .utils import send_verify_code_SMS
+from .utils import send_verification_code
 from .models import User, NormalUserFollow, SaloonFollow, ArtistFollow, SaloonModel, ArtistModel, NormalUserModel
 from rest_framework import status
 from django.contrib.auth import get_user_model
@@ -42,7 +42,7 @@ class SignUpAPIView(APIView):
                 if created:
                     user.is_active = False
                 user.save()
-                sms_state = send_verify_code_SMS(phone_number, user.key)
+                sms_state = send_verification_code(phone_number, user.key)
                 if sms_state:
                     redirect = 'http://127.0.0.1:8000/account/verify/'
                     return Response({'message': 'verify code sent'}, status=status.HTTP_200_OK,

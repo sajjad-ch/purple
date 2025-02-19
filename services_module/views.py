@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now, timedelta
 from django.db.models import Sum
 from account_module.serializers import SaloonProfileSerializer, ArtistProfileSerializer
-from account_module.utils import send_notifying_SMS
+from account_module.utils import send_verification_code
 from .serializers import *
 from .models import PostModel, LikeModel, VisitingTimeModel, WalletModel, \
     DiscountModel, StoryModel, SliderModel, UserServicesModel, ServiceModel, SupServiceModel
@@ -1040,7 +1040,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            send_notifying_SMS(message, phone_number, url)
+            send_verification_code(message, phone_number, url)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1094,7 +1094,7 @@ class RequestVisitingTimeArtistAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             phone_number = visit.artist.artist.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            send_notifying_SMS(message, phone_number, url)
+            send_verification_code(message, phone_number, url)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1237,7 +1237,7 @@ class PostConfirmVisitAPIView(APIView):
                 phone_number = visit.user.phone_number
                 message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
                 url = "http://127.0.0.1:8000/service/visits/payment/"
-                send_notifying_SMS(message, phone_number, url)
+                send_verification_code(message, phone_number, url)
                 return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
 
             elif action == 'reject':
@@ -1248,7 +1248,7 @@ class PostConfirmVisitAPIView(APIView):
                 phone_number = visit.user.phone_number
                 message = "نوبت شما به علت نبود وقت رد شد."
                 url = ""
-                send_notifying_SMS(message, phone_number, url)
+                send_verification_code(message, phone_number, url)
                 return Response({'message': 'Visit rejected and user notified.'}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1308,7 +1308,7 @@ class PaymentNotificationAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = f"http://127.0.0.1:8000/service/visits/{visit_id}/payment/"
-        send_notifying_SMS(message, phone_number, url)
+        send_verification_code(message, phone_number, url)
 
         return Response({'message': 'Payment received. Visiting time confirmed.'}, status=status.HTTP_200_OK)
 
@@ -1332,7 +1332,7 @@ class GradeNotificationAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = "http://127.0.0.1:8000/service/visits/grade/"
-        send_notifying_SMS(message, phone_number, url)
+        send_verification_code(message, phone_number, url)
         return Response({'message': 'Notification sent. Please grade your visit.'}, status=status.HTTP_200_OK)
 
 
