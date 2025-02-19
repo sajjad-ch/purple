@@ -1205,7 +1205,7 @@ class PostConfirmVisitAPIView(APIView):
         visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='waiting for confirmation')
         user_id = request.user.pk
         user = request.user
-
+        supservice_price = UserServicesModel.objects.filter(supservice=visit.service, artist=visit.artist.artist).first().price
         if (visit.artist is None or visit.artist.artist is None) and (visit.saloon is None or visit.saloon.saloon is None):
             return Response({'error': 'This visit does not have an associated artist or saloon.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1217,8 +1217,8 @@ class PostConfirmVisitAPIView(APIView):
 
         serializer = VisitingTimeSerializerPostNew(data=request.data)
         if serializer.is_valid():
-            action = serializer.validated_data['action']
-            price = serializer.validated_data['price']
+            action = serializer.validated_data.get('action')
+            suggested_time = serializer.validated_data.get('suggested_time')
             exact_time = serializer.validated_data.get('exact_time')
 
             if action == 'confirm':
@@ -1227,9 +1227,10 @@ class PostConfirmVisitAPIView(APIView):
 
                 visit.status = 'waiting for deposit'
                 visit.exact_time = exact_time
+                visit.suggested_time = suggested_time
                 visit.confirmation_time = timezone.now()
                 visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
-                visit.price = price
+                visit.price = supservice_price
                 visit.save()
                 # visiting_user = visit.user
                 # real_user: User = User.objects.filter(user=visiting_user).first()

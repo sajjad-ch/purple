@@ -82,7 +82,7 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name}"
 
     def generate_verification_code(self):
-        self.key = send_verification_code()
+#        self.key = send_verification_code()
         self.code_generated_at = datetime.now()
         self.save()
     

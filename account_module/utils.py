@@ -3,7 +3,7 @@ import json
 
 
 def send_verification_code(phone_number, code):
-    pass
+    return True
     # if phone_number[0] == '0':
     #     phone_number = phone_number[1:]
     # url = 'https://api.sms.ir/v1/send/verify'
