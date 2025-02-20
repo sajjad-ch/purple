@@ -1145,13 +1145,13 @@ class GetConfirmVisitAPIView(APIView):
             else:
                 waiting_for_deposit_serializer = []
 
-            waiting_for_confirmation_visits = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, status='waiting for confirmation').all()
+            waiting_for_confirmation_visits = VisitingTimeModel.objects.filter(artist=user.artist.pk, status='waiting for confirmation').all()
             if waiting_for_confirmation_visits:
                 waiting_for_confirmation_serializer = VisitingTimeSerializerGet(waiting_for_deposit_visits, many=True, context={'request': request})
             else:
                 waiting_for_confirmation_serializer = []
 
-            confirmed_visits = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, status='confirmed').all()
+            confirmed_visits = VisitingTimeModel.objects.filter(artist=user.artist.pk, status='confirmed').all()
             if confirmed_visits:
                 confirmed_serializer = VisitingTimeSerializerGet(waiting_for_deposit_visits, many=True, context={'request': request})
             else:
