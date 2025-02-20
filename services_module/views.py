@@ -1107,22 +1107,22 @@ class GetConfirmVisitAPIView(APIView):
         user = request.user
         dates = list(request.data.get('dates'))
         if hasattr(user, 'artist'):
-            user_morning_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='morning', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_morning_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='morning', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_morning_visiting_time:
                 morning_serializer = VisitingTimeSerializerGet(user_morning_visiting_time, many=True, context={'request': request})
             else:
                 morning_serializer = []
-            user_noon_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='noon', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_noon_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='noon', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_noon_visiting_time:
                 noon_serializer = VisitingTimeSerializerGet(user_noon_visiting_time, many=True, context={'request': request})
             else:
                 noon_serializer = []
-            user_evening_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='evening', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_evening_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='evening', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_evening_visiting_time:
                 evening_serializer = VisitingTimeSerializerGet(user_evening_visiting_time, many=True, context={'request': request})
             else:
                 evening_serializer = []
-            user_night_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='night', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_night_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='night', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_night_visiting_time:
                 night_serializer = VisitingTimeSerializerGet(user_night_visiting_time, many=True, context={'request': request})
             else:
@@ -1171,22 +1171,22 @@ class GetConfirmVisitAPIView(APIView):
                             status=status.HTTP_200_OK)
 
         elif hasattr(user, 'saloon'):
-            user_morning_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='morning', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_morning_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='morning', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_morning_visiting_time:
                 morning_serializer = VisitingTimeSerializerGet(user_morning_visiting_time, many=True, context={'request': request})
             else:
                 morning_serializer = []
-            user_noon_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='noon', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_noon_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='noon', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_noon_visiting_time:
                 noon_serializer = VisitingTimeSerializerGet(user_noon_visiting_time, many=True, context={'request': request})
             else:
                 noon_serializer = []
-            user_evening_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='evening', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_evening_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='evening', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_evening_visiting_time:
                 evening_serializer = VisitingTimeSerializerGet(user_evening_visiting_time, many=True, context={'request': request})
             else:
                 evening_serializer = []
-            user_night_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='night', status='waiting for deposit' or 'waiting for confirmation' or 'confirmed').all().order_by('-suggested_date')
+            user_night_visiting_time = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, suggested_date__in=dates, suggested_time='night', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
             if user_night_visiting_time:
                 night_serializer = VisitingTimeSerializerGet(user_night_visiting_time, many=True, context={'request': request})
             else:
