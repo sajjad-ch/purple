@@ -1205,7 +1205,7 @@ class PostConfirmVisitAPIView(APIView):
         visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='waiting for confirmation')
         user_id = request.user.pk
         user = request.user
-        supservice_price = UserServicesModel.objects.filter(supservice=visit.service, artist=visit.artist.artist).first().price
+        supservice_price = UserServicesModel.objects.filter(supservice=visit.service, artist=visit.artist).first().suggested_price
         if (visit.artist is None or visit.artist.artist is None) and (visit.saloon is None or visit.saloon.saloon is None):
             return Response({'error': 'This visit does not have an associated artist or saloon.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1238,7 +1238,7 @@ class PostConfirmVisitAPIView(APIView):
                 phone_number = visit.user.phone_number
                 message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
                 url = "http://127.0.0.1:8000/service/visits/payment/"
-                send_verification_code(message, phone_number, url)
+                # send_verification_code(message, phone_number, url)
                 return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
 
             elif action == 'reject':
