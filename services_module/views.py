@@ -1162,7 +1162,7 @@ class GetConfirmVisitAPIView(APIView):
                             'evening': evening_serializer if isinstance(evening_serializer, list) else evening_serializer.data,
                             'night': night_serializer if isinstance(night_serializer, list) else night_serializer.data,
                             'waiting_for_confirmation_number': str(waiting_for_confirmation_number),
-                            'rejected_number': str(rejected_number),
+                            # 'rejected_number': str(rejected_number),
                             'confirmed_number': str(confirmed_number),
                             'waiting_for_deposit': waiting_for_deposit_serializer if isinstance(waiting_for_deposit_serializer, list) else waiting_for_deposit_serializer.data,
                             'waiting_for_deposit': waiting_for_deposit_serializer if isinstance(waiting_for_deposit_serializer, list) else waiting_for_deposit_serializer.data,
@@ -1226,7 +1226,7 @@ class GetConfirmVisitAPIView(APIView):
                          'evening': evening_serializer if isinstance(evening_serializer, list) else evening_serializer.data,
                          'night': night_serializer if isinstance(night_serializer, list) else night_serializer.data,
                          'waiting_for_confirmation_number': str(waiting_for_confirmation_number),
-                         'rejected_number': str(rejected_number),
+                         # 'rejected_number': str(rejected_number),
                          'confirmed_number': str(confirmed_number),
                          'waiting_for_deposit': waiting_for_deposit_serializer if isinstance(waiting_for_deposit_serializer, list) else waiting_for_deposit_serializer.data,
                          'waiting_for_confirmation': waiting_for_confirmation_serializer if isinstance(waiting_for_confirmation_serializer, list) else waiting_for_confirmation_serializer.data,
@@ -1292,7 +1292,7 @@ class PostConfirmVisitAPIView(APIView):
                 phone_number = visit.user.phone_number
                 message = "نوبت شما به علت نبود وقت رد شد."
                 url = ""
-                send_verification_code(message, phone_number, url)
+                # send_verification_code(message, phone_number, url)
                 return Response({'message': 'Visit rejected and user notified.'}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
