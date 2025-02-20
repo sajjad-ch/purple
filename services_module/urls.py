@@ -57,6 +57,7 @@ urlpatterns = [
     path('other-visits-user/', UserOtherVisitingTimeAPIView.as_view(), name='user-other-visiting-time'),
     path('completed-visits-user/', UserCompletedVisitingTimeAPIView.as_view(), name='user-completed-visiting-time'),
     path('visits/', GetConfirmVisitAPIView.as_view(), name='confirm-visit'),
+    path('visits/select-supservice/', SupserviceFromArtistAPIView.as_view(), name='supservice-from-artist'),
     path('visits/<int:visit_id>/confirm/', PostConfirmVisitAPIView.as_view(), name='post_confirm_visit'),
 
     # Payment Notification URL

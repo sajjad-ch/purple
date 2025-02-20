@@ -286,6 +286,17 @@ class HandingVisitingView(APIView):
         return Response({'error': 'You can not make this visiting time.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class SupserviceFromArtistAPIView(APIView):
+    def get(self, request):
+        user = request.user
+        if hasattr(user, 'artist'):
+            supservices = UserServicesModel.objects.filter(artist=user.artist.pk)
+            serializer = UserServiceSerializer(supservices, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response({'error': 'Only artists can get their supservices.'}, status=status.HTTP_403_FORBIDDEN)
+    
+
 class ManageArtistTeamView(APIView):
     permission_classes = [IsAuthenticated]
 
