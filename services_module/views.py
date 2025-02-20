@@ -1138,6 +1138,12 @@ class GetConfirmVisitAPIView(APIView):
                     confirmed_number += 1
                 elif visit.status == 'rejected':
                     rejected_number += 1
+            
+            waiting_for_deposit_visits = VisitingTimeModel.objects.filter(artist=user.artist.pk, status='waiting for deposit').all()
+            if waiting_for_deposit_visits:
+                waiting_for_deposit_serializer = VisitingTimeSerializerGet(waiting_for_deposit_visits, many=True, context={'request': request})
+            else:
+                waiting_for_deposit_serializer = []
 
             return Response({'morning': morning_serializer if isinstance(morning_serializer, list) else morning_serializer.data,
                             'noon': noon_serializer if isinstance(noon_serializer, list) else noon_serializer.data,
@@ -1145,7 +1151,8 @@ class GetConfirmVisitAPIView(APIView):
                             'night': night_serializer if isinstance(night_serializer, list) else night_serializer.data,
                             'waiting_for_confirmation_number': str(waiting_for_confirmation_number),
                             'rejected_number': str(rejected_number),
-                            'confirmed_number': str(confirmed_number)},
+                            'confirmed_number': str(confirmed_number),
+                            'waiting_for_deposit': waiting_for_deposit_serializer if isinstance(waiting_for_deposit_serializer, list) else waiting_for_deposit_serializer.data},
                             status=status.HTTP_200_OK)
 
         elif hasattr(user, 'saloon'):
@@ -1180,6 +1187,12 @@ class GetConfirmVisitAPIView(APIView):
                     confirmed_number += 1
                 elif visit.status == 'rejected':
                     rejected_number += 1
+            
+            waiting_for_deposit_visits = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, status='waiting for deposit').all()
+            if waiting_for_deposit_visits:
+                waiting_for_deposit_serializer = VisitingTimeSerializerGet(waiting_for_deposit_visits, many=True, context={'request': request})
+            else:
+                waiting_for_deposit_serializer = []
 
         return Response({'morning': morning_serializer if isinstance(morning_serializer, list) else morning_serializer.data,
                          'noon': noon_serializer if isinstance(noon_serializer, list) else noon_serializer.data,
@@ -1187,7 +1200,8 @@ class GetConfirmVisitAPIView(APIView):
                          'night': night_serializer if isinstance(night_serializer, list) else night_serializer.data,
                          'waiting_for_confirmation_number': str(waiting_for_confirmation_number),
                          'rejected_number': str(rejected_number),
-                         'confirmed_number': str(confirmed_number)},
+                         'confirmed_number': str(confirmed_number),
+                         'waiting_for_deposit': waiting_for_deposit_serializer if isinstance(waiting_for_deposit_serializer, list) else waiting_for_deposit_serializer.data},
                          status=status.HTTP_200_OK)
 
 
