@@ -342,9 +342,11 @@ class GetVisitsFromArtistAPIView(APIView):
         user = request.user
         time = jdatetime.datetime.now()
         if hasattr(user, 'saloon'):
-            visits = VisitingTimeModel.objects.filter(artist=artist_id, saloon=user.saloon.pk,
+            first_visits = VisitingTimeModel.objects.filter(artist=artist_id, saloon=user.saloon.pk,
                                                      exact_time__gt=jdatetime.datetime(time.year, time.month, time.day),
                                                      exact_time__lt=jdatetime.datetime(time.year, time.month, time.day, 23, 59)).all()
+            second_visits = VisitingTimeModel.objects.filter(artist=artist_id, saloon=user.saloon.pk, suggested_date__gt=time.date()).all()
+            visits = first_visits.union(second_visits)
             if visits:
                 serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
