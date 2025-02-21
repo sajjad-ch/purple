@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.urls import reverse
 from services_module.serializers import PostSerializerGet, HighlightSerializerGet
 from account_module.models import *
-
+import jdatetime
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -308,10 +308,30 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     follower_count = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    active = serializers.SerializerMethodField()
+    supservices = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtistModel
         fields = "__all__"
+    
+    def get_active(self, obj):
+        time = jdatetime.datetime.now()
+        visits = VisitingTimeModel.objects.filter(artist=obj,
+                                                  exact_time__gt=jdatetime.datetime(time.year, time.month, time.day),
+                                                  exact_time__lt=jdatetime.datetime(time.year, time.month, time.day, 23, 59)).all()
+        if visits:
+            return True
+        else:
+            return False
+
+    def get_supservices(self, obj):
+        skills = []
+        artist_services = UserServicesModel.objects.filter(artist=obj).all()
+        for service in artist_services:
+            skills.append(service.supservice.supservice_name_fa)
+        return skills
+
 
     def get_artist_name(self, obj):
         return obj.artist.first_name + ' ' + obj.artist.last_name
