@@ -323,10 +323,10 @@ class SupserviceFromArtistAPIView(APIView):
 
 
 class GetArtsitsFromSaloonAPIView(APIView):
-    def get(self, request, saloon_id):
+    def get(self, request):
         user = request.user
         if hasattr(user, 'saloon'):
-            saloon = SaloonModel.objects.filter(id=saloon_id).first()
+            saloon = SaloonModel.objects.filter(id=request.user.saloon.pk).first()
             if saloon:
                 artists = ArtistModel.objects.filter(saloon_artists=saloon).all()
                 if artists:
