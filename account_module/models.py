@@ -177,8 +177,7 @@ class ArtistModel(models.Model):
 
 class UnregisteredUser(models.Model):
     phone_number = models.CharField(max_length=11, verbose_name='شماره همراه', unique=True)
-    first_name = models.CharField(max_length=255, verbose_name='نام')
-    last_name = models.CharField(max_length=255, verbose_name='نام خانوادگی')
+    name = models.CharField(max_length=255, verbose_name='نام و نام خانوادگی')
 
     class Meta:
         verbose_name = 'کاربر ثبت نام نشده'

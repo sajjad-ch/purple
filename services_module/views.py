@@ -19,6 +19,8 @@ from moviepy.editor import VideoFileClip
 from PIL import Image
 from django.utils import timezone
 from rest_framework.pagination import LimitOffsetPagination
+import jdatetime
+from datetime import timedelta
 # Create your views here.
 
 
@@ -279,9 +281,32 @@ class HandingVisitingView(APIView):
         if hasattr(user, 'artist'):
             serializer = HandigVisitSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.validated_data['artist'] = user.artist.pk
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                username = request.data.get('username')
+                user_service = UserServicesModel.objects.filter(artist=user.artist.pk).first()
+                if username != None:
+                    customer = User.objects.filter(username=username).first()
+                    if customer != None:
+                        serializer.validated_data['artist'] = user.artist
+                        serializer.validated_data['saloon'] = user.artist.saloon_artists
+                        serializer.validated_data['user'] = customer
+                        serializer.validated_data['price'] = user_service.suggested_price
+                        serializer.validated_data['confirmation_time'] = jdatetime.datetime.now()
+                        serializer.validated_data['payment_due_time'] = jdatetime.datetime.now() + timedelta(minutes=40)
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    else:
+                        unregistered_user_name = request.data.get('name')
+                        unregistered_phone_number = request.data.get('phone_number')
+                        UnregisteredUser(name=unregistered_user_name, phone_number=unregistered_phone_number).save()
+                        unregistered_user = UnregisteredUser.objects.filter(phone_number=unregistered_phone_number).first()
+                        serializer.validated_data['artist'] = user.artist
+                        serializer.validated_data['saloon'] = user.artist.saloon_artists
+                        serializer.validated_data['unregistered_user'] = unregistered_user
+                        serializer.validated_data['price'] = user_service.suggested_price
+                        serializer.validated_data['confirmation_time'] = jdatetime.datetime.now()
+                        serializer.validated_data['payment_due_time'] = jdatetime.datetime.now() + timedelta(minutes=40)
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'You can not make this visiting time.'}, status=status.HTTP_400_BAD_REQUEST)
 
