@@ -341,8 +341,8 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
         comments = []
         visits = VisitingTimeModel.objects.filter(artist=obj).all()
         for visit in visits:
-            comments.append({'commenter': visit.user.username,
-                             'commenter_profile_picture': visit.user.profile_picture.url,
+            comments.append({'commenter': visit.user.username if visit.user else '',
+                             'commenter_profile_picture': visit.user.profile_picture.url if visit.user else '',
                              'comment': visit.text if visit.text else '',
                              'rate': visit.rank.rank if visit.rank else 0,
                              'service': visit.service.service.service_name_fa if visit.service else ''})

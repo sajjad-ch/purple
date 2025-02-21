@@ -320,7 +320,34 @@ class SupserviceFromArtistAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response({'error': 'Only artists can get their supservices.'}, status=status.HTTP_403_FORBIDDEN)
-    
+
+
+class GetArtsitsFromSaloonAPIView(APIView):
+    def get(self, request, saloon_id):
+        user = request.user
+        if hasattr(user, 'saloon'):
+            saloon = SaloonModel.objects.filter(id=saloon_id).first()
+            if saloon:
+                artists = ArtistModel.objects.filter(saloon_artists=saloon).all()
+                if artists:
+                    serializer = ArtistProfileSerializer(artists, many=True, context={'request': request})
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response({'error': 'There is no artist in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Saloon not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Only saloons can get their artists.'}, status=status.HTTP_403_FORBIDDEN)
+
+
+class GetVisitsFromArtistAPIView(APIView):
+    def get(self, request, artist_id):
+        user = request.user
+        if hasattr(user, 'saloon'):
+            visits = VisitingTimeModel.objects.filter(artist=artist_id, saloon=user.saloon.pk).all()
+            if visits:
+                serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'There is no visit for this artist.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Only saloons can get their artists visits.'}, status=status.HTTP_403_FORBIDDEN)
+
 
 class ManageArtistTeamView(APIView):
     permission_classes = [IsAuthenticated]
