@@ -177,31 +177,38 @@ class ProfileSerializer(serializers.ModelSerializer):
             services = UserServicesModel.objects.filter(artist__in=artists).all()
 
             average_ranks = {}
+            total_sum = 0
+            total_count = 0
 
             for service in services:
                 visits = VisitingTimeModel.objects.filter(saloon=user.saloon).all()
-                for visit in visits:
-                    print(visit)
                 ranks = [visit.rank.rank for visit in visits if visit.rank is not None]
                 if ranks:
                     avg_rank = sum(ranks) / len(ranks)
                 else:
                     avg_rank = 0
 
-                average_ranks[service.service_id] = avg_rank
+                average_ranks[str(service.supservice)] = avg_rank
+                total_sum += avg_rank
+                total_count += 1
 
+                total_average = total_sum / total_count if total_count > 0 else 0
+
+                # Add total_average to the result dictionary
+                average_ranks['total_average'] = total_average
+                
             return average_ranks
 
         if hasattr(user, 'artist'):
             services = UserServicesModel.objects.filter(artist=user.artist).all()
 
             average_ranks = {}
+            total_sum = 0
+            total_count = 0
 
             for service in services:
                 # Fetch all visiting times for the user and service
                 visits = VisitingTimeModel.objects.filter(artist=user.artist).all()
-                for visit in visits:
-                    print(visit)
                 # Extract rank values
                 ranks = [visit.rank.rank for visit in visits if visit.rank is not None]
                 # Calculate average rank
@@ -211,6 +218,14 @@ class ProfileSerializer(serializers.ModelSerializer):
                     avg_rank = 0
 
                 average_ranks[str(service.supservice)] = avg_rank
+
+                total_sum += avg_rank
+                total_count += 1
+
+                total_average = total_sum / total_count if total_count > 0 else 0
+
+                # Add total_average to the result dictionary
+                average_ranks['total_average'] = total_average
 
             return average_ranks
         return None
@@ -279,7 +294,7 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
                 else:
                     avg_rank = 0
 
-                average_ranks[str(service.service)] = avg_rank
+                average_ranks[str(service.supservice)] = avg_rank
 
                 # Accumulate the total sum and count for calculating the overall average
                 total_sum += avg_rank
