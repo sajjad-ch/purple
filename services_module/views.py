@@ -1108,7 +1108,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            send_verification_code(message, phone_number, url)
+            # send_verification_code(message, phone_number, url)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1162,7 +1162,7 @@ class RequestVisitingTimeArtistAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             phone_number = visit.artist.artist.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            send_verification_code(message, phone_number, url)
+            # send_verification_code(message, phone_number, url)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1366,19 +1366,19 @@ class PostConfirmVisitAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class Payments(APIView):
+class UserVisitAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        visits = VisitingTimeModel.objects.filter(user=user, status='waiting for deposit').all()
+        visits = VisitingTimeModel.objects.filter(user=user).all().order_by('-suggested_date')
         if visits:
             serializer = PaymentsSerializer(visits, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class PaymentNotificationAPIView(APIView):
+class PaymentHandlingAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, visit_id):
@@ -1411,7 +1411,7 @@ class PaymentNotificationAPIView(APIView):
                     main_price = price - ((price * discount_percentage) / 100)
                     visit.price = main_price
                     visit.save()
-        # todo: handling the payment gateway
+        # Todo: handling the payment gateway
         visit.status = 'confirmed'
         visit.save()
         message = "بیعانه پرداخت شد."
@@ -1420,7 +1420,35 @@ class PaymentNotificationAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = f"http://127.0.0.1:8000/service/visits/{visit_id}/payment/"
-        send_verification_code(message, phone_number, url)
+        # send_verification_code(message, phone_number, url)
+
+        return Response({'message': 'Payment received. Visiting time confirmed.'}, status=status.HTTP_200_OK)
+
+
+class PayingDepositAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, visit_id):
+        user = request.user
+        visit = get_object_or_404(VisitingTimeModel, id=visit_id, user=user, status='waiting for deposit')
+        if visit.user != user:
+            return Response({'error': 'You do not have permission to make this payment.'}, status=status.HTTP_403_FORBIDDEN)
+        if timezone.now() > visit.payment_due_time:
+            visit.status = 'deleted'
+            visit.save()
+            return Response({'message': 'Visit deleted due to payment timeout.'}, status=status.HTTP_200_OK)
+        
+        price = visit.price
+        # Todo: handling the payment gateway
+        visit.status = 'confirmed'
+        visit.save()
+        message = "بیعانه پرداخت شد."
+        if visit.saloon:
+            phone_number = visit.saloon.saloon.phone_number
+        else:
+            phone_number = visit.artist.artist.phone_number
+        url = f"http://127.0.0.1:8000/service/visits/{visit_id}/payment/"
+        # send_verification_code(message, phone_number, url)
 
         return Response({'message': 'Payment received. Visiting time confirmed.'}, status=status.HTTP_200_OK)
 
@@ -1429,14 +1457,14 @@ class GradeNotificationAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, visit_id):
-        visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='completed')
+        visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='confirmed')
+        supservice = UserServicesModel.objects.filter(artist=visit.artist, supservice=visit.service).first()
         user = request.user
 
         if visit.user != user:
             return Response({'error': 'You do not have permission to grade this visit.'}, status=status.HTTP_403_FORBIDDEN)
-        print(visit.exact_time, ' ', visit.exact_time + timezone.timedelta(hours=1), timezone.now())
         # todo: why it isn't working : because I made up some random time now It's working.
-        if timezone.now() < visit.exact_time + timezone.timedelta(hours=1):
+        if timezone.now() < visit.exact_time + timezone.timedelta(minutes=supservice.suggested_time):
             return Response({'error': 'Grading is only available 1 hour after the visiting time.'}, status=status.HTTP_400_BAD_REQUEST)
         message = "برای امتیاز دهی به نوبت به لینک زیر وارد شوید."
         if visit.saloon:
@@ -1444,7 +1472,7 @@ class GradeNotificationAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = "http://127.0.0.1:8000/service/visits/grade/"
-        send_verification_code(message, phone_number, url)
+        # send_verification_code(message, phone_number, url)
         return Response({'message': 'Notification sent. Please grade your visit.'}, status=status.HTTP_200_OK)
 
 
@@ -1453,15 +1481,23 @@ class GradingAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        visit = VisitingTimeModel.objects.filter(user=user, status='confirmed').first()
-        if visit:
-            serializer = CommentVisitingSerializer(visit)
+        time = jdatetime.datetime.now()
+        visits = VisitingTimeModel.objects.filter(user=user,
+                                                  status='confirmed',
+                                                    payment_due_time__gt=jdatetime.datetime(time.year, time.month, time.day, 00, 00, 10),
+                                                    payment_due_time__lt=jdatetime.datetime(time.year, time.month, time.day, 23, 59, 59)).all()
+        if visits:
+            serializer = CommentVisitingSerializer(visits, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        time = jdatetime.datetime.now()
         user = request.user
-        visit = VisitingTimeModel.objects.filter(user=user, status='confirmed').first()
+        visit = VisitingTimeModel.objects.filter(user=user,
+                                                  status='confirmed',
+                                                  payment_due_time__gt=jdatetime.datetime(time.year, time.month, time.day, 00, 00, 10),
+                                                  payment_due_time__lt=jdatetime.datetime(time.year, time.month, time.day, 23, 59, 59)).first()
         if not visit:
             return Response({"error": "No confirmed visit found"}, status=status.HTTP_404_NOT_FOUND)
 

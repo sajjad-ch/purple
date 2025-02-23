@@ -64,8 +64,8 @@ urlpatterns = [
     path('visits/select-visits/<int:artist_id>/', GetVisitsFromArtistAPIView.as_view(), name='visits-artist'),
 
     # Payment Notification URL
-    path('visits/payment/', Payments.as_view(), name='payment'),
-    path('visits/<int:visit_id>/payment/', PaymentNotificationAPIView.as_view(), name='payment-notification'),
+    path('visits/payment/', UserVisitAPIView.as_view(), name='user-visits'),
+    path('visits/<int:visit_id>/payment/', PaymentHandlingAPIView.as_view(), name='payment-handling'),
 
     # Grade Notification URL
     path('visits/<int:visit_id>/grade/', GradeNotificationAPIView.as_view(), name='grade-notification'),

@@ -281,7 +281,9 @@ class VisitingTimeSerializerGet(serializers.ModelSerializer):
             return obj.service.supservice_name_fa
 
     def get_name_of_the_user(self, obj):
-        return obj.user.first_name + ' ' + obj.user.last_name
+        if obj.user:
+            return obj.user.first_name + ' ' + obj.user.last_name
+        return obj.unregistered_user.name
 
 
 class SaloonVisitingTimeSerializerPost(serializers.ModelSerializer):
@@ -339,7 +341,7 @@ class PaymentsSerializer(serializers.ModelSerializer):
 
     def get_url(self, obj):
         request = self.context.get('request')
-        path = reverse('payment-notification', kwargs={'visit_id': obj.id})
+        path = reverse('payment-handling', kwargs={'visit_id': obj.id})
         return request.build_absolute_uri(path)
 
 
