@@ -53,7 +53,8 @@ class User(AbstractUser):
     private_key = models.TextField(blank=True, null=True)
     status = models.CharField(choices=[('online', 'online'), ('offline', 'offline')], max_length=10, default='offline', blank=True, null=True, verbose_name='آنلاین / آفلاین (0/1)')
     total_active_time = models.DurationField(default=timedelta(0)) 
-    last_activity_time = models.DateTimeField(null=True, blank=True)  
+    last_activity_time = models.DateTimeField(null=True, blank=True)
+    bank_account_number = models.CharField(max_length=16, null=True, blank=True)  
 
     groups = models.ManyToManyField(
         Group,
