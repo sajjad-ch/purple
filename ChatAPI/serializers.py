@@ -30,6 +30,7 @@ class ConversationListSerializer(serializers.ModelSerializer):
         return {
             'name': other_user.first_name + ' ' + other_user.last_name if other_user.first_name else other_user.username,
             'username': other_user.username,
+            'phone_number': other_user.phone_number,
             'profile_picture': other_user.profile_picture.url if other_user.profile_picture else None
         }
 
