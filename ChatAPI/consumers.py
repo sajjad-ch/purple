@@ -2,6 +2,7 @@ import base64
 import json
 import secrets
 from datetime import datetime
+from django.utils.timezone import now
 
 from asgiref.sync import async_to_sync, sync_to_async
 from channels.db import database_sync_to_async
@@ -125,7 +126,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             sender_id = event.get("sender")  # Get sender from event
             current_user = self.scope["user_id"]
-            message_text = event.get("message") 
+            message_text = event.get("message")
+            timestamp = now().isoformat()
 
             # Prevent duplicate saving by only allowing the sender to save
             if current_user != sender_id:
@@ -133,7 +135,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     text_data=json.dumps({
                         "message": "Message received",
                         "sender": sender_id,
-                        "text": message_text  # ✅ Include the message here
+                        "text": message_text,
+                        "timestamp": timestamp
                         })
                 )
                 return  
