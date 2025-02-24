@@ -12,10 +12,11 @@ class MessageSerializer(serializers.ModelSerializer):
 class ConversationListSerializer(serializers.ModelSerializer):
     other_user = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
+    requested_user =serializers.SerializerMethodField()
     
     class Meta:
         model = Conversation
-        fields = ['id', 'initiator', 'receiver', 'other_user', 'last_message']
+        fields = ['id', 'initiator', 'receiver', 'other_user', 'last_message', 'requested_user']
     
     def get_last_message(self, instance):
         message = instance.message_set.first()
@@ -32,6 +33,10 @@ class ConversationListSerializer(serializers.ModelSerializer):
             'profile_picture': other_user.profile_picture.url if other_user.profile_picture else None
         }
 
+    def get_requested_user(self, instance):
+        request_user = self.context.get('request').user.id
+        return request_user
+        
 
 class ConversationSerializer(serializers.ModelSerializer):
     initiator = UserSerializerChat()
