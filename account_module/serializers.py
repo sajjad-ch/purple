@@ -491,4 +491,4 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 class UserSerializerChat(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username']
+        fields = ['username', 'profile_picture']
