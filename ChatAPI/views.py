@@ -34,7 +34,6 @@ def get_conversation(request, convo_id):
 
 @api_view(['GET'])
 def conversations(request):
-    conversation_list = Conversation.objects.filter(Q(initiator=request.user) |
-                                                    Q(receiver=request.user))
-    serializer = ConversationListSerializer(instance=conversation_list, many=True)
+    conversation_list = Conversation.objects.filter(Q(initiator=request.user) | Q(receiver=request.user))
+    serializer = ConversationListSerializer(instance=conversation_list, many=True, context={'request': request})
     return Response(serializer.data)
