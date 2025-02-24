@@ -27,6 +27,7 @@ class ConversationListSerializer(serializers.ModelSerializer):
         request_user = self.context.get('request').user
         other_user = instance.receiver if instance.initiator == request_user else instance.initiator
         return {
+            'name': other_user.first_name + ' ' + other_user.last_name if other_user.first_name else other_user.username,
             'username': other_user.username,
             'profile_picture': other_user.profile_picture.url if other_user.profile_picture else None
         }
