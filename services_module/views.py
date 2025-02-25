@@ -426,7 +426,7 @@ class PostAPIView(APIView):
             saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
             saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
             posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
-
+        posts = posts.order_by('-created')
         serializer = PostSerializerGet(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -690,13 +690,13 @@ class StoryAPIView(APIView):
 
     def post(self, request):
         user = request.user
+        duration = 0
         if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
             return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
-        serializer = StorySerializerPost(data=request.data, context={'request': request})
+        serializer = StorySerializerPost(data=request.data, context={'request': request, 'duration_time': duration})
         if serializer.is_valid():
-            story_content = serializer.data.get('story_content')
+            story_content = serializer.validated_data.get('story_content')
             file_extension = str(story_content.name).split('.')[-1].lower()
-
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(story_content)
                 width, height = image.size
@@ -729,7 +729,7 @@ class StoryAPIView(APIView):
                                     status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save(user=user, duration=duration)
+            serializer.save(user=user, duration_time=duration)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

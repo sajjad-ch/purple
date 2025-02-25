@@ -80,13 +80,17 @@ class StorySerializerGet(serializers.ModelSerializer):
 
 
 class StorySerializerPost(serializers.ModelSerializer):
-    duration = serializers.IntegerField()
+    duration_time = serializers.SerializerMethodField()
     class Meta:
         model = StoryModel
-        fields = ['story_content', 'duration']
+        fields = ['story_content', 'duration_time']
+
+    def get_duration_time(self, obj):
+        return self.context.get('duration_time', None)
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
+        validated_data.pop('duration_time', None)  
         return super().create(validated_data)
 
 
