@@ -107,7 +107,7 @@ class HighlightSerializerGet(serializers.ModelSerializer):
 class HighlightSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = HighlightModel
-        fields = ['highlight_content']
+        fields = ['highlight_content', 'text']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

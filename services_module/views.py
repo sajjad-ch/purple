@@ -700,8 +700,8 @@ class StoryAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(story_content)
                 width, height = image.size
-                if width != height:
-                    return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
+                # if width != height:
+                #     return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             elif file_extension in ('mp4', 'mpeg', 'mpg'):
                 try:
                     # Create a temporary file
@@ -722,8 +722,8 @@ class StoryAPIView(APIView):
                     if duration > 10:
                         return Response({'error': 'Video duration should be less than 10 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    if width != 600 or height != 1068:
-                        return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
+                    # if width != 600 or height != 1068:
+                    #     return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     return Response({'error': f'An error occurred while processing the video: {str(e)}'},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -779,13 +779,14 @@ class HighlightAPIView(APIView):
         highlight_serializer: HighlightSerializerPost = HighlightSerializerPost(data=request.data, context={'request': request})
         if highlight_serializer.is_valid():
             highlight_content = highlight_serializer.validated_data['highlight_content']
+
             file_extension = str(highlight_content.name).split('.')[-1].lower()
 
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(highlight_content)
                 width, height = image.size
-                if width != height:
-                    return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
+                # if width != height:
+                #     return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             elif file_extension in ('mp4', 'mpeg', 'mpg'):
                 try:
                     # Create a temporary file
@@ -806,8 +807,8 @@ class HighlightAPIView(APIView):
                     if duration > 60:
                         return Response({'error': 'Video duration should be less than 10 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    if width != 600 or height != 1068:
-                        return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
+                    # if width != 600 or height != 1068:
+                    #     return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     return Response({'error': f'An error occurred while processing the video: {str(e)}'},
                                     status=status.HTTP_400_BAD_REQUEST)
