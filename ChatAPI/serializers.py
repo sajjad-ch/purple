@@ -43,7 +43,23 @@ class ConversationSerializer(serializers.ModelSerializer):
     initiator = UserSerializerChat()
     receiver = UserSerializerChat()
     message_set = MessageSerializer(many=True)
+    requested_user =serializers.SerializerMethodField()
+    other_user = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['initiator', 'receiver', 'message_set']
+        fields = ['id', 'initiator', 'receiver', 'message_set', 'other_user', 'requested_user']
+
+    def get_other_user(self, instance):
+        request_user = self.context.get('request').user
+        other_user = instance.receiver if instance.initiator == request_user else instance.initiator
+        return {
+            'name': other_user.first_name + ' ' + other_user.last_name if other_user.first_name else other_user.username,
+            'username': other_user.username,
+            'phone_number': other_user.phone_number,
+            'profile_picture': other_user.profile_picture.url if other_user.profile_picture else None
+        }
+
+    def get_requested_user(self, instance):
+        request_user = self.context.get('request').user.id
+        return request_user

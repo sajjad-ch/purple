@@ -240,10 +240,14 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     follower_count = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    phone_number_for_chat = serializers.SerializerMethodField()
 
     class Meta:
         model = SaloonModel
         fields = "__all__"
+
+    def get_phone_number_for_chat(self, obj):
+        return obj.saloon.phone_number
 
     def get_highlights(self, obj):
         highlishts = HighlightModel.objects.filter(user=obj.saloon_id)
@@ -325,6 +329,8 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     active = serializers.SerializerMethodField()
     supservices = serializers.SerializerMethodField()
+    phone_number_for_chat = serializers.SerializerMethodField()
+
 
     class Meta:
         model = ArtistModel
@@ -347,6 +353,8 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
             skills.append(service.supservice.supservice_name_fa)
         return skills
 
+    def get_phone_number_for_chat(self, obj):
+        return obj.artist.phone_number
 
     def get_artist_name(self, obj):
         return obj.artist.first_name + ' ' + obj.artist.last_name

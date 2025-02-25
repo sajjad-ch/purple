@@ -18,6 +18,9 @@ def start_convo(request):
     except User.DoesNotExist:
         return Response({'message': 'You cannot chat with a non existent user'})
 
+    if Conversation.objects.filter(initiator=request.user, receiver=participant).exists() or Conversation.objects.filter(initiator=participant, receiver=request.user).exists():
+        conversation = Conversation.objects.filter(initiator=request.user, receiver=participant).first()
+        return Response(ConversationSerializer(instance=conversation).data)
     conversation: Conversation = Conversation.objects.create(initiator=request.user, receiver=participant)
     return Response(ConversationSerializer(instance=conversation).data)
 
