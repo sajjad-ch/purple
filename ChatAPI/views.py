@@ -12,7 +12,7 @@ from django.db.models import Q
 @api_view(['POST'])
 def start_convo(request):
     data = request.data
-    username = data.pop('username')
+    username = data.get('username')
     try:
         participant = User.objects.get(phone_number=username)
     except User.DoesNotExist:
@@ -31,7 +31,7 @@ def get_conversation(request, convo_id):
     if not conversation.exists():
         return Response({'message': 'Conversation does not exist'})
     else:
-        serializer = ConversationSerializer(instance=conversation[0])
+        serializer = ConversationSerializer(instance=conversation[0], context={'request': request})
         return Response(serializer.data)
     
 
