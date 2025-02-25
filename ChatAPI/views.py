@@ -20,9 +20,9 @@ def start_convo(request):
 
     if Conversation.objects.filter(initiator=request.user, receiver=participant).exists() or Conversation.objects.filter(initiator=participant, receiver=request.user).exists():
         conversation = Conversation.objects.filter(initiator=request.user, receiver=participant).first()
-        return Response(ConversationSerializer(instance=conversation).data)
+        return Response(ConversationSerializer(instance=conversation, context={'request': request}).data)
     conversation: Conversation = Conversation.objects.create(initiator=request.user, receiver=participant)
-    return Response(ConversationSerializer(instance=conversation).data)
+    return Response(ConversationSerializer(instance=conversation, context={'request': request}).data)
 
 
 @api_view(['GET'])
