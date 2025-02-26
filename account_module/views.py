@@ -107,8 +107,8 @@ class ProfileView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        user_phone_number = request.data.get('phone_number')
-        queried_user = User.objects.filter(phone_number=user_phone_number).first()
+        user_id = request.user.id
+        queried_user = User.objects.filter(id=user_id).first()
         serializer = ProfileUpdateSerializer(queried_user, data=request.data)
         if serializer.is_valid():
             normal_user, created = NormalUserModel.objects.get_or_create(normal_user=queried_user, defaults={'interests': ''})
