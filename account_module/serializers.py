@@ -454,14 +454,13 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'phone_number', 'age', 'profile_picture', 'normal_user', 'saloon', 'artist', 'city', 'birth_date']
+        fields = ['first_name', 'last_name', 'username', 'age', 'profile_picture', 'normal_user', 'saloon', 'artist', 'city', 'birth_date']
 
     def update(self, instance, validated_data):
         # Update User fields
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.username = validated_data.get('username', instance.username)
-        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
         instance.age = validated_data.get('age', instance.age)
         instance.city = validated_data.get('city', instance.city)
         instance.birth_date = validated_data.get('birth_date', instance.birth_date)
