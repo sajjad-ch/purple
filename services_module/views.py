@@ -1490,28 +1490,99 @@ class GradeNotificationAPIView(APIView):
         return Response({'message': 'Notification sent. Please grade your visit.'}, status=status.HTTP_200_OK)
 
 
+class ChangeConfirmedToCompleted(APIView):
+    def get(self, request):
+        current_time = jdatetime.datetime.now().togregorian()
+        current_time = timezone.make_aware(current_time)
+
+        user = request.user
+        visits = VisitingTimeModel.objects.filter(user=user, status='confirmed').all()
+
+        if visits:
+            for visit in visits:
+                service_obj = UserServicesModel.objects.filter(supservice=visit.service).first()
+                if service_obj:
+                    service_time = service_obj.suggested_time
+                    visit_end_time = visit.exact_time + timedelta(minutes=service_time)
+
+                    if timezone.is_naive(visit_end_time):
+                        visit_end_time = timezone.make_aware(visit_end_time)
+
+                    if visit_end_time > current_time:
+                        visit.status = 'completed'
+                        visit.save()
+
+            return Response({'message': 'visits status changed.'}, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangeWaitingForDepositToRejectedByArtistOrSaloon(APIView):
+    def get(self, request):
+        current_time = jdatetime.datetime.now().togregorian()
+        current_time = timezone.make_aware(current_time)
+
+        user = request.user
+
+        if hasattr(user, 'saloon'):
+            visits = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, status='waiting for deposit')
+        elif hasattr(user, 'artist'):
+            visits = VisitingTimeModel.objects.filter(artist=user.artist.pk, status='waiting for deposit')
+        else:
+            return Response({'message': 'User type not recognized.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if visits.exists():
+            for visit in visits:
+                if timezone.is_naive(visit.payment_due_time):
+                    visit.payment_due_time = timezone.make_aware(visit.payment_due_time)
+
+                if visit.payment_due_time < current_time:
+                    visit.status = 'rejected'
+                    visit.save()
+
+            return Response({'message': 'Visits status changed.'}, status=status.HTTP_200_OK)
+
+        return Response({'message': 'No matching visits found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class ChangeWaitingForDepositToRejectedByUser(APIView):
+    def get(self, request):
+        current_time = jdatetime.datetime.now().togregorian()
+        current_time = timezone.make_aware(current_time)
+
+        user = request.user
+        visits = VisitingTimeModel.objects.filter(user=user, status='waiting for deposit')
+
+        if visits.exists():
+            for visit in visits:
+                if timezone.is_naive(visit.payment_due_time):
+                    visit.payment_due_time = timezone.make_aware(visit.payment_due_time)
+
+                if visit.payment_due_time < current_time:
+                    visit.status = 'rejected'
+                    visit.save()
+
+            return Response({'message': 'Visits status changed.'}, status=status.HTTP_200_OK)
+
+        return Response({'message': 'No matching visits found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class GradingAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        time = jdatetime.datetime.now()
-        visits = VisitingTimeModel.objects.filter(user=user,
-                                                  status='confirmed',
-                                                    payment_due_time__gt=jdatetime.datetime(time.year, time.month, time.day, 00, 00, 10),
-                                                    payment_due_time__lt=jdatetime.datetime(time.year, time.month, time.day, 23, 59, 59)).all()
+        visits = VisitingTimeModel.objects.filter(user=user, status='completed').all()
         if visits:
             serializer = CommentVisitingSerializer(visits, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request):
+    def post(self, request, visit_id):
         time = jdatetime.datetime.now()
         user = request.user
-        visit = VisitingTimeModel.objects.filter(user=user,
-                                                  status='confirmed',
-                                                  payment_due_time__gt=jdatetime.datetime(time.year, time.month, time.day, 00, 00, 10),
-                                                  payment_due_time__lt=jdatetime.datetime(time.year, time.month, time.day, 23, 59, 59)).first()
+        visit = VisitingTimeModel.objects.filter(id=visit_id, user=user, status='completed').first()
         if not visit:
             return Response({"error": "No confirmed visit found"}, status=status.HTTP_404_NOT_FOUND)
 

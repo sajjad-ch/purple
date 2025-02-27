@@ -365,7 +365,7 @@ class CommentVisitingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VisitingTimeModel
-        fields = ['user', 'artist', 'saloon', 'service', 'exact_time', 'rank', 'text']
+        fields = ['id', 'user', 'artist', 'saloon', 'service', 'exact_time', 'rank', 'text']
 
     def to_representation(self, instance):
         # This will format the rank as a nested dictionary for GET requests

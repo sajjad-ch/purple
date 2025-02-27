@@ -63,6 +63,12 @@ urlpatterns = [
     path('visits/select-artist-visits/', GetArtsitsFromSaloonAPIView.as_view(), name='artist-visits'),
     path('visits/select-visits/<int:artist_id>/', GetVisitsFromArtistAPIView.as_view(), name='visits-artist'),
 
+    # changing states for visits
+    path('visits/change-states/confirmed-to-complete/', ChangeConfirmedToCompleted.as_view(), name='confirmed-to-complete'),
+    path('visits/change-states/waiting-for-deposit-to-rejected-sa/', ChangeWaitingForDepositToRejectedByArtistOrSaloon.as_view(), name='waiting-for-deposit-to-rejected-sa'),
+    path('visits/change-states/waiting-for-deposit-to-rejected-user/', ChangeWaitingForDepositToRejectedByUser.as_view(), name='waiting-for-deposit-to-rejected-user'),
+
+
     # Payment Notification URL
     path('visits/payment/', UserVisitAPIView.as_view(), name='user-visits'),
     path('visits/<int:visit_id>/payment/', PaymentHandlingAPIView.as_view(), name='payment-handling'),
@@ -70,6 +76,7 @@ urlpatterns = [
     # Grade Notification URL
     path('visits/<int:visit_id>/grade/', GradeNotificationAPIView.as_view(), name='grade-notification'),
     path('visits/grade/', GradingAPIView.as_view(), name='grading'),
+    path('visits/grade/<int:visit_id>/', GradingAPIView.as_view(), name='grading-post'),
 
     # filtering Saloon and Artist
     path('filter/saloon/', FilterSaloonAPIView.as_view(), name='filter-saloon'),
