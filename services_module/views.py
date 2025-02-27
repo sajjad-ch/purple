@@ -551,6 +551,19 @@ class ProfileCertificateAPIView(APIView):
                 return Response({'error': 'You don\'t follow this artist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class GetCertificates(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        posts = PostModel.objects.filter(user=user, is_certificate=True).all()
+        if posts:
+            serializer = PostSerializerGet(posts, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'You don\'t have any certificates.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
 class CertificateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
