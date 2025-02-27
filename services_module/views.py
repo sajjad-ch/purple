@@ -1105,7 +1105,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         artist = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
         supservice_name = request.data.get('service')
-        price = UserServicesModel.objects.filter(artist=artist, supservice=supservice_name).first().price
+        price = UserServicesModel.objects.filter(artist=artist, supservice=supservice_name).first().suggested_price
         supservice = SupServiceModel.objects.filter(id=supservice_name).first()
         if supservice != None:
             data['service'] = supservice.id

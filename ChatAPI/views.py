@@ -13,15 +13,24 @@ from django.db.models import Q
 def start_convo(request):
     data = request.data
     username = data.get('username')
+    
+    if not username:
+        return Response({'message': 'Username is required'}, status=400)
+
     try:
         participant = User.objects.get(phone_number=username)
     except User.DoesNotExist:
-        return Response({'message': 'You cannot chat with a non existent user'})
+        return Response({'message': 'You cannot chat with a non-existent user'}, status=404)
 
-    if Conversation.objects.filter(initiator=request.user, receiver=participant).exists() or Conversation.objects.filter(initiator=participant, receiver=request.user).exists():
-        conversation = Conversation.objects.filter(initiator=request.user, receiver=participant).first()
+    conversation = Conversation.objects.filter(
+        (Q(initiator=request.user, receiver=participant) | Q(initiator=participant, receiver=request.user))
+    ).first()
+
+    if conversation:
         return Response(ConversationSerializer(instance=conversation, context={'request': request}).data)
-    conversation: Conversation = Conversation.objects.create(initiator=request.user, receiver=participant)
+
+    conversation = Conversation.objects.create(initiator=request.user, receiver=participant)
+
     return Response(ConversationSerializer(instance=conversation, context={'request': request}).data)
 
 
