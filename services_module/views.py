@@ -926,7 +926,7 @@ class ArtistVisitsAPIView(APIView):
         serializer = ArtistVisitsSerializer(artists, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# TODO: Make URL for these three new Logic and we should add the supservice and artsit that do the supservice in the visitingtime card.
+
 class GetAllArtistsFromSaloon(APIView):
     permission_classes = [IsAuthenticated]
 

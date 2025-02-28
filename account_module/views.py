@@ -49,19 +49,6 @@ class SignUpAPIView(APIView):
                                     headers={'location': redirect})
                 else:
                     return Response({'message': 'verify code didn\'t send'}, status=status.HTTP_400_BAD_REQUEST)
-            # if created or not user.is_active:
-            #     user.generate_verification_code()
-            #     user.is_active = False
-            #     user.save()
-            #     sms_state = send_verify_code_SMS(phone_number, user.key)
-            #     if sms_state:
-            #         redirect = 'http://127.0.0.1:8000/account/verify/'
-            #         return Response({'message': 'verify code sent'}, status=status.HTTP_200_OK,
-            #                         headers={'location': redirect})
-            #     else:
-            #         return Response({'message': 'verify code didn\'t send'}, status=status.HTTP_400_BAD_REQUEST)
-            # else:
-            #     return Response({'message': 'this user already exists and is active'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -55,46 +55,6 @@ class KeySerializer(serializers.Serializer):
         return value
 
 
-# class ProfileSerializer(serializers.ModelSerializer):
-#     phone_number = serializers.CharField(max_length=11)
-#     follower_count = serializers.SerializerMethodField()
-#     following_count = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = User
-#         fields = ['first_name', 'last_name', 'username', 'phone_number', 'age', 'profile_picture', 'follower_count', 'following_count']
-#
-#     def validate_phone_number(self, value):
-#         if not re.match(r'^09\d{9}$', value):
-#             raise serializers.ValidationError("Phone number must be exactly 11 digits and start with '09'.")
-#         return value
-#
-#     def get_follower_count(self, obj):
-#         if hasattr(obj, 'normal_user'):
-#             return 0
-#         normal_followers = NormalUserFollow.objects.filter(followed_user=obj).count()
-#         saloon_followers = SaloonFollow.objects.filter(followed_user=obj).count()
-#         artist_followers = ArtistFollow.objects.filter(followed_user=obj).count()
-#         return normal_followers + saloon_followers + artist_followers
-#
-#     def get_following_count(self, obj):
-#         # Aggregate followings from all follow models
-#         if hasattr(obj, 'saloon'):
-#             normal_following = NormalUserFollow.objects.filter(followed_user=obj.saloon).count()
-#             saloon_following = SaloonFollow.objects.filter(followed_user=obj.saloon).count()
-#             artist_following = ArtistFollow.objects.filter(followed_user=obj.saloon).count()
-#             return normal_following + saloon_following + artist_following
-#
-#         elif hasattr(obj, 'artist'):
-#             normal_following = NormalUserFollow.objects.filter(followed_user=obj.artist).count()
-#             saloon_following = SaloonFollow.objects.filter(followed_user=obj.artist).count()
-#             artist_following = ArtistFollow.objects.filter(followed_user=obj.artist).count()
-#             return normal_following + saloon_following + artist_following
-#
-#         elif hasattr(obj, 'normal_user'):
-#             return 0
-
-
 class FollowSerializer(serializers.Serializer):
     followed_user_id = serializers.IntegerField()
 
@@ -161,14 +121,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             'normal_user', 'saloon', 'artist', 'average_ranks', 'posts', 'city', 'birth_date'
         ]
 
-    # def get_posts(self, user):
-    #     if hasattr(user, 'saloon'):
-    #         posts = PostModel.objects.filter(user=user).all()
-    #         return posts
-    #     if hasattr(user, 'artist'):
-    #         posts = PostModel.objects.filter(user=user).all()
-    #         return posts
-    #     return None
 
     def get_average_ranks(self, user):
         if hasattr(user, 'saloon'):

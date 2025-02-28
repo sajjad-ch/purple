@@ -82,7 +82,7 @@ urlpatterns = [
     path('filter/saloon/', FilterSaloonAPIView.as_view(), name='filter-saloon'),
     path('filter/artist/', FilterArtistAPIView.as_view(), name='filter-artist'),
 
-# Wallet URLs
+    # Wallet URLs
     path('wallet/', WalletAPIView.as_view(), name='wallet'),
 
     # Discount URLs
