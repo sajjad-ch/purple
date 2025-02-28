@@ -382,18 +382,20 @@ class CommentVisitingSerializer(serializers.ModelSerializer):
 
         if rank_value is not None:
             if instance.rank:
+                user_service = UserServicesModel.objects.filter(supservice=instance.service).first()
                 rank = instance.rank
                 rank.rank = rank_value
                 rank.artist = instance.artist
                 rank.saloon = instance.saloon
-                rank.service = instance.service
+                rank.service = user_service
                 rank.save()
             else:
+                user_service = UserServicesModel.objects.filter(supservice=instance.service).first()
                 rank = RankModel.objects.create(
                     rank=rank_value,
                     artist=instance.artist,
                     saloon=instance.saloon,
-                    service=instance.service
+                    service=user_service
                 )
                 instance.rank = rank
 
