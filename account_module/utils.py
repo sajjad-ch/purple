@@ -1,5 +1,6 @@
 import requests
 import json
+import random
 
 
 def send_verification_code(phone_number, code):
@@ -26,3 +27,10 @@ def send_verification_code(phone_number, code):
     #     },
     #     data=json.dumps(body)
     # )
+
+
+def random_number():
+    code = ''
+    for i in range(5):
+        code += random.randint(0, 9)
+    return code
