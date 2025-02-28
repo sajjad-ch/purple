@@ -1497,7 +1497,6 @@ class ChangeConfirmedToCompleted(APIView):
 
         user = request.user
         visits = VisitingTimeModel.objects.filter(user=user, status='confirmed').all()
-
         if visits:
             for visit in visits:
                 service_obj = UserServicesModel.objects.filter(supservice=visit.service).first()
@@ -1508,7 +1507,7 @@ class ChangeConfirmedToCompleted(APIView):
                     if timezone.is_naive(visit_end_time):
                         visit_end_time = timezone.make_aware(visit_end_time)
 
-                    if visit_end_time > current_time:
+                    if visit_end_time < current_time:
                         visit.status = 'completed'
                         visit.save()
 

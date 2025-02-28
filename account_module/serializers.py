@@ -235,8 +235,7 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
 
     def get_average_ranks(self, user):
         if hasattr(user, 'saloon'):
-            services = UserServicesModel.objects.filter(artist__saloon_artists=user.saloon.id).all()
-
+            services = UserServicesModel.objects.filter(artist__saloon_artists=user).all()
             average_ranks = {}
             total_sum = 0
             total_count = 0
