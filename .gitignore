@@ -29,12 +29,15 @@ celerybeat-schedule
 celerybeat-schedule.*
 
 # Cache and temp files
-__pycache__/
-*.py[cod]
-*.pyo
 *.swp
 *.swo
 
-# Environment files
-.env
-*.lock
+# SQLite database (if used)
+db.sqlite3
+
+# Django static & media files (if collected manually)
+static/
+media/
+
+# Ignore __pycache__ in migrations
+*/migrations/__pycache__/
