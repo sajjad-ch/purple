@@ -98,9 +98,9 @@ class ProfileView(APIView):
         queried_user = User.objects.filter(id=user_id).first()
         serializer = ProfileUpdateSerializer(queried_user, data=request.data)
         if serializer.is_valid():
-            normal_user, created = NormalUserModel.objects.get_or_create(normal_user=queried_user, defaults={'interests': ''})
+            normal_user, created = NormalUserModel.objects.get_or_create(normal_user_id=user_id, defaults={'interests': ''})
             normal_user.save()
-            queried_user.is_active = True
+	    queried_user.is_active = True
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

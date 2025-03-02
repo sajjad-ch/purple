@@ -17,5 +17,5 @@ urlpatterns = [
     path('follow/<int:user_id>/', views.FollowView.as_view(), name='follow'),
     path('check_follow/', views.CheckFollowAPIView.as_view(), name='check-follow'),
     path('key_setter/', views.PublicAndPrivateKeySetter.as_view(), name='key-setter'),
-    path('', views.user_list, name='user_list')
+    path('user_list/', views.user_list, name='user_list')
 ]

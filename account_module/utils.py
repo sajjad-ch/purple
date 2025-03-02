@@ -32,5 +32,5 @@ def send_verification_code(phone_number, code):
 def random_number():
     code = ''
     for i in range(5):
-        code += random.randint(0, 9)
+        code += str(random.randint(0, 9))
     return code
