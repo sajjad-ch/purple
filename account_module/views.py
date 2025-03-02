@@ -94,9 +94,6 @@ class ProfileView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        if not request.user.is_authenticated:
-            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
-
         user = request.user  # Ensure user is authenticated
         serializer = ProfileUpdateSerializer(user, data=request.data)
 
