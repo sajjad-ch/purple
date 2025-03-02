@@ -94,13 +94,14 @@ class ProfileView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        user_id = request.user.id
-        queried_user = User.objects.filter(id=user_id).first()
-        serializer = ProfileUpdateSerializer(queried_user, data=request.data)
+        if not request.user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user = request.user  # Ensure user is authenticated
+        serializer = ProfileUpdateSerializer(user, data=request.data)
+
         if serializer.is_valid():
-            normal_user, created = NormalUserModel.objects.get_or_create(normal_user=user_id, defaults={'interests': ''})
-            if normal_user:
-                normal_user.save()
+            normal_user, created = NormalUserModel.objects.get_or_create(normal_user=user, defaults={'interests': ''})
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
