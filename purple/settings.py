@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-90xmq_rm1dl9g2cvwbtfa@+96yg@yjhi=vlq+%uz9%8v-j7#2z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ["212.23.201.20", '127.0.0.1', 'localhost']
+=======
+ALLOWED_HOSTS = ["212.23.201.20", '127.0.0.0', 'localhost']
+>>>>>>> e055a1982ea778e276a09b9df4478b4f04a1dd5f
 
 
 # Application definition
@@ -109,11 +113,19 @@ CHANNEL_LAYERS = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # DATABASES = {
+<<<<<<< HEAD
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': BASE_DIR / 'db.sqlite3',
 #    }
 #}
+=======
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+>>>>>>> e055a1982ea778e276a09b9df4478b4f04a1dd5f
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
