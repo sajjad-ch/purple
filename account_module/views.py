@@ -82,7 +82,7 @@ class VerifyKeyView(APIView):
 
 
 class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         user = request.user
@@ -94,15 +94,13 @@ class ProfileView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        user = request.user  # Ensure user is authenticated
+        phone_number = request.data.get('phone_number')
+        user = User.objects.filter(phone_number=phone_number).first()
         serializer = ProfileUpdateSerializer(user, data=request.data)
-
         if serializer.is_valid():
             normal_user, created = NormalUserModel.objects.get_or_create(normal_user=user, defaults={'interests': ''})
-            if User.objects.filter(id=request.user.id).exists():
-                user = User.objects.filter(id=request.user.id).first()
-                user.is_active = True
-                user.save()
+            user.is_active = True
+            user.save()
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
