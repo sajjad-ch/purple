@@ -96,9 +96,12 @@ class ProfileView(APIView):
     def post(self, request):
         phone_number = request.data.get('phone_number')
         user = User.objects.filter(phone_number=phone_number).first()
-        serializer = ProfileUpdateSerializer(user, data=request.data)
+        serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
-            normal_user, created = NormalUserModel.objects.get_or_create(normal_user=user, defaults={'interests': ''})
+            if user:
+                normal_user, created = NormalUserModel.objects.get_or_create(normal_user=user, defaults={'interests': ''})
+            else:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
             user.is_active = True
             user.save()
             serializer.save()
