@@ -242,18 +242,40 @@ CELERY_ENABLE_UTC = True
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'file': {
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/django_errors.log',
+            'filename': 'django_debug.log',  # Logs will be stored in this file
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
             'propagate': True,
+        },
+        'django.db.backends': {  # Enable SQL query logging
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     },
 }
+
