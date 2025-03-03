@@ -44,7 +44,7 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=False, verbose_name='فعال / غیرفعال (0/1)')
     key = models.CharField(max_length=6, blank=True, null=True)
     code_generated_at = models.DateTimeField(null=True, blank=True)
-    profile_picture = models.ImageField(upload_to='Images/', default='Images/avatar.jpg/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='Images/', default='avatar.jpg', null=True, blank=True)
     last_login = models.DateTimeField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     city = models.CharField(max_length=128, null=True, blank=True)
