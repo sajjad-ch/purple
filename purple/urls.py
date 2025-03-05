@@ -21,6 +21,7 @@ from django.views.static import serve
 from django.conf import settings
 from rest_framework.authtoken.views import obtain_auth_token
 from django.http import HttpResponse
+from django.views.generic.base import RedirectView
 
 def home(request):
     return HttpResponse("Hello, World!")
@@ -31,6 +32,7 @@ urlpatterns = [
     path('account/', include('account_module.urls')),
     path('service/', include('services_module.urls')),
     path('conversations/', include('ChatAPI.urls')),
+    path('favicon.ico', RedirectView.as_view(url='/statics/favicon.ico', permanent=True)),
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT})
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
