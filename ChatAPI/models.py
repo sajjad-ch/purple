@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django_jalali.db import models as jmodels
 
 
 # Create your models here.
@@ -20,7 +21,7 @@ class Message(models.Model):
     text = models.CharField(max_length=200, blank=True)
     attachment = models.FileField(blank=True)
     conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = jmodels.jDateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-timestamp',)
