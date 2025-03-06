@@ -969,7 +969,7 @@ class GetSupservicesFromArtist(APIView):
                 supservices = SupServiceModel.objects.filter(id__in=supservices)
                 serializer = SupServiceSerializer(supservices, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response({'error': 'No supservices found in this artist.'}, status=status.HTTP_404_NOT)
+            return Response({'error': 'No supservices found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'error': 'No services found in this artist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
