@@ -732,7 +732,7 @@ class StoryAPIView(APIView):
                     # Remove the temporary file
                     os.remove(temp_file_path)
 
-                    if duration > 30:
+                    if duration > 36:
                         return Response({'error': 'Video duration should be less than 10 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
                     # if width != 600 or height != 1068:
