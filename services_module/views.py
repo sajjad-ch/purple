@@ -443,8 +443,8 @@ class PostAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(post_content)
                 width, height = image.size
-                if width != height:
-                    return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
+                # if width != height:
+                #     return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             elif file_extension in ('mp4', 'mpeg', 'mpg'):
                 try:
                     # Create a temporary file
@@ -465,8 +465,8 @@ class PostAPIView(APIView):
                     if duration > 60:
                         return Response({'error': 'Video duration should be less than 60 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    if width != height:
-                        return Response({'error': 'Video resolution must be 1x1.'}, status=status.HTTP_400_BAD_REQUEST)
+                    # if width != height:
+                    #     return Response({'error': 'Video resolution must be 1x1.'}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     return Response({'error': f'An error occurred while processing the video: {str(e)}'},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -605,8 +605,8 @@ class CertificateAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(post_content)
                 width, height = image.size
-                if width != height:
-                    return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
+                # if width != height:
+                #     return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(user=user)
