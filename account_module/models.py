@@ -139,6 +139,7 @@ class SaloonModel(models.Model):
     management = models.CharField(max_length=255, verbose_name='مدیریت')
     address = models.CharField(max_length=255, verbose_name='آدرس')
     saloon_rank = models.CharField(choices=rank_choices, max_length=10, verbose_name='رنک سالن')
+    saloon_profile_picture = models.ImageField(upload_to='Images/', default='avatar.jpg', null=True, blank=True)
 
     class Meta:
         verbose_name = 'سالن'
