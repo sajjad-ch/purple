@@ -114,7 +114,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "message": "Message received",
                         "sender": sender_id,
                         "text": message_text,
-                        "timestamp": jdatetime(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+                        "timestamp": jdatetime.fromgregorian(datetime=now()).strftime("%Y-%m-%d %H:%M:%S")
                         })
                 )
                 return  
