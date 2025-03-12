@@ -171,12 +171,12 @@ class FollowView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         follower_user = request.user
-        if hasattr(follower_user, 'normal_user'):
-            if hasattr(followed_user, 'artist'):
+        if hasattr(follower_user, 'normal_user') and not hasattr(follower_user, 'artist') and not hasattr(follower_user, 'saloon'):
+            if hasattr(followed_user, 'artist') and not hasattr(followed_user, 'saloon'):
                 artist = ArtistModel.objects.filter(artist=followed_user).first()
                 ArtistFollow.objects.get_or_create(follower=artist, followed_user=follower_user)
                 return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
-            elif hasattr(followed_user, 'saloon'):
+            elif hasattr(followed_user, 'saloon') and not hasattr(followed_user, 'artist'):
                 saloon = SaloonModel.objects.filter(saloon=followed_user).first()
                 SaloonFollow.objects.get_or_create(follower=saloon, followed_user=follower_user)
                 return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
@@ -184,12 +184,12 @@ class FollowView(APIView):
                 return Response({'error': 'Normal users can only follow artists and saloons.'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        elif hasattr(follower_user, 'saloon'):
-            if hasattr(followed_user, 'artist'):
+        elif hasattr(follower_user, 'saloon') and not hasattr(follower_user, 'artist'):
+            if hasattr(followed_user, 'artist') and not hasattr(followed_user, 'saloon'):
                 artist = ArtistModel.objects.filter(artist=followed_user).first()
                 ArtistFollow.objects.get_or_create(follower=artist, followed_user=follower_user)
                 return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
-            elif hasattr(followed_user, 'saloon'):
+            elif hasattr(followed_user, 'saloon') and not hasattr(followed_user, 'artist'):
                 saloon = SaloonModel.objects.filter(saloon=followed_user).first()
                 SaloonFollow.objects.get_or_create(follower=saloon, followed_user=follower_user)
                 return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
@@ -197,12 +197,12 @@ class FollowView(APIView):
                 return Response({'error': 'Normal users can only follow artists and saloons.'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        elif hasattr(follower_user, 'artist'):
-            if hasattr(followed_user, 'artist'):
+        elif hasattr(follower_user, 'artist') and not hasattr(follower_user, 'saloon'):
+            if hasattr(followed_user, 'artist') and not hasattr(followed_user, 'saloon'):
                 artist = ArtistModel.objects.filter(artist=followed_user).first()
                 ArtistFollow.objects.get_or_create(follower=artist, followed_user=follower_user)
                 return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
-            elif hasattr(followed_user, 'saloon'):
+            elif hasattr(followed_user, 'saloon') and not hasattr(followed_user, 'artist'):
                 saloon = SaloonModel.objects.filter(saloon=followed_user).first()
                 SaloonFollow.objects.get_or_create(follower=saloon, followed_user=follower_user)
                 return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
