@@ -92,14 +92,22 @@ WSGI_APPLICATION = 'purple.wsgi.application'
 ASGI_APPLICATION = "purple.asgi.application"
 
 # for staging
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+IS_SERVER = os.getenv("IS_SERVER", "False") == "True"
+if IS_SERVER:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [('127.0.0.1', 6379)],
+            },
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
 
 CACHES = {
     "default": {
@@ -108,11 +116,6 @@ CACHES = {
     }
 }
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     },
-# }
 
 DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
 

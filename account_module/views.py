@@ -12,8 +12,9 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view
-import json
-
+import json, os
+from dotenv import load_dotenv
+load_dotenv()
 
 class HomeAPIView(APIView):
     def get(self, request):
@@ -22,6 +23,21 @@ class HomeAPIView(APIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class GetPublickKeyForUser(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        user_id = request.user.id
+        user = User.objects.filter(id=user_id).first()
+        if user:
+            public_key = request.data.get('public_key')
+            user.public_key = public_key
+            user.save()
+            return Response({'message': f'{os.getenv('Public_key')}'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'There is no such user.'}, status=status.HTTP_400_BAD_REQUEST) 
 
 
 class SignUpAPIView(APIView):

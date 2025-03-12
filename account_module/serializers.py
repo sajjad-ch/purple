@@ -83,7 +83,7 @@ class SaloonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SaloonModel
-        fields = ['name', 'management', 'follower_count', 'following_count', 'address']
+        fields = ['id', 'name', 'management', 'follower_count', 'following_count', 'address', 'saloon_profile_picture']
 
     def get_follower_count(self, obj):
         return obj.get_follower_count()
@@ -389,7 +389,7 @@ class NormalUserUpdateSerializer(serializers.ModelSerializer):
 class SaloonUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaloonModel
-        fields = ['name', 'management', 'address']
+        fields = ['name', 'management', 'address', 'saloon_profile_picture']
 
 
 class ArtistUpdateSerializer(serializers.ModelSerializer):
@@ -431,6 +431,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             saloon = instance.saloon
             saloon.name = saloon_data.get('name', saloon.name)
             saloon.management = saloon_data.get('management', saloon.management)
+            saloon.saloon_profile_picture = saloon_data.get('saloon_profile_picture', saloon.saloon_profile_picture)
             saloon.save()
 
         # Update ArtistModel fields if exists

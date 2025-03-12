@@ -29,15 +29,20 @@ class PostSerializerGet(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
+    saloon_profile_picture_post = serializers.SerializerMethodField()
 
     class Meta:
         model = PostModel
-        fields = ['id', 'post_content', 'caption', 'user', 'name', 'profile_picture', 'likes']
+        fields = ['id', 'post_content', 'caption', 'user', 'name', 'profile_picture', 'likes', 'saloon_profile_picture_post']
     
     def get_profile_picture(self, obj):
         profile_picture = obj.user.profile_picture.url
         return profile_picture
     
+    def get_saloon_profile_picture_post(self, obj):
+        if obj.saloon:
+            return obj.saloon.saloon_profile_picture.url
+
     def get_name(self, obj):
         if hasattr(obj.user, 'artist'):
             return obj.user.first_name + ' ' + obj.user.last_name
@@ -52,7 +57,7 @@ class PostSerializerGet(serializers.ModelSerializer):
 class PostSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = PostModel
-        fields = ['post_content', 'caption']
+        fields = ['post_content', 'caption', 'saloon']
 
         def create(self, validated_data):
             validated_data['user'] = self.context['request'].user
@@ -62,13 +67,18 @@ class PostSerializerPost(serializers.ModelSerializer):
 class StorySerializerGet(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
+    saloon_profile_picture_story = serializers.SerializerMethodField()
     class Meta:
         model = StoryModel
-        fields = ['story_content', 'name', 'profile_picture']
+        fields = ['story_content', 'name', 'profile_picture', 'saloon_profile_picture_story']
 
     def get_profile_picture(self, obj):
         profile_picture = obj.user.profile_picture.url
         return profile_picture
+
+    def saloon_profile_picture_story(self, obj):
+        if obj.saloon:
+            return obj.saloon.saloon_profile_picture.url
 
     def get_name(self, obj):
         first_name = f'{obj.user.first_name} {obj.user.last_name}'
@@ -83,7 +93,7 @@ class StorySerializerPost(serializers.ModelSerializer):
     duration_time = serializers.SerializerMethodField()
     class Meta:
         model = StoryModel
-        fields = ['story_content', 'duration_time']
+        fields = ['story_content', 'duration_time', 'saloon']
 
     def get_duration_time(self, obj):
         return self.context.get('duration_time', None)
@@ -95,19 +105,24 @@ class StorySerializerPost(serializers.ModelSerializer):
 
 
 class HighlightSerializerGet(serializers.ModelSerializer):
+    saloon_profile_picture_highlight = serializers.SerializerMethodField()
     class Meta:
         model = HighlightModel
-        fields = ['highlight_content', 'user', 'created', 'text']
+        fields = ['highlight_content', 'user', 'created', 'text', 'saloon_profile_picture_highlight']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 
+    def get_saloon_profile_picture_highlight(self, obj):
+        if obj.saloon:
+            return obj.saloon.saloon_profile_picture.url
+
 
 class HighlightSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = HighlightModel
-        fields = ['highlight_content', 'text']
+        fields = ['highlight_content', 'text', 'saloon']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -197,7 +212,7 @@ class SaloonVisitsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SaloonModel
-        fields = ['id', 'name', 'management', 'url', 'saloonDetailForArtistAndServices', 'GetAllServicesFromSaloon', 'profile_picture', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks']
+        fields = ['id', 'name', 'management', 'url', 'saloonDetailForArtistAndServices', 'GetAllServicesFromSaloon', 'profile_picture', 'profile_url', 'address', 'saloon_rank', 'average_ranks', 'ranks', 'saloon_profile_picture']
 
     def get_saloonDetailForArtistAndServices(self, obj):
         request = self.context.get('request')

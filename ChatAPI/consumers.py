@@ -1,5 +1,5 @@
 import base64
-import json
+import json, os
 import secrets
 from datetime import datetime
 from django.utils.timezone import now
@@ -15,38 +15,85 @@ from account_module.models import User
 from .models import Message, Conversation
 from .serializers import MessageSerializer
 
-# encryption library
+from decouple import config
+from cryptography.hazmat.primitives import serialization
+
+# Load keys from .env
+SERVER_PUBLIC_KEY = config("SERVER_PUBLIC_KEY").replace("\\n", "\n")
+SERVER_PRIVATE_KEY = config("SERVER_PRIVATE_KEY").replace("\\n", "\n")
+
+# Deserialize keys
+server_public_key = serialization.load_pem_public_key(SERVER_PUBLIC_KEY.encode())
+server_private_key = serialization.load_pem_private_key(
+    SERVER_PRIVATE_KEY.encode(),
+    password=None,
+)
+
+import base64
+
+def is_base64(s):
+    try:
+        base64.b64decode(s)
+        return True
+    except Exception:
+        return False
+
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.serialization import load_pem_public_key
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from cryptography.hazmat.backends import default_backend
 
+def decrypt_message(encrypted_message, private_key):
+    """
+    Decrypt a message using the provided private key.
 
-def encrypt_message(public_key_pem, message):
-    public_key = load_pem_public_key(public_key_pem.encode(), backend=default_backend())
-    ciphertext = public_key.encrypt(
-        message.encode(),
+    Args:
+        encrypted_message (str): The base64-encoded encrypted message.
+        private_key (Union[str, RSAPrivateKey]): The private key as a PEM-encoded string or RSAPrivateKey object.
+
+    Returns:
+        str: The decrypted message.
+    """
+    # If private_key is a PEM-encoded string, deserialize it
+    if isinstance(private_key, str):
+        private_key = serialization.load_pem_private_key(
+            private_key.encode(),  # Convert the PEM string to bytes
+            password=None,
+        )
+
+    # Decrypt the message
+    decrypted_message = private_key.decrypt(
+        base64.b64decode(encrypted_message),  # Decode the base64-encoded message
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
         )
     )
-    return ciphertext
+    return decrypted_message.decode('utf-8') 
 
-def decrypt_message(private_key_pem, ciphertext):
-    private_key = load_pem_private_key(private_key_pem.encode(), password=None, backend=default_backend())
-    plaintext = private_key.decrypt(
-        bytes.fromhex(ciphertext),
+
+# def encrypt_message(message, public_key_pem):
+#     public_key = serialization.load_pem_public_key(public_key_pem)
+#     encrypted_message = public_key.encrypt(
+#         message.encode('utf-8'),
+#         padding.OAEP(
+#             mgf=padding.MGF1(algorithm=hashes.SHA256()),
+#             algorithm=hashes.SHA256(),
+#             label=None
+#         )
+#     )
+#     return base64.b64encode(encrypted_message).decode('utf-8')
+def encrypt_message(message, public_key):
+    if isinstance(message, str):
+        message = message.encode('utf-8')
+    encrypted_message = public_key.encrypt(
+        message,  # Ensure this is bytes
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
         )
     )
-    return plaintext.decode()
-
+    return base64.b64encode(encrypted_message).decode('utf-8')
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -72,18 +119,35 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = User.objects.filter(id=user_id).first()
         user.status = status
         user.save()
+
+
     async def receive(self, text_data=None, bytes_data=None):
         try:
             text_data_json = json.loads(text_data)
-            message = text_data_json.get("message")
+            encrypted_message  = text_data_json.get("message")
+            print('103: Encrypted message received:', encrypted_message)
+            if not is_base64(encrypted_message):
+                await self.send(text_data=json.dumps({"error": "Invalid message format: expected base64-encoded string"}))
+                return
             recipient_username = text_data_json.get("recipient")
             sender_id = self.scope["user_id"]  # Get the sender's user ID
-
+            print('Type of server_private_key:', type(server_private_key))
+            decrypted_message = decrypt_message(encrypted_message, server_private_key)
+            print('106: Decrypted message:', decrypted_message)
             recipient = await sync_to_async(User.objects.get)(phone_number=recipient_username)
+            recipient_public_key_pem = recipient.public_key
+            if not recipient_public_key_pem:
+                await self.send(text_data=json.dumps({"error": "Recipient's public key not found"}))
+                return
+            from cryptography.hazmat.primitives import serialization
+            recipient_public_key = serialization.load_pem_public_key(recipient_public_key_pem.encode())
+            print('114: Recipient public key loaded:', recipient_public_key)
+            re_encrypted_message = encrypt_message(decrypted_message, recipient_public_key)
+            print('116: Re-encrypted message:', re_encrypted_message)
 
             # Add sender ID to the data before broadcasting
             text_data_json["sender"] = sender_id
-            text_data_json["message"] = message
+            text_data_json["message"] = re_encrypted_message
 
 
             await self.channel_layer.group_send(
@@ -104,8 +168,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             sender_id = event.get("sender")  # Get sender from event
             current_user = self.scope["user_id"]
-            message_text = event.get("message")
+            message = event.get("message")
+            recipient_username = event.get("recipient")
             timestamp = now().isoformat()
+            receiver = await sync_to_async(User.objects.get)(phone_number=recipient_username)
+            sender_user = await sync_to_async(User.objects.get)(id=int(sender_id))
+            conversation = await sync_to_async(Conversation.objects.get)(id=int(self.room_name))
+            encrypted_message = event["message"]
+            attachment = event.get("attachment")
 
             # Prevent duplicate saving by only allowing the sender to save
             if current_user != sender_id:
@@ -113,19 +183,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     text_data=json.dumps({
                         "message": "Message received",
                         "sender": sender_id,
-                        "text": message_text,
+                        "text": message,
                         "timestamp": jdatetime.fromgregorian(datetime=now()).strftime("%Y-%m-%d %H:%M:%S")
                         })
                 )
                 return  
-
-            encrypted_message = event["message"]
-            attachment = event.get("attachment")
-            recipient_username = event.get("recipient")
-
-            receiver = await sync_to_async(User.objects.get)(phone_number=recipient_username)
-            sender_user = await sync_to_async(User.objects.get)(id=int(sender_id))
-            conversation = await sync_to_async(Conversation.objects.get)(id=int(self.room_name))
 
             if attachment:
                 file_str, file_ext = attachment["data"], attachment["format"]
@@ -135,13 +197,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 _message = await sync_to_async(Message.objects.create)(
                     sender=sender_user,
                     attachment=file_data,
-                    text=encrypted_message,
+                    text=message,
                     conversation=conversation,
                 )
             else:
                 _message = await sync_to_async(Message.objects.create)(
                     sender=sender_user,
-                    text=encrypted_message,
+                    text=message,
                     conversation_id=conversation,
                 )
 

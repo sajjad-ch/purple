@@ -780,7 +780,7 @@ class HighlightAPIView(APIView):
     def get(self, request):
         user = request.user
         if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
-            return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'Only artists and saloons can create Highlight.'}, status=status.HTTP_403_FORBIDDEN)
         highlights = HighlightModel.objects.filter(user=user)
         serializer: HighlightSerializerGet = HighlightSerializerGet(highlights, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -788,7 +788,7 @@ class HighlightAPIView(APIView):
     def post(self, request):
         user  = request.user
         if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
-            return Response({'error': 'Only artists and saloons can create story.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'Only artists and saloons can create Highlight.'}, status=status.HTTP_403_FORBIDDEN)
         highlight_serializer: HighlightSerializerPost = HighlightSerializerPost(data=request.data, context={'request': request})
         if highlight_serializer.is_valid():
             highlight_content = highlight_serializer.validated_data['highlight_content']

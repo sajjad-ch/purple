@@ -9,6 +9,7 @@ urlpatterns = [
     path('token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('is_authenticated/<str:token>/', views.verify_authenticattion, name='is_authenticated'),
+    path('user_public_key/', views.GetPublickKeyForUser.as_view(), name='get-public-key'),
     path('sign_up/', views.SignUpAPIView.as_view(), name='signup-page'),
     path('verify/', views.VerifyKeyView.as_view(), name='verify-page'),
     path('profile/', views.ProfileView.as_view(), name='profile-page'),

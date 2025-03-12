@@ -50,7 +50,6 @@ class User(AbstractUser):
     city = models.CharField(max_length=128, null=True, blank=True)
     birth_date = jmodels.jDateField(verbose_name='تاریخ تولد', null=True, blank=True)
     public_key = models.TextField(blank=True, null=True)
-    private_key = models.TextField(blank=True, null=True)
     status = models.CharField(choices=[('online', 'online'), ('offline', 'offline')], max_length=10, default='offline', blank=True, null=True, verbose_name='آنلاین / آفلاین (0/1)')
     total_active_time = models.DurationField(default=timedelta(0)) 
     last_activity_time = models.DateTimeField(null=True, blank=True)

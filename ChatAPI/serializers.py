@@ -28,6 +28,7 @@ class ConversationListSerializer(serializers.ModelSerializer):
         request_user = self.context.get('request').user
         other_user = instance.receiver if instance.initiator == request_user else instance.initiator
         return {
+            'roll': 'saloon' if hasattr(other_user, 'saloon') else 'artist' if hasattr(other_user, 'artist') else 'normal_user',
             'name': other_user.first_name + ' ' + other_user.last_name if other_user.first_name else other_user.username,
             'username': other_user.username,
             'phone_number': other_user.phone_number,
