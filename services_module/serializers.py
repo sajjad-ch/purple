@@ -76,7 +76,7 @@ class StorySerializerGet(serializers.ModelSerializer):
         profile_picture = obj.user.profile_picture.url
         return profile_picture
 
-    def saloon_profile_picture_story(self, obj):
+    def get_saloon_profile_picture_story(self, obj):
         if obj.saloon:
             return obj.saloon.saloon_profile_picture.url
 
