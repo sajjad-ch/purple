@@ -35,7 +35,7 @@ class GetPublickKeyForUser(APIView):
             public_key = request.data.get('public_key')
             user.public_key = public_key
             user.save()
-            return Response({'message': f'{os.getenv('Public_key')}'}, status=status.HTTP_201_CREATED)
+            return Response({'message': f'{os.getenv('SERVER_PUBLIC_KEY')}'}, status=status.HTTP_201_CREATED)
         else:
             return Response({'message': 'There is no such user.'}, status=status.HTTP_400_BAD_REQUEST) 
 
