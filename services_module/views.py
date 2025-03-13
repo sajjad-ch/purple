@@ -944,11 +944,11 @@ class GetAllServicesFromSaloon(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, saloon_id):
-        saloon_artist = ArtistModel.objects.filter(saloon_artists=saloon_id).all()
+        saloon_artist = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
         if saloon_artist:
-            supservice = UserServicesModel.objects.filter(artist__in=saloon_artist).all()
+            supservice = UserServicesModel.objects.filter(artist__in=saloon_artist).values_list('supservice_id', flat=True)
             if supservice:
-                services = SupServiceModel.objects.filter(id__in=supservice).all()
+                services = SupServiceModel.objects.filter(id__in=supservice).values_list('service_id', flat=True)
                 if services:
                     services = ServiceModel.objects.filter(service_code__in=services)
                     serializer = ServiceSerializer(services, many=True, context={'request': request})
