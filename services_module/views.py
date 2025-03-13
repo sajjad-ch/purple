@@ -980,8 +980,8 @@ class GetSupserviceFromServiceAndSaloon(APIView):
             if usersupservices:
                 serializer = UserServiceSerializer(usersupservices, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'No usersupservices found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'No artists found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetArtistFromSaloonAndSupservice(APIView):
