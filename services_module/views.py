@@ -974,9 +974,9 @@ class GetSupserviceFromServiceAndSaloon(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, saloon_id, service_id):
-        saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
+        saloon_artists = ArtistModel.objects.filter(saloon_artists=saloon_id).all()
         if saloon_artists:
-            usersupservices = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice__service__service_code=service_id)
+            usersupservices = UserServicesModel.objects.filter(artist__in=saloon_artists, supservice__service__service_code=service_id).all()
             if usersupservices:
                 serializer = UserServiceSerializer(usersupservices, many=True, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
