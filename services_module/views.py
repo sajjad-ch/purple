@@ -955,7 +955,7 @@ class GetAllServicesFromSaloon(APIView):
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
             return Response({'error': 'No supservice found'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)        
+        return Response({'error': 'No saloon found'}, status=status.HTTP_404_NOT_FOUND)        
 
 
 class GetSupservicesFromArtist(APIView):
