@@ -945,12 +945,16 @@ class GetAllServicesFromSaloon(APIView):
 
     def get(self, request, saloon_id):
         saloon_artist = ArtistModel.objects.filter(saloon_artists=saloon_id).values_list('saloon_artists', flat=True)
+        print(saloon_artist)
         if saloon_artist:
             supservice = UserServicesModel.objects.filter(artist__in=saloon_artist).values_list('supservice_id', flat=True)
+            print(supservice)
             if supservice:
                 services = SupServiceModel.objects.filter(id__in=supservice).values_list('service_id', flat=True)
+                print(services)
                 if services:
                     services = ServiceModel.objects.filter(service_code__in=services)
+                    print(services)
                     serializer = ServiceSerializer(services, many=True, context={'request': request})
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response({'error': 'No services found in this saloon.'}, status=status.HTTP_404_NOT_FOUND)
