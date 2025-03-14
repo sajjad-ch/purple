@@ -256,13 +256,13 @@ class CheckFollowAPIView(APIView):
         current_user = request.user
         followed = request.data.get('id')
         if is_saloon.lower() == 'true':
-            follow_instance = SaloonFollow.objects.filter(follower=int(followed), followed_user=current_user.pk)
+            follow_instance = SaloonFollow.objects.filter(follower_id=int(followed), followed_user_id=current_user.pk)
             if follow_instance.exists():
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
             else:
                 return Response({'is_following': False}, status=status.HTTP_400_BAD_REQUEST)
         elif is_saloon.lower() == 'false':
-            follow_instance = ArtistFollow.objects.filter(follower=int(followed), followed_user=current_user.pk)
+            follow_instance = ArtistFollow.objects.filter(follower_id=int(followed), followed_user_id=current_user.pk)
             if follow_instance.exists():           
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
             else:
