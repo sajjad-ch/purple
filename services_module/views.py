@@ -4,7 +4,7 @@ from itertools import groupby
 from operator import itemgetter
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now, timedelta
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from account_module.serializers import SaloonProfileSerializer, ArtistProfileSerializer
 from account_module.utils import send_verification_code
 from .serializers import *
@@ -1041,7 +1041,7 @@ class UserOtherVisitingTimeAPIView(APIView):
     def get(self, request):
         user = request.user
         # if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
-        visits = VisitingTimeModel.objects.filter(user=user, status__in=['waiting for confirmation', 'rejected', 'waiting for deposit']).all()
+        visits = VisitingTimeModel.objects.filter(Q(status='waiting for confirmation') | Q(status='rejected') | Q('waiting for deposit'), user=user).all()
         serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
         # else:
