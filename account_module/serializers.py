@@ -224,7 +224,7 @@ class SaloonProfileSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         comments = []
-        visits = VisitingTimeModel.objects.filter(saloon=obj).all()
+        visits = VisitingTimeModel.objects.filter(saloon=obj, rank__isnull=True).all()
         for visit in visits:
             comments.append({'commenter': visit.user.first_name + ' ' + visit.user.last_name if visit.user else '',
                               'commenter_profile_picture': visit.user.profile_picture.url if visit.user else '',
@@ -333,7 +333,7 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         comments = []
-        visits = VisitingTimeModel.objects.filter(artist=obj).all()
+        visits = VisitingTimeModel.objects.filter(artist=obj, rank__isnull=True).all()
         for visit in visits:
             comments.append({'commenter': visit.user.first_name + ' ' + visit.user.last_name if visit.user else '',
                              'commenter_profile_picture': visit.user.profile_picture.url if visit.user else '',
