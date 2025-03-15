@@ -249,16 +249,19 @@ class CheckFollowAPIView(APIView):
 
     def post(self, request):
         is_saloon: str = request.data.get('is_saloon')
-        current_user = request.user
+        current_user = request.user.id
+        user = User.objects.filter(pk=current_user).first()
         followed = request.data.get('id')
         if is_saloon.lower() == 'true':
-            follow_instance = SaloonFollow.objects.filter(follower_id=int(followed), followed_user_id=current_user.pk)
+            saloon = SaloonModel.objects.filter(id=followed).first()
+            follow_instance = SaloonFollow.objects.filter(follower=saloon, followed_user=user)
             if follow_instance.exists():
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
             else:
                 return Response({'is_following': False}, status=status.HTTP_400_BAD_REQUEST)
         elif is_saloon.lower() == 'false':
-            follow_instance = ArtistFollow.objects.filter(follower_id=int(followed), followed_user_id=current_user.pk)
+            artist = ArtistModel.objects.filter(id=followed).first()
+            follow_instance = ArtistFollow.objects.filter(follower=artist, followed_user=user)
             if follow_instance.exists():           
                 return Response({'is_following': True}, status=status.HTTP_200_OK)
             else:
