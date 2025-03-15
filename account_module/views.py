@@ -210,7 +210,7 @@ class FollowView(APIView):
     def delete(self, request, user_id):
         is_saloon = request.data.get('is_saloon')
 
-        follower_user = request.user
+        follower_user = request.user.id
         user = User.objects.filter(pk=follower_user).first()
         # if hasattr(followed_user, 'normal_user') and not NormalUserModel.objects.filter(normal_user=followed_user).exists():
         #     normal_user = NormalUserModel.objects.filter(normal_user=followed_user).first()
