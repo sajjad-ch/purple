@@ -125,29 +125,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             text_data_json = json.loads(text_data)
             encrypted_message  = text_data_json.get("message")
-            print('103: Encrypted message received:', encrypted_message)
-            if not is_base64(encrypted_message):
-                await self.send(text_data=json.dumps({"error": "Invalid message format: expected base64-encoded string"}))
-                return
+            # print('103: Encrypted message received:', encrypted_message)
+            # if not is_base64(encrypted_message):
+            #     await self.send(text_data=json.dumps({"error": "Invalid message format: expected base64-encoded string"}))
+            #     return
             recipient_username = text_data_json.get("recipient")
             sender_id = self.scope["user_id"]  # Get the sender's user ID
-            print('Type of server_private_key:', type(server_private_key))
-            decrypted_message = decrypt_message(encrypted_message, server_private_key)
-            print('106: Decrypted message:', decrypted_message)
+            # print('Type of server_private_key:', type(server_private_key))
+            # decrypted_message = decrypt_message(encrypted_message, server_private_key)
+            # print('106: Decrypted message:', decrypted_message)
             recipient = await sync_to_async(User.objects.get)(phone_number=recipient_username)
-            recipient_public_key_pem = recipient.public_key
-            if not recipient_public_key_pem:
-                await self.send(text_data=json.dumps({"error": "Recipient's public key not found"}))
-                return
-            from cryptography.hazmat.primitives import serialization
-            recipient_public_key = serialization.load_pem_public_key(recipient_public_key_pem.encode())
-            print('114: Recipient public key loaded:', recipient_public_key)
-            re_encrypted_message = encrypt_message(decrypted_message, recipient_public_key)
-            print('116: Re-encrypted message:', re_encrypted_message)
+            # recipient_public_key_pem = recipient.public_key
+            # if not recipient_public_key_pem:
+            #     await self.send(text_data=json.dumps({"error": "Recipient's public key not found"}))
+            #     return
+            # from cryptography.hazmat.primitives import serialization
+            # recipient_public_key = serialization.load_pem_public_key(recipient_public_key_pem.encode())
+            # print('114: Recipient public key loaded:', recipient_public_key)
+            # re_encrypted_message = encrypt_message(decrypted_message, recipient_public_key)
+            # print('116: Re-encrypted message:', re_encrypted_message)
 
             # Add sender ID to the data before broadcasting
             text_data_json["sender"] = sender_id
-            text_data_json["message"] = re_encrypted_message
+            text_data_json["message"] = encrypted_message     # when uncommenting it should be re_encrypted_message
 
 
             await self.channel_layer.group_send(
