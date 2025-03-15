@@ -341,7 +341,7 @@ class VisitingTimeSerializerPostNew(serializers.ModelSerializer):
 
     class Meta:
         model = VisitingTimeModel
-        fields = ['action', 'exact_time', 'price']
+        fields = ['action', 'exact_time', 'price', 'suggested_time']
 
 
 class VisitingTimeSerializerGetNew(serializers.ModelSerializer):
