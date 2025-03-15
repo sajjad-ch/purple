@@ -1041,7 +1041,7 @@ class UserOtherVisitingTimeAPIView(APIView):
     def get(self, request):
         user = request.user
         # if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
-        visits = VisitingTimeModel.objects.filter(user=user).all()
+        visits = VisitingTimeModel.objects.filter(user=user).exclude(status='completed').exclude(status='rejected').all()
         serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
         # else:
@@ -1186,7 +1186,7 @@ class GetConfirmVisitAPIView(APIView):
         user = request.user
         dates = list(request.data.get('dates'))
         if hasattr(user, 'artist'):
-            user_morning_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='morning', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed']).all().order_by('-suggested_date')
+            user_morning_visiting_time = VisitingTimeModel.objects.filter(artist=user.artist.pk, suggested_date__in=dates, suggested_time='morning', status__in=['waiting for deposit', 'waiting for confirmation', 'confirmed', 'rejected']).all().order_by('-suggested_date')
             if user_morning_visiting_time:
                 morning_serializer = VisitingTimeSerializerGet(user_morning_visiting_time, many=True, context={'request': request})
             else:
