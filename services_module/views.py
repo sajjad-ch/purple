@@ -1041,7 +1041,7 @@ class UserOtherVisitingTimeAPIView(APIView):
     def get(self, request):
         user = request.user
         # if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
-        visits = VisitingTimeModel.objects.filter(Q(status='waiting for confirmation') | Q(status='rejected') | Q('waiting for deposit'), user=user).all()
+        visits = VisitingTimeModel.objects.filter(user=user).all()
         serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
         # else:
