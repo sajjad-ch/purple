@@ -168,13 +168,14 @@ class FollowView(APIView):
     def post(self, request, user_id):
         is_saloon = request.data.get('is_saloon')
         follower_user = request.user.id
+        user = User.objects.filter(pk=follower_user).first()
         if str.lower(is_saloon) == 'false':
             artist = ArtistModel.objects.filter(pk=user_id).first()
-            ArtistFollow.objects.get_or_create(follower=artist, followed_user=follower_user)
+            ArtistFollow.objects.get_or_create(follower=artist, followed_user=user)
             return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
         elif str.lower(is_saloon) == 'true':
             saloon = SaloonModel.objects.filter(pk=user_id).first()
-            SaloonFollow.objects.get_or_create(follower=saloon, followed_user=follower_user)
+            SaloonFollow.objects.get_or_create(follower=saloon, followed_user=user)
             return Response({'message': 'Followed successfully.'}, status=status.HTTP_201_CREATED)
         else:
             return Response({'error': 'Normal users can only follow artists and saloons.'},
@@ -210,6 +211,7 @@ class FollowView(APIView):
         is_saloon = request.data.get('is_saloon')
 
         follower_user = request.user
+        user = User.objects.filter(pk=follower_user).first()
         # if hasattr(followed_user, 'normal_user') and not NormalUserModel.objects.filter(normal_user=followed_user).exists():
         #     normal_user = NormalUserModel.objects.filter(normal_user=followed_user).first()
         #     follow_instance = NormalUserFollow.objects.filter(follower=normal_user,
@@ -223,7 +225,7 @@ class FollowView(APIView):
         if str.lower(is_saloon) == 'true':
             saloon = SaloonModel.objects.filter(pk=user_id).first()
             follow_instance = SaloonFollow.objects.filter(follower=saloon,
-                                                          followed_user=follower_user)
+                                                          followed_user=user)
             if follow_instance.exists():
                 follow_instance.delete()
                 return Response({'message': 'Unfollowed successfully.'}, status=status.HTTP_200_OK)
@@ -232,7 +234,7 @@ class FollowView(APIView):
         if str.lower(is_saloon) == 'false':
             artist = ArtistModel.objects.filter(pk=user_id).first()
             follow_instance = ArtistFollow.objects.filter(follower=artist,
-                                                          followed_user=follower_user)
+                                                          followed_user=user)
             if follow_instance.exists():
                 follow_instance.delete()
                 return Response({'message': 'Unfollowed successfully.'}, status=status.HTTP_200_OK)
