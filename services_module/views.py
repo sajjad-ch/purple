@@ -286,9 +286,13 @@ class HandingVisitingView(APIView):
                 if username != None:
                     customer = User.objects.filter(username=username).first()
                     if customer != None:
+                        exact_time = str(serializer.validated_data.get('exact_time'))
+                        suggested_hour, suggested_date = exact_time.split(' ')
                         serializer.validated_data['artist'] = user.artist
                         serializer.validated_data['saloon'] = user.artist.saloon_artists
                         serializer.validated_data['user'] = customer
+                        serializer.validated_data['suggested_hour'] = suggested_hour
+                        serializer.validated_data['suggested_date'] = suggested_date
                         serializer.validated_data['price'] = user_service.suggested_price
                         serializer.validated_data['confirmation_time'] = jdatetime.datetime.now()
                         serializer.validated_data['payment_due_time'] = jdatetime.datetime.now() + timedelta(minutes=40)
@@ -1324,7 +1328,7 @@ class PostConfirmVisitAPIView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, visit_id):
-        visit = get_object_or_404(VisitingTimeModel, id=visit_id, status='waiting for confirmation')
+        visit = get_object_or_404(VisitingTimeModel, id=visit_id, status__in=['waiting for confirmation', 'waiting for deposit', 'confirmed'])
         user_id = request.user.pk
         user = request.user
         supservice_price = UserServicesModel.objects.filter(supservice=visit.service, artist=visit.artist).first().suggested_price
