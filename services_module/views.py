@@ -1342,6 +1342,7 @@ class PostConfirmVisitAPIView(APIView):
             action = serializer.validated_data.get('action')
             suggested_time = serializer.validated_data.get('suggested_time')
             exact_time = serializer.validated_data.get('exact_time')
+            suggested_date, suggested_hour = exact_time.split(' ') 
 
             if action == 'confirm':
                 if not exact_time:
@@ -1350,6 +1351,8 @@ class PostConfirmVisitAPIView(APIView):
                 visit.status = 'waiting for deposit'
                 visit.exact_time = exact_time
                 visit.suggested_time = suggested_time
+                visit.suggested_hour = suggested_hour
+                visit.suggested_date = suggested_date
                 visit.confirmation_time = timezone.now()
                 visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
                 visit.price = supservice_price
