@@ -300,7 +300,7 @@ class HandingVisitingView(APIView):
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
                     else:
                         exact_time = str(serializer.validated_data.get('exact_time'))
-                        suggested_hour, suggested_date = exact_time.split(' ')
+                        suggested_date, suggested_hour = exact_time.split(' ')
                         unregistered_user_name = request.data.get('name')
                         unregistered_phone_number = request.data.get('phone_number')
                         UnregisteredUser(name=unregistered_user_name, phone_number=unregistered_phone_number).save()
