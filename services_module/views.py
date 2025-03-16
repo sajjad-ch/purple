@@ -280,14 +280,14 @@ class HandingVisitingView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         if hasattr(user, 'artist'):
             serializer = HandigVisitSerializer(data=request.data)
+            exact_time = str(request.data.get('exact_time'))
+            suggested_hour, suggested_date = exact_time.split(' ')
             if serializer.is_valid():
                 username = request.data.get('username')
                 user_service = UserServicesModel.objects.filter(artist=user.artist.pk).first()
                 if username != None:
                     customer = User.objects.filter(username=username).first()
                     if customer != None:
-                        exact_time = str(serializer.validated_data.get('exact_time'))
-                        suggested_hour, suggested_date = exact_time.split(' ')
                         serializer.validated_data['artist'] = user.artist
                         serializer.validated_data['saloon'] = user.artist.saloon_artists
                         serializer.validated_data['user'] = customer
@@ -305,6 +305,8 @@ class HandingVisitingView(APIView):
                         unregistered_user = UnregisteredUser.objects.filter(phone_number=unregistered_phone_number).first()
                         serializer.validated_data['artist'] = user.artist
                         serializer.validated_data['saloon'] = user.artist.saloon_artists
+                        serializer.validated_data['suggested_hour'] = suggested_hour
+                        serializer.validated_data['suggested_date'] = suggested_date
                         serializer.validated_data['unregistered_user'] = unregistered_user
                         serializer.validated_data['price'] = user_service.suggested_price
                         serializer.validated_data['confirmation_time'] = jdatetime.datetime.now()
