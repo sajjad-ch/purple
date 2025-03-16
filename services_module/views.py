@@ -408,30 +408,24 @@ class PostAPIView(APIView):
     def get(self, request):
         user = request.user
         posts = PostModel.objects.none()
-        artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
-        saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
-        posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
-
-        # if hasattr(user, 'normal_user'):
-        #     artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        #     artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
-        #     saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        #     saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
-        #     posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
-        # elif hasattr(user, 'artist'):
-        #     artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        #     artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
-        #     saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        #     saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
-        #     posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
-        # elif hasattr(user, 'saloon'):
-        #     artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        #     artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
-        #     saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
-        #     saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
-        #     posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
+        if hasattr(user, 'normal_user'):
+            artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
+            artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
+            saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
+            saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
+            posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
+        elif hasattr(user, 'artist'):
+            artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
+            artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
+            saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
+            saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
+            posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
+        elif hasattr(user, 'saloon'):
+            artist_followed_by_this_user = ArtistFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
+            artists = ArtistModel.objects.filter(id__in=artist_followed_by_this_user).values_list('artist', flat=True)
+            saloon_followed_by_this_user = SaloonFollow.objects.filter(followed_user=user).values_list('follower', flat=True)
+            saloons = SaloonModel.objects.filter(id__in=saloon_followed_by_this_user).values_list('saloon', flat=True)
+            posts = PostModel.objects.filter(user__in=list(artists) + list(saloons))
         posts = posts.order_by('-created')
         serializer = PostSerializerGet(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -520,19 +514,19 @@ class ProfilePostAPIView(APIView):
         current_user = request.user
         user = get_object_or_404(User, pk=user_id)
         if hasattr(user, 'saloon'):
-            if SaloonFollow.objects.filter(follower=user.saloon.pk, followed_user=current_user.pk).exists():
-                posts = PostModel.objects.filter(user=user).all()
-                serializer = PostSerializerGet(posts, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'You don\'t follow this saloon'}, status=status.HTTP_400_BAD_REQUEST)
+            # if SaloonFollow.objects.filter(follower=user.saloon.pk, followed_user=current_user.pk).exists():
+            posts = PostModel.objects.filter(user=user).all()
+            serializer = PostSerializerGet(posts, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            # else:
+            #     return Response({'error': 'You don\'t follow this saloon'}, status=status.HTTP_400_BAD_REQUEST)
         if hasattr(user, 'artist'):
-            if ArtistFollow.objects.filter(follower=user.artist.pk, followed_user=current_user.pk).exists():
-                posts = PostModel.objects.filter(user=user).all()
-                serializer = PostSerializerGet(posts, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'You don\'t follow this artist'}, status=status.HTTP_400_BAD_REQUEST)
+            # if ArtistFollow.objects.filter(follower=user.artist.pk, followed_user=current_user.pk).exists():
+            posts = PostModel.objects.filter(user=user).all()
+            serializer = PostSerializerGet(posts, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            # else:
+            #    return Response({'error': 'You don\'t follow this artist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileCertificateAPIView(APIView):
