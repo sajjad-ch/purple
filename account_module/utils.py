@@ -5,9 +5,12 @@ import random
 
 def send_verification_code(phone_number, code):
     url = 'https://api.sms.ir/v1/send/verify'
-
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
     body = {
-            "mobile": str(phone_number),
+            "mobile": str(new_phone_number),
             "templateId": 540146,
             "parameters": [
             {
