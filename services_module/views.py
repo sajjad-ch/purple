@@ -21,6 +21,7 @@ from django.utils import timezone
 from rest_framework.pagination import LimitOffsetPagination
 import jdatetime
 from datetime import timedelta
+from .utils import *
 # Create your views here.
 
 
@@ -451,8 +452,6 @@ class PostAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(post_content)
                 width, height = image.size
-                # if width != height:
-                #     return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             elif file_extension in ('mp4', 'mpeg', 'mpg'):
                 try:
                     # Create a temporary file
@@ -473,8 +472,6 @@ class PostAPIView(APIView):
                     if duration > 60:
                         return Response({'error': 'Video duration should be less than 60 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    # if width != height:
-                    #     return Response({'error': 'Video resolution must be 1x1.'}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     return Response({'error': f'An error occurred while processing the video: {str(e)}'},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -522,19 +519,13 @@ class ProfilePostAPIView(APIView):
         current_user = request.user
         user = get_object_or_404(User, pk=user_id)
         if hasattr(user, 'saloon'):
-            # if SaloonFollow.objects.filter(follower=user.saloon.pk, followed_user=current_user.pk).exists():
             posts = PostModel.objects.filter(user=user).all()
             serializer = PostSerializerGet(posts, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-            # else:
-            #     return Response({'error': 'You don\'t follow this saloon'}, status=status.HTTP_400_BAD_REQUEST)
         if hasattr(user, 'artist'):
-            # if ArtistFollow.objects.filter(follower=user.artist.pk, followed_user=current_user.pk).exists():
             posts = PostModel.objects.filter(user=user).all()
             serializer = PostSerializerGet(posts, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-            # else:
-            #    return Response({'error': 'You don\'t follow this artist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileCertificateAPIView(APIView):
@@ -613,8 +604,6 @@ class CertificateAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(post_content)
                 width, height = image.size
-                # if width != height:
-                #     return Response({'error': 'Image must be 1x1 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(user=user)
@@ -721,8 +710,6 @@ class StoryAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(story_content)
                 width, height = image.size
-                # if width != height:
-                #     return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             elif file_extension in ('mp4', 'mpeg', 'mpg'):
                 try:
                     # Create a temporary file
@@ -743,8 +730,6 @@ class StoryAPIView(APIView):
                     if duration > 36:
                         return Response({'error': 'Video duration should be less than 10 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    # if width != 600 or height != 1068:
-                    #     return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     return Response({'error': f'An error occurred while processing the video: {str(e)}'},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -806,8 +791,6 @@ class HighlightAPIView(APIView):
             if file_extension in ('png', 'jpg', 'jpeg'):
                 image = Image.open(highlight_content)
                 width, height = image.size
-                # if width != height:
-                #     return Response({'error': 'Image must be 16x9 resolution.'}, status=status.HTTP_400_BAD_REQUEST)
             elif file_extension in ('mp4', 'mpeg', 'mpg'):
                 try:
                     # Create a temporary file
@@ -828,8 +811,6 @@ class HighlightAPIView(APIView):
                     if duration > 60:
                         return Response({'error': 'Video duration should be less than 10 seconds.'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    # if width != 600 or height != 1068:
-                    #     return Response({'error': 'Video resolution must be 9x16.'}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     return Response({'error': f'An error occurred while processing the video: {str(e)}'},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -1036,11 +1017,9 @@ class UserConfirmedVisitingTimeAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        # if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
         visits = VisitingTimeModel.objects.filter(user=user, status='confirmed').all()
         serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return Response({'error': 'Only normal users can see their confirmed visits.'}, status=status.HTTP_403_FORBIDDEN)
 
 
 class UserOtherVisitingTimeAPIView(APIView):
@@ -1048,12 +1027,9 @@ class UserOtherVisitingTimeAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        # if not (hasattr(user, 'artist') or hasattr(user, 'saloon')):
         visits = VisitingTimeModel.objects.filter(user=user).exclude(status='completed').exclude(status='rejected').all()
         serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # else:
-        #     return Response({'error': 'Only normal users can see their other visits.'}, status=status.HTTP_403_FORBIDDEN)
 
 
 class UserCompletedVisitingTimeAPIView(APIView):
@@ -1065,8 +1041,6 @@ class UserCompletedVisitingTimeAPIView(APIView):
         visits = VisitingTimeModel.objects.filter(user=user, status='completed').all()
         serializer = VisitingTimeSerializerGet(visits, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # else:
-        #     return Response({'error': 'Only normal users can see their completed visits.'}, status=status.HTTP_403_FORBIDDEN)
 
 
 class RequestVisitingTimeSaloonAPIView(APIView):
@@ -1106,8 +1080,9 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         data['user'] = user.id
         data['saloon'] = user_id
         saloon = json.loads(request.data.get('saloon'))
+        saloon_obj: SaloonModel = SaloonModel.objects.get(id=saloon).id
         artist_id = saloon.get('artist')
-        artist = ArtistModel.objects.get(id=artist_id).id
+        artist: ArtistModel = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist
         supservice_name = request.data.get('service')
         price = UserServicesModel.objects.filter(artist=artist, supservice=supservice_name).first().suggested_price
@@ -1124,11 +1099,15 @@ class RequestVisitingTimeSaloonAPIView(APIView):
 
         if serializer.is_valid():
             visit = serializer.save()
+            artist_user_id = artist.artist_id
+            saloon_user_id = saloon.saloon_id
+            # send_visit_notification(artist_user_id, 'یک نوبت جدید دارید.') # TODO: Uncomment the notification function   
+            # send_visit_notification(saloon_user_id, 'یک نوبت جدید دارید.') # TODO: Uncomment the notification function
             message = "یک نوبت جدید برای شما ارسال شد."
             phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            # send_verification_code(message, phone_number, url)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            sms_for_new_visiting_time_saloon(saloon_obj.saloon.phone_number, saloon_obj.saloon.first_name) # TODO: Uncomment the notification function  
+            sms_for_new_visiting_time_artist(artist.artist.phone_number, artist.artist.first_name)   # TODO: Uncomment the notification function              return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1369,7 +1348,10 @@ class PostConfirmVisitAPIView(APIView):
                 # visiting_user = visit.user
                 # real_user: User = User.objects.filter(user=visiting_user).first()
                 # phone_number = real_user.phone_number
+                # send_visit_notification(visit.user.pk, 'نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
+                sms_for_result_of_appointment(phone_number, 'تایید', visit_id)     # TODO: UNcomment this function
+                # sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name)     # TODO: UNcomment this function
                 message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
                 url = "http://127.0.0.1:8000/service/visits/payment/"
                 # send_verification_code(message, phone_number, url)
@@ -1380,7 +1362,9 @@ class PostConfirmVisitAPIView(APIView):
                 visit.save()
                 # visiting_user = visit.user
                 # real_user: User = User.objects.filter(user=visiting_user).first()
+                # send_visit_notification(visit.user.pk, 'نوبت شما به علت نبود وقت رد شد.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
+                sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
                 message = "نوبت شما به علت نبود وقت رد شد."
                 url = ""
                 # send_verification_code(message, phone_number, url)
@@ -1437,6 +1421,12 @@ class PaymentHandlingAPIView(APIView):
         # Todo: handling the payment gateway
         visit.status = 'confirmed'
         visit.save()
+        # TODO: Uncomment this section
+        # send_visit_notification(visit.user.pk, 'بیعانه پرداخت شد.')
+        # send_visit_notification(visit.saloon.saloon.pk, 'بیعانه پرداخت شد.')
+        # send_visit_notification(visit.artist.artist.pk, 'بیعانه پرداخت شد.')
+        sms_for_deposit_paid(visit.saloon.saloon.phone_number, visit.user.first_name, visit_id)
+        sms_for_deposit_paid(visit.artist.artist.phone_number, visit.user.first_name, visit_id)
         message = "بیعانه پرداخت شد."
         if visit.saloon:
             phone_number = visit.saloon.saloon.phone_number
@@ -1462,9 +1452,13 @@ class PayingDepositAPIView(APIView):
             return Response({'message': 'Visit deleted due to payment timeout.'}, status=status.HTTP_200_OK)
         
         price = visit.price
-        # Todo: handling the payment gateway
+        # TODO: handling the payment gateway
         visit.status = 'confirmed'
         visit.save()
+        # TODO: UNcomment this section
+        # send_visit_notification(visit.user.pk, 'نوبت شما تایید شد.')
+        # send_visit_notification(visit.artist.artist.pk, 'بیعانه پرداخت شد. ')
+        # send_visit_notification(visit.saloon.saloon.pk, 'بیعانه پرداخت شد. ')
         message = "بیعانه پرداخت شد."
         if visit.saloon:
             phone_number = visit.saloon.saloon.phone_number
@@ -1490,6 +1484,7 @@ class GradeNotificationAPIView(APIView):
         if timezone.now() < visit.exact_time + timezone.timedelta(minutes=supservice.suggested_time):
             return Response({'error': 'Grading is only available 1 hour after the visiting time.'}, status=status.HTTP_400_BAD_REQUEST)
         message = "برای امتیاز دهی به نوبت به لینک زیر وارد شوید."
+        # send_visit_notification(visit.user.pk, message)   # TODO: Uncomment this section
         if visit.saloon:
             phone_number = visit.saloon.saloon.phone_number
         else:

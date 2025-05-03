@@ -25,3 +25,16 @@ class Message(models.Model):
 
     class Meta:
         ordering = ('-timestamp',)
+
+
+class RequestVisitNotification(models.Model):
+    message = models.CharField(max_length=128, verbose_name='متن اعلان')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='فرستنده اعلان', related_name='sent_notifications')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='گیرنده اعلان', related_name='received_notifications')
+    timestamp = jmodels.jDateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False, verbose_name='دیده شده')
+    # TODO: Do not forget the migration
+    
+    def __str__(self):
+        return f'{self.sender} {self.message} {self.receiver}'
+    

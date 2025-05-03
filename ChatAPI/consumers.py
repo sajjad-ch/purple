@@ -12,7 +12,7 @@ from channels.generic.websocket import WebsocketConsumer
 from django.core.files.base import ContentFile
 
 from account_module.models import User
-from .models import Message, Conversation
+from .models import Message, Conversation, RequestVisitNotification
 from .serializers import MessageSerializer
 
 from decouple import config
@@ -99,12 +99,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
-        # user_id = self.scope['user_id']
+        user_id = self.scope['user_id']
+        user = await sync_to_async(User.objects.get)(pk=user_id)
+        self.user = user
         # await self.update_user_status(user_id, 'online')
         await self.channel_layer.group_add(
                 self.room_group_name, self.channel_name
             )
         await self.accept()
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "chat_notification",
+                "message": f"{self.user.username}",
+                "user_id": self.user.id
+            }
+        )
 
 
     async def disconnect(self, close_code):
@@ -112,6 +123,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # await self.update_user_status(user, 'offline')
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
+        )
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "chat_notification",
+                "message": f"{self.user.username} is offline",
+                "user_id": self.user.id,
+            },
         )
 
     @database_sync_to_async
@@ -154,6 +174,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {"type": "chat_message", **text_data_json},
             )
+
+            recipient_group = f"user_{recipient.id}"
+            await self.channel_layer.group_send(
+                recipient_group,
+                {
+                    "type": "chat_notification",
+                    "message": f"New message from {self.scope['user'].username}",
+                    "sender_id": sender_id,
+                },
+
+            )
+
         except User.DoesNotExist:
             await self.send(
                 text_data=json.dumps({"error": "Recipient not found"})
@@ -215,3 +247,77 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(
                 text_data=json.dumps({"error": "Failed to process received message", "details": str(e)})
             )
+
+    async def chat_notification(self, event):
+        await self.send(text_data=json.dumps({"type": "notification", "message":event["message"]}))
+
+
+
+class VisitConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        user_id = self.scope["user_id"]
+        user = await sync_to_async(User.objects.get)(pk=user_id)
+        self.user = user
+        self.group_name = f"user_{self.user.id}"
+
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
+
+        pending_notifications = await sync_to_async(
+            lambda: list(
+                RequestVisitNotification.objects.filter(receiver=user, seen=False).order_by('-timestamp')
+            )
+        )()
+
+        for notification in pending_notifications:
+            await self.send(text_data=json.dumps({
+                "type": "pending_notification",
+                "notification_id": notification.id,
+                "message": notification.message,
+                "sender_id": notification.sender.id,
+                "timestamp": str(notification.timestamp),
+            }))
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def receive(self, text_data=None, bytes_data=None):
+        try:
+            data = json.loads(text_data)
+            customer_id = data.get("customer_id")
+            status = data.get("status")
+
+            customer = await sync_to_async(User.objects.get)(id=customer_id)
+            if status == '':
+                await sync_to_async(RequestVisitNotification.objects.create)(
+                    message=f"",
+                    sender=self.user,
+                    receiver=customer,
+                )
+            #TODO: add other status
+            customer_group = f"user_{customer_id}"
+
+            await self.channel_layer.group_send(
+                customer_group,
+                {
+                    "type": "visit_notification",
+                    "message": f"Your visit status has changed: {status}",
+                    "customer_id": customer_id,
+                },
+            )
+        except User.DoesNotExist:
+            await self.send(text_data=json.dumps({"error": "Customer not found"}))
+        except Exception as e:
+            await self.send(text_data=json.dumps({"error": "Failed to process visit update", "details": str(e)}))
+
+    async def visit_notification(self, event):
+        await self.send(text_data=json.dumps({"type": "notification", "message": event["message"]}))
+
+    async def mark_notification_seen(self, notification_id):
+        try:
+            notification = await sync_to_async(RequestVisitNotification.objects.get)(id=notification_id, receiver=self.user)
+            notification.seen = True
+            await sync_to_async(notification.save)()
+            await self.send(text_data=json.dumps({"type": "seen_update", "notification_id": notification_id, "status": "success"}))
+        except RequestVisitNotification.DoesNotExist:
+            await self.send(text_data=json.dumps({"type": "seen_update", "notification_id": notification_id, "status": "not_found"}))

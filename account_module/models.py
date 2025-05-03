@@ -139,6 +139,8 @@ class SaloonModel(models.Model):
     address = models.CharField(max_length=255, verbose_name='آدرس')
     saloon_rank = models.CharField(choices=rank_choices, max_length=10, verbose_name='رنک سالن')
     saloon_profile_picture = models.ImageField(upload_to='Images/', default='avatar.jpg', null=True, blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)   # TODO: these two fields must be migrated.
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
     class Meta:
         verbose_name = 'سالن'
@@ -146,6 +148,16 @@ class SaloonModel(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+    def get_google_maps_url(self):
+        if self.latitude and self.longitude:
+            return f"https://www.google.com/maps?q={self.latitude},{self.longitude}"
+        return None
+
+    def get_waze_url(self):
+        if self.latitude and self.longitude:
+            return f"https://waze.com/ul?ll={self.latitude},{self.longitude}&navigate=yes"
+        return None
 
     def get_follower_count(self):
         return SaloonFollow.objects.filter(follower=self).count()
