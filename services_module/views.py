@@ -1080,7 +1080,8 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         data['user'] = user.id
         data['saloon'] = user_id
         saloon = json.loads(request.data.get('saloon'))
-        saloon_obj: SaloonModel = SaloonModel.objects.get(id=saloon).id
+        saloon_id = saloon.get('id')
+        saloon_obj: SaloonModel = SaloonModel.objects.get(id=saloon_id).id
         artist_id = saloon.get('artist')
         artist: ArtistModel = ArtistModel.objects.get(id=artist_id).id
         data['artist'] = artist

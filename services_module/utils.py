@@ -58,9 +58,12 @@ def send_message():
 
 def sms_for_new_visiting_time_saloon(phone_number, saloon_name):
     url = "https://api.sms.ir/v1/send/verify"
-
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
     body = {
-        "mobile": str(phone_number),
+        "mobile": str(new_phone_number),
         "templateId": 749786,
         "parameters": [
             {
@@ -85,9 +88,12 @@ def sms_for_new_visiting_time_saloon(phone_number, saloon_name):
 
 def sms_for_new_visiting_time_artist(phone_number, artist_name):
     url = "https://api.sms.ir/v1/send/verify"
-
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
     body = {
-        "mobile": str(phone_number),
+        "mobile": str(new_phone_number),
         "templateId": 190287,
         "parameters": [
             {
@@ -112,9 +118,12 @@ def sms_for_new_visiting_time_artist(phone_number, artist_name):
 
 def sms_for_result_of_appointment(phone_number, result, appointment_id):
     url = "https://api.sms.ir/v1/send/verify"
-
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
     body = {
-        "mobile": str(phone_number),
+        "mobile": str(new_phone_number),
         "templateId": 114040,
         "parameters": [
             {
@@ -143,9 +152,12 @@ def sms_for_result_of_appointment(phone_number, result, appointment_id):
 
 def sms_for_reminding_deposit(phone_number, paying_url, saloon, artist, appointmet_id):
     url = "https://api.sms.ir/v1/send/verify"
-
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
     body = {
-        "mobile": str(phone_number),
+        "mobile": str(new_phone_number),
         "templateId": 302725,
         "parameters": [
             {
@@ -183,9 +195,12 @@ def sms_for_reminding_deposit(phone_number, paying_url, saloon, artist, appointm
 
 def sms_for_deposit_paid(phone_number, customer, appointmet_id):
     url = "https://api.sms.ir/v1/send/verify"
-
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
     body = {
-        "mobile": str(phone_number),
+        "mobile": str(new_phone_number),
         "templateId": 302725,
         "parameters": [
             {
