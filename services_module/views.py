@@ -1100,8 +1100,9 @@ class RequestVisitingTimeSaloonAPIView(APIView):
 
         if serializer.is_valid():
             visit = serializer.save()
-            artist_user_id = artist.artist_id
-            saloon_user_id = saloon.saloon_id
+            # TODO: uncomment this
+            # artist_user_id = artist.artist_id
+            # saloon_user_id = saloon.saloon_id
             # send_visit_notification(artist_user_id, 'یک نوبت جدید دارید.') # TODO: Uncomment the notification function   
             # send_visit_notification(saloon_user_id, 'یک نوبت جدید دارید.') # TODO: Uncomment the notification function
             message = "یک نوبت جدید برای شما ارسال شد."
