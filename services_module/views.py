@@ -1366,7 +1366,7 @@ class PostConfirmVisitAPIView(APIView):
                 # real_user: User = User.objects.filter(user=visiting_user).first()
                 # send_visit_notification(visit.user.pk, 'نوبت شما به علت نبود وقت رد شد.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
-                sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
+                # sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
                 message = "نوبت شما به علت نبود وقت رد شد."
                 url = ""
                 # send_verification_code(message, phone_number, url)
