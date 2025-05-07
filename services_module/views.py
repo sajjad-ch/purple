@@ -1108,8 +1108,8 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            # sms_for_new_visiting_time_saloon(saloon_obj.saloon.phone_number, saloon_obj.saloon.first_name) # TODO: Uncomment the notification function  
-            # sms_for_new_visiting_time_artist(artist.artist.phone_number, artist.artist.first_name)   # TODO: Uncomment the notification function              
+            sms_for_new_visiting_time_saloon(saloon_obj.saloon.phone_number, saloon_obj.saloon.first_name) # TODO: Uncomment the notification function  
+            sms_for_new_visiting_time_artist(artist.artist.phone_number, artist.artist.first_name)   # TODO: Uncomment the notification function              
             return Response(serializer.data, status=status.HTTP_201_CREATED)        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1353,7 +1353,8 @@ class PostConfirmVisitAPIView(APIView):
                 # send_visit_notification(visit.user.pk, 'نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
                 sms_for_result_of_appointment(phone_number, 'تایید', visit_id)     # TODO: UNcomment this function
-                # sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name)     # TODO: UNcomment this function
+                paying_url = ''
+                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name)     # TODO: UNcomment this function
                 message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
                 url = "http://127.0.0.1:8000/service/visits/payment/"
                 # send_verification_code(message, phone_number, url)
@@ -1366,7 +1367,7 @@ class PostConfirmVisitAPIView(APIView):
                 # real_user: User = User.objects.filter(user=visiting_user).first()
                 # send_visit_notification(visit.user.pk, 'نوبت شما به علت نبود وقت رد شد.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
-                # sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
+                sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
                 message = "نوبت شما به علت نبود وقت رد شد."
                 url = ""
                 # send_verification_code(message, phone_number, url)
@@ -1467,8 +1468,7 @@ class PayingDepositAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = f"http://127.0.0.1:8000/service/visits/{visit_id}/payment/"
-        # send_verification_code(message, phone_number, url)
-
+        sms_for_deposit_paid(phone_number, customer=visit.user.first_name, appointmet_id=visit.id)
         return Response({'message': 'Payment received. Visiting time confirmed.'}, status=status.HTTP_200_OK)
 
 
