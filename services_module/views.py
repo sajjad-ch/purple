@@ -1110,8 +1110,8 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             # phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            sms_for_new_visiting_time_saloon(saloon_obj.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
-            sms_for_new_visiting_time_artist(artist.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
+            sms_for_new_visiting_time_saloon(saloon_real.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
+            sms_for_new_visiting_time_artist(artist_real.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
             return Response(serializer.data, status=status.HTTP_201_CREATED)        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
