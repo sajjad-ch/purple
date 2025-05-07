@@ -1108,7 +1108,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             # send_visit_notification(artist_user_id, 'یک نوبت جدید دارید.') # TODO: Uncomment the notification function   
             # send_visit_notification(saloon_user_id, 'یک نوبت جدید دارید.') # TODO: Uncomment the notification function
             message = "یک نوبت جدید برای شما ارسال شد."
-            phone_number = visit.saloon.saloon.phone_number
+            # phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
             sms_for_new_visiting_time_saloon(saloon_obj.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
             sms_for_new_visiting_time_artist(artist.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
