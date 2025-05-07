@@ -1085,6 +1085,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
         saloon_real: SaloonModel = SaloonModel.objects.get(id=saloon_id)
         artist_id = saloon.get('artist')
         artist: ArtistModel = ArtistModel.objects.get(id=artist_id).id
+        artist_real: ArtistModel = ArtistModel.objects.get(id=artist_id)
         data['artist'] = artist
         supservice_name = request.data.get('service')
         price = UserServicesModel.objects.filter(artist=artist, supservice=supservice_name).first().suggested_price
@@ -1110,7 +1111,7 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
             sms_for_new_visiting_time_saloon(saloon_obj.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
-            sms_for_new_visiting_time_artist(artist.artist.phone_number, artist.artist.first_name)   # TODO: Uncomment the notification function              
+            sms_for_new_visiting_time_artist(artist.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
             return Response(serializer.data, status=status.HTTP_201_CREATED)        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
