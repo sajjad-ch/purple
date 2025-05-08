@@ -1331,8 +1331,8 @@ class PostConfirmVisitAPIView(APIView):
         serializer = VisitingTimeSerializerPostNew(data=request.data)
         if serializer.is_valid():
             action = serializer.validated_data.get('action')
-            suggested_time = serializer.validated_data.get('suggested_time', '1 1')
-            exact_time = serializer.validated_data.get('exact_time', '1 1')
+            suggested_time = serializer.validated_data.get('suggested_time')
+            exact_time = serializer.validated_data.get('exact_time')
             exact_time_str = str(exact_time)
             suggested_date, suggested_hour = exact_time_str.split(' ') 
 
