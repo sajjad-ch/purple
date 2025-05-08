@@ -1334,7 +1334,6 @@ class PostConfirmVisitAPIView(APIView):
             suggested_time = serializer.validated_data.get('suggested_time', '1 1')
             exact_time = serializer.validated_data.get('exact_time', '1 1')
             exact_time_str = str(exact_time)
-            raise Exception(f'{suggested_time} /  {exact_time}')
             suggested_date, suggested_hour = exact_time_str.split(' ') 
 
             if action == 'confirm':
@@ -1357,7 +1356,7 @@ class PostConfirmVisitAPIView(APIView):
                 phone_number = visit.user.phone_number
                 sms_for_result_of_appointment(phone_number, 'تایید', visit_id)     # TODO: UNcomment this function
                 paying_url = ''
-                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name)     # TODO: UNcomment this function
+                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)     # TODO: UNcomment this function
                 message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
                 url = "http://127.0.0.1:8000/service/visits/payment/"
                 # send_verification_code(message, phone_number, url)
