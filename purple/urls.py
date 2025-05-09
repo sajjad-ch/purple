@@ -33,6 +33,7 @@ urlpatterns = [
     path('service/', include('services_module.urls')),
     path('conversations/', include('ChatAPI.urls')),
     path('favicon.ico', RedirectView.as_view(url='/statics/favicon.ico', permanent=True)),
-    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT})
+    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
