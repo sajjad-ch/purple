@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import render
 from django.urls import path, include, re_path
 from django.conf.urls.static import static
 from django.views.static import serve
@@ -25,7 +26,7 @@ from django.views.generic.base import RedirectView
 from django.views.generic import TemplateView
 
 def home(request):
-    return HttpResponse("Hello, World!")
+    return render(request, 'index.html')
 
 # urlpatterns = [
 #     path('', home, name='home'),
