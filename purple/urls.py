@@ -56,7 +56,12 @@ urlpatterns = [
 
     # Flutter assets (e.g. /assets/**)
     re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'frontend/assets'}),
-
+    
+    re_path(r'^flutter_service_worker\.js$', serve, {
+    'document_root': settings.BASE_DIR / 'frontend',
+    'path': 'flutter_service_worker.js',
+    }),
+    
     # Catch-all to serve index.html for Flutter Web routes
     re_path(r'^(?!static/|media/|assets/|manifest\.json|flutter_service_worker\.js$|favicon\.ico$).*$', serve, {
     'document_root': settings.BASE_DIR / 'frontend',
