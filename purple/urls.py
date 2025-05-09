@@ -58,7 +58,9 @@ urlpatterns = [
     re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'frontend/assets'}),
 
     # Catch-all to serve index.html for Flutter Web routes
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
+    re_path(r'^(?!static/|media/|assets/|manifest\.json|flutter_service_worker\.js).*$', serve, {
+    'document_root': settings.BASE_DIR / 'frontend',
+    'path': 'index.html'}),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
