@@ -1,0 +1,2348 @@
+{
+	"info": {
+		"_postman_id": "2dbebd53-99c8-4c46-8570-6aa23cbf3cf3",
+		"name": "test_collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26219131",
+		"_collection_link": "https://purpleteam-3651.postman.co/workspace/Purple_Team-Workspace~328737a5-18a8-46c5-8a8f-7e90d110df8d/collection/26219131-2dbebd53-99c8-4c46-8570-6aa23cbf3cf3?action=share&source=collection_link&creator=26219131"
+	},
+	"item": [
+		{
+			"name": "authentication",
+			"item": [
+				{
+					"name": "get_sign_up_user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/sign_up/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"sign_up",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post_sign_up_user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"09104627599\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/sign_up/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"sign_up",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_verify_user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/verify/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post_verify_user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"09104627599\",\r\n    \"key\": \"90809\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/verify/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_sign_up_artist",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/sign_up/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"sign_up",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post_sign_up_artist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"09216976280\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/sign_up/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"sign_up",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_verify_artist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/verify/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post_verify_artist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"09216976280\",\r\n    \"key\": \"15416\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/verify/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_sign_uo_saloon",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/sign_up/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"sign_up",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post_sign_up_saloon",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"09945760433\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/sign_up/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"sign_up",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_verify_saloon",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/verify/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post_verify_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"09945760433\",\r\n    \"key\": \"56251\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/verify/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "profile",
+			"item": [
+				{
+					"name": "saloon_profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saloon_profile_update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"شهاب\",\r\n    \"last_name\": \"کیا\",\r\n    \"username\": null,\r\n    \"phone_number\": \"09104627599\",\r\n    \"age\": 27,\r\n    \"saloon\": {\r\n        \"name\": \"سالن بنفش\",\r\n        \"management\": \"شهاب\",\r\n        \"follower_count\": 0,\r\n        \"following_count\": 0,\r\n        \"address\": \"سمنان\"\r\n    },\r\n    \"average_ranks\": {},\r\n    \"posts\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_profile_update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"ایلیا\",\r\n    \"last_name\": \"صندوقدار\",\r\n    \"username\": null,\r\n    \"phone_number\": \"09216976280\",\r\n    \"age\": 27,\r\n    \"artist\": {\r\n        \"years_of_work\": 5,\r\n        \"places_worked\": \"سالن الف\\r\\nسالن ب\",\r\n        \"following_count\": 0,\r\n        \"follower_count\": 0,\r\n        \"address\": \"سمنان\"\r\n    },\r\n    \"average_ranks\": {},\r\n    \"posts\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_profile_update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"سجاد\",\r\n    \"last_name\": \"چریک\",\r\n    \"username\": null,\r\n    \"phone_number\": \"09945760433\",\r\n    \"age\": 23,\r\n    \"normal_user\": {\r\n        \"interests\": \"تتو\",\r\n        \"following_count\": 0\r\n    },\r\n    \"average_ranks\": null,\r\n    \"posts\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/profile/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "follow/unfollow",
+			"item": [
+				{
+					"name": "user_follow_artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/follow/3/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"follow",
+								"3",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_follow_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/follow/2/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"follow",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_follow_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/follow/2/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"follow",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_unfollows_artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/account/follow/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"account",
+								"follow",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_unfollows_saloon",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "artist_unfollows_saloon",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "saloon_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "post_content",
+									"type": "file",
+									"src": "postman-cloud:///1ef4822c-03ce-4940-992a-d8840a294ab4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "post_content",
+									"type": "file",
+									"src": "postman-cloud:///1ef4d71d-291d-42f0-a3f0-f629c8a3d3f5"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_see_posts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_see_posts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_delete_post_artist",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_delete_post_saloon",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Story",
+			"item": [
+				{
+					"name": "saloon_story",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "story_content",
+									"type": "file",
+									"src": "/G:/purple_back_end/media/stories/forth_story.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/stories/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"stories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_story",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "story_content",
+									"type": "file",
+									"src": "/G:/purple_back_end/media/stories/forth_story.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/stories/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"stories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_see_story",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/stories/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"stories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_see_story",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDYwLCJpYXQiOjE3MzE0ODgwNjAsImp0aSI6IjI3NWU3MDg1OTZkMDRmOTE4NDQ2ODg0NTRhMGE5Mjg4IiwidXNlcl9pZCI6M30.-D7iIk9lW4M3Mc2RFfypzGF9UBO6MG5hHCrOmVwlWic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/stories/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"stories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_delete_story_artist",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/stories/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"stories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_delete_story_saloon",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/stories/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"stories",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Like_Posts",
+			"item": [
+				{
+					"name": "user_like_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/2/like/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								"2",
+								"like",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_unlike_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/posts/2/unlike/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"posts",
+								"2",
+								"unlike",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Visiting_Time",
+			"item": [
+				{
+					"name": "user_visit_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/requesting/saloon/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"requesting",
+								"saloon",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requesting_visit_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits-saloon/1/request/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits-saloon",
+								"1",
+								"request",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "visit_detail_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"saloon\": {\r\n        \"id\": 1,\r\n        \"name\": \"سالن بنفش\"\r\n    },\r\n    \"user\": {\r\n        \"id\": 4,\r\n        \"username\": null\r\n    },\r\n    \"service\": 1,\r\n    \"suggested_time\": \"morning\",\r\n    \"suggested_date\": \"1403-12-25\",\r\n    \"exact_time\": \"\",\r\n    \"status\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits-saloon/1/request/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits-saloon",
+								"1",
+								"request",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "confirming_visit_saloon_get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "confirming_visit_saloon_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/1/confirm/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"1",
+								"confirm",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "confirming_visit_saloon_post_confirmation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": 4,\r\n    \"artist\": null,\r\n    \"saloon\": 1,\r\n    \"service\": 1,\r\n    \"suggested_time\": \"morning\",\r\n    \"suggested_date\": \"1403-12-25\",\r\n    \"exact_time\": \"1403-12-25 10:30:00\",\r\n    \"status\": \"waiting for confirmation\",\r\n    \"confirmation_time\": null,\r\n    \"payment_due_time\": null,\r\n    \"action\": \"confirm\",\r\n    \"price\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/1/confirm/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"1",
+								"confirm",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checking_confirmation_by_user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits-saloon/1/request/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits-saloon",
+								"1",
+								"request",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "checking_payments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/payment/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"payment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paying_deposit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/1/payment/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"1",
+								"payment",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Grading_visiting_time",
+			"item": [
+				{
+					"name": "grading_visits_notif",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/1/grade/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"1",
+								"grade",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "grading_visit_get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/grade/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"grade",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "grading_visit_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": 4,\r\n    \"artist\": null,\r\n    \"saloon\": 1,\r\n    \"service\": 1,\r\n    \"exact_time\": \"1403-12-25T10:30:00Z\",\r\n    \"text\": null,\r\n    \"rank\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/visits/grade/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"visits",
+								"grade",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Filtering",
+			"item": [
+				{
+					"name": "filter_saloon",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "saloon_name",
+									"value": "سالن بنفش",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/filter/saloon/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"filter",
+								"saloon",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "filter_artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"artist_name\": \"ایلیا\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/filter/artist/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"filter",
+								"artist",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User_HomePage",
+			"item": [
+				{
+					"name": "sliders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/sliders/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"sliders",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Services",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/service/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"service",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "artist_services",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/service_artist/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"service_artist",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saloon_services",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/service_saloon/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"service_saloon",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "best_user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg4MDk3LCJpYXQiOjE3MzE0ODgwOTcsImp0aSI6IjhmYmJhNmE4N2U0YjRiYWE5M2VjOWE2ZGE4Y2RiOTczIiwidXNlcl9pZCI6NH0.Mm7ZBjOJaEQY0b6IGxEdAKgrssPCoVhjjTTwA31pTCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/best_user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"best_user",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "artist_saloon_HomePage",
+			"item": [
+				{
+					"name": "managing_financial",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/managing_financial/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"managing_financial",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getting_financial",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/getting_financial/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"getting_financial",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "calculate_payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/calculate_payment/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"calculate_payment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saloon_artist_service_management",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/user_service/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"user_service",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saloon_artist_service_management Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"service\": \"1\",\r\n    \"suggested_time\": 45\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/user_service/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"user_service",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "manage_artist_get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/manage_artist/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"manage_artist",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "manage_artist_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/manage_artist/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"manage_artist",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "manage_artist_delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE3ODg3Nzc1LCJpYXQiOjE3MzE0ODc3NzUsImp0aSI6ImFhMWVmZTJhNDZhMTQ3NzY5Nzg1YjgzNDcwMzljNWY4IiwidXNlcl9pZCI6Mn0.WpGycF6DJtUGHwpD7qD-QckoQM1ZnBCVffUYF6wzgCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/manage_artist/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"manage_artist",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "active-artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxODE5MTkwMjE5LCJpYXQiOjE3MzI3OTAyMTksImp0aSI6IjVhMTI3MWNiNmE0ZjQ5ZDdhZDFhMDE2MTg2MTQ5YzFkIiwidXNlcl9pZCI6Mn0.jW6ny3DFUH50gAmcDTe4zxuMBQe1VqGIo-tnxZWHYk8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/service/active_artist/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"service",
+								"active_artist",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
