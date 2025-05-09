@@ -232,9 +232,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 # CORS_ALLOWED_HOSTS = ['http://5.75.202.75:8000', '*']
 # CORS_ALLOW_ALL_ORIGIN = True
 
-# CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
-# CORS_ALLOWED_ORIGINS = ['http://5.75.202.75:8000', '*']
-# CSRF_TRUSTED_ORIGINS = ['http://5.75.202.75:8000', '*']
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+CORS_ALLOWED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins (for development only)
 
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
