@@ -22,9 +22,22 @@ from django.conf import settings
 from rest_framework.authtoken.views import obtain_auth_token
 from django.http import HttpResponse
 from django.views.generic.base import RedirectView
+from django.views.generic import TemplateView
 
 def home(request):
     return HttpResponse("Hello, World!")
+
+# urlpatterns = [
+#     path('', home, name='home'),
+#     path('admin/', admin.site.urls),
+#     path('account/', include('account_module.urls')),
+#     path('service/', include('services_module.urls')),
+#     path('conversations/', include('ChatAPI.urls')),
+#     path('favicon.ico', RedirectView.as_view(url='/statics/favicon.ico', permanent=True)),
+#     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+#     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
+
+# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = [
     path('', home, name='home'),
@@ -32,8 +45,19 @@ urlpatterns = [
     path('account/', include('account_module.urls')),
     path('service/', include('services_module.urls')),
     path('conversations/', include('ChatAPI.urls')),
-    path('favicon.ico', RedirectView.as_view(url='/statics/favicon.ico', permanent=True)),
-    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+
+    # Favicon
+    path('favicon.ico', serve, {'document_root': settings.BASE_DIR / 'frontend/build/web', 'path': 'favicon.ico'}),
+
+    # Static & media
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Flutter assets (e.g. /assets/**)
+    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'frontend/build/web/assets'}),
+
+    # Catch-all to serve index.html for Flutter Web routes
+    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
+]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
