@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'services_module',
     'ChatAPI',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [

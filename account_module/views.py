@@ -11,6 +11,7 @@ from .models import User, NormalUserFollow, SaloonFollow, ArtistFollow, SaloonMo
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.decorators import api_view
 import json, os
 from dotenv import load_dotenv
@@ -137,6 +138,21 @@ class PublicAndPrivateKeySetter(APIView):
             return Response('Keys are set.', status=status.HTTP_201_CREATED)
         else:
             return Response('There are no keys to save.', status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data['refresh']
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': "Logged out."}, status=status.HTTP_205_RESET_CONTENT)
+        except KeyError:
+            return Response({'error': 'Refresh token needed.'}, status=status.HTTP_400_BAD_REQUEST)
+        except TokenError:
+            return Response({'error': 'Token is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
