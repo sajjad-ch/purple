@@ -48,14 +48,14 @@ urlpatterns = [
     path('conversations/', include('ChatAPI.urls')),
 
     # Favicon
-    path('favicon.ico', serve, {'document_root': settings.BASE_DIR / 'frontend/build/web', 'path': 'favicon.ico'}),
+    path('favicon.ico', serve, {'document_root': settings.BASE_DIR / 'frontend/', 'path': 'favicon.ico'}),
 
     # Static & media
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
 
     # Flutter assets (e.g. /assets/**)
-    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'frontend/build/web/assets'}),
+    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'frontend/assets'}),
 
     # Catch-all to serve index.html for Flutter Web routes
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
