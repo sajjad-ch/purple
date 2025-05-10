@@ -63,9 +63,13 @@ urlpatterns = [
     }),
     
     # Catch-all to serve index.html for Flutter Web routes
-    re_path(r'^(?!static/|media/|assets/|manifest\.json|flutter_service_worker\.js$|favicon\.ico$).*$', serve, {
-    'document_root': settings.BASE_DIR / 'frontend',
-    'path': 'index.html'}),
+    re_path(
+    r'^(?!static/|media/|assets/|manifest\.json|favicon\.ico|flutter_service_worker\.js|flutter_bootstrap\.js|flutter\.js|main\.dart\.js|version\.json|icons/).*$', 
+    serve, {
+        'document_root': settings.BASE_DIR / 'frontend',
+        'path': 'index.html'
+    }
+),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
