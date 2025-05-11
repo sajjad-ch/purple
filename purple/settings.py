@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-90xmq_rm1dl9g2cvwbtfa@+96yg@yjhi=vlq+%uz9%8v-j7#2z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["212.23.201.20", '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["212.23.201.20", '127.0.0.1', 'localhost', 'app.banafshapp.ir']
 
 
 # Application definition
