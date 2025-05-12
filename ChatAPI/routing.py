@@ -5,6 +5,6 @@ django.setup()
 from . import consumers
 
 websocket_urlpatterns = [
-    re_path(r"wss/chat/(?P<room_name>\w+)/$", consumers.ChatConsumer.as_asgi()),
-    re_path(r"wss/visit/$", consumers.VisitConsumer.as_asgi()),
+    re_path(r"ws/chat/(?P<room_name>\w+)/$", consumers.ChatConsumer.as_asgi()),
+    re_path(r"ws/visit/$", consumers.VisitConsumer.as_asgi()),
 ]
