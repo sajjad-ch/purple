@@ -139,8 +139,8 @@ class SaloonModel(models.Model):
     address = models.CharField(max_length=255, verbose_name='آدرس')
     saloon_rank = models.CharField(choices=rank_choices, max_length=10, verbose_name='رنک سالن')
     saloon_profile_picture = models.ImageField(upload_to='Images/', default='avatar.jpg', null=True, blank=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)   # TODO: these two fields must be migrated.
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name='طول جغرافیایی')   # TODO: these two fields must be migrated.
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name='عرض جغرافیایی')
 
     class Meta:
         verbose_name = 'سالن'

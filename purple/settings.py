@@ -236,8 +236,10 @@ STATICFILES_DIRS = [
 # CORS_ALLOW_ALL_ORIGIN = True
 
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
-CORS_ALLOWED_ORIGINS = ['http://212.23.201.20']
-CSRF_TRUSTED_ORIGINS = ['http://212.23.201.20']
+# CORS_ALLOWED_ORIGINS = ['http://212.23.201.20']
+# CSRF_TRUSTED_ORIGINS = ['http://212.23.201.20']
+CORS_ALLOWED_ORIGINS = ['https://app.banafshapp.ir']
+CSRF_TRUSTED_ORIGINS = ['https://app.banafshapp.ir']
 CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins (for development only)
 
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
