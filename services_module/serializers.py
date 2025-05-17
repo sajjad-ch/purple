@@ -9,7 +9,7 @@ from django.utils.timezone import now
 class SliderSeralizer(serializers.ModelSerializer):
     class Meta:
         model = SliderModel
-        fields = ['slider_picture', 'slider_text']
+        fields = ['slider_picture', 'slider_text', 'url_slider']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -342,7 +342,7 @@ class ArtistVisitingTimeSerializerPost(serializers.ModelSerializer):
 
 class VisitingTimeSerializerPostNew(serializers.ModelSerializer):
     action = serializers.ChoiceField(choices=[('confirm', 'Confirm'), ('reject', 'Reject')])
-    exact_time = serializers.DateTimeField(required=False)
+    exact_time = serializers.CharField(required=False)
 
     class Meta:
         model = VisitingTimeModel
