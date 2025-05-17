@@ -1485,6 +1485,7 @@ class PaymentHandlingAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, visit_id):
+        logger.info(f"Request data: {request.data}")
         user = request.user
         visit = VisitingTimeModel.objects.filter(pk=visit_id, status='waiting for deposit').first()
         if visit:
