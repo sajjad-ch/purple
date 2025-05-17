@@ -342,11 +342,18 @@ class ArtistVisitingTimeSerializerPost(serializers.ModelSerializer):
 
 class VisitingTimeSerializerPostNew(serializers.ModelSerializer):
     action = serializers.ChoiceField(choices=[('confirm', 'Confirm'), ('reject', 'Reject')])
-    exact_time = serializers.DateTimeField(required=False, input_formats=['%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', 'iso-8601'])
+    exact_time = serializers.CharField(required=False)
 
     class Meta:
         model = VisitingTimeModel
         fields = ['action', 'exact_time', 'price', 'suggested_time']
+
+    def validate_exact_time(self, value):
+        try:
+            from django.utils.dateparse import parse_datetime
+            return parse_datetime(value)
+        except (ValueError, TypeError):
+            raise serializers.ValidationError("Invalid datetime format. Use: YYYY-MM-DD HH:MM:SS")
 
 
 class VisitingTimeSerializerGetNew(serializers.ModelSerializer):
