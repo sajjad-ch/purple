@@ -1332,7 +1332,11 @@ class PostConfirmVisitAPIView(APIView):
         if serializer.is_valid():
             action = serializer.validated_data.get('action')
             suggested_time = serializer.validated_data.get('suggested_time', '1 1')
-            exact_time = serializer.validated_data.get('exact_time', '1 1')
+            # exact_time = serializer.validated_data.get('exact_time', '1 1')
+            exact_time = serializer.validated_data.get('exact_time')
+            if action == 'confirm' and not exact_time:
+                return Response({'error': 'Exact time is required for confirmation.'}, status=status.HTTP_400_BAD_REQUEST)
+
             exact_time_str = str(exact_time)
             if action == 'confirm':
                 suggested_date, suggested_hour = exact_time_str.split(' ') 
