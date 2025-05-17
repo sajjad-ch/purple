@@ -1336,7 +1336,11 @@ class PostConfirmVisitAPIView(APIView):
             logger.warning(f"[Visit {visit_id}] Permission denied. User: {request.user}")
             return Response({'error': 'You do not have permission to confirm or reject this visit.'}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer = VisitingTimeSerializerPostNew(data=request.data)
+        data = request.data.copy()
+        if 'exact_time' in data:
+            data['exact_time'] = data['exact_time'].replace(' ', 'T')
+
+        serializer = VisitingTimeSerializerPostNew(data=data)
         if serializer.is_valid():
             action = serializer.validated_data.get('action')
             suggested_time = serializer.validated_data.get('suggested_time', '1 1')
