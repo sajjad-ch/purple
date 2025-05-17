@@ -258,42 +258,68 @@ if IS_SERVER:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
+
         'formatters': {
             'verbose': {
-                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+                'format': '[{levelname}] {asctime} | {name} | {message}',
                 'style': '{',
             },
             'simple': {
-                'format': '{levelname} {message}',
+                'format': '[{levelname}] {message}',
                 'style': '{',
             },
+            'colored': {
+                '()': 'colorlog.ColoredFormatter',
+                'format': '%(log_color)s[%(levelname)s] %(asctime)s | %(name)s | %(message)s',
+                'log_colors': {
+                    'DEBUG':    'cyan',
+                    'INFO':     'green',
+                    'WARNING':  'yellow',
+                    'ERROR':    'red',
+                    'CRITICAL': 'bold_red',
+                },
+            },
         },
+
         'handlers': {
             'file': {
                 'level': 'DEBUG',
                 'class': 'logging.FileHandler',
-                'filename': 'django_debug.log',  # Logs will be stored in this file
+                'filename': 'logs/django_debug.log',
+                'formatter': 'verbose',
+            },
+            'error_file': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': 'logs/django_errors.log',
                 'formatter': 'verbose',
             },
             'console': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
-                'formatter': 'verbose',
+                'formatter': 'colored',
             },
         },
+
         'loggers': {
             'django': {
-                'handlers': ['file', 'console'],
+                'handlers': ['file', 'error_file', 'console'],
                 'level': 'DEBUG',
                 'propagate': True,
             },
-            'django.db.backends': {  # Enable SQL query logging
+            'django.request': {  # برای گرفتن استثناهای View
+                'handlers': ['file', 'error_file', 'console'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+            'django.db.backends': {
                 'handlers': ['file'],
                 'level': 'DEBUG',
                 'propagate': False,
             },
         },
     }
+
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 
