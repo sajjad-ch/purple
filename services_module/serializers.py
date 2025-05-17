@@ -277,6 +277,7 @@ class VisitingTimeSerializerGet(serializers.ModelSerializer):
     artist_name = serializers.SerializerMethodField()
     service_name = serializers.SerializerMethodField()
     name_of_the_user = serializers.SerializerMethodField()
+    saloon_address = serializers.SerializerMethodField()
 
     class Meta:
         model = VisitingTimeModel
@@ -303,6 +304,10 @@ class VisitingTimeSerializerGet(serializers.ModelSerializer):
         if obj.user:
             return obj.user.first_name + ' ' + obj.user.last_name
         return obj.unregistered_user.name
+    
+    def get_saloon_address(self, obj):
+        if obj.saloon:
+            return obj.saloon.address
 
 
 class SaloonVisitingTimeSerializerPost(serializers.ModelSerializer):

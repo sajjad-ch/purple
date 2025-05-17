@@ -1314,13 +1314,11 @@ class PostConfirmVisitAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
     def post(self, request, visit_id):
         visit = get_object_or_404(VisitingTimeModel, id=visit_id, status__in=['waiting for confirmation', 'waiting for deposit', 'confirmed'])
         user_id = request.user.pk
         user = request.user
         supservice_price = UserServicesModel.objects.filter(supservice=visit.service, artist=visit.artist).first().suggested_price
-        
         if (visit.artist is None or visit.artist.artist is None) and (visit.saloon is None or visit.saloon.saloon is None):
             return Response({'error': 'This visit does not have an associated artist or saloon.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1334,17 +1332,14 @@ class PostConfirmVisitAPIView(APIView):
         if serializer.is_valid():
             action = serializer.validated_data.get('action')
             suggested_time = serializer.validated_data.get('suggested_time', '1 1')
-            exact_time = serializer.validated_data.get('exact_time')
-            
+            exact_time = serializer.validated_data.get('exact_time', '1 1')
+            exact_time_str = str(exact_time)
+            if action == 'confirm':
+                suggested_date, suggested_hour = exact_time_str.split(' ') 
+
             if action == 'confirm':
                 if not exact_time:
                     return Response({'error': 'Exact time is required for confirmation.'}, status=status.HTTP_400_BAD_REQUEST)
-                
-                try:
-                    exact_time_str = str(exact_time)
-                    suggested_date, suggested_hour = exact_time_str.split(' ')
-                except (AttributeError, ValueError):
-                    return Response({'error': 'Invalid exact_time format. Expected format: "YYYY-MM-DD HH:MM:SS"'}, status=status.HTTP_400_BAD_REQUEST)
 
                 visit.status = 'waiting for deposit'
                 visit.exact_time = exact_time
@@ -1355,90 +1350,33 @@ class PostConfirmVisitAPIView(APIView):
                 visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
                 visit.price = supservice_price
                 visit.save()
-                
+                # visiting_user = visit.user
+                # real_user: User = User.objects.filter(user=visiting_user).first()
+                # phone_number = real_user.phone_number
+                # send_visit_notification(visit.user.pk, 'نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
-                sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
+                sms_for_result_of_appointment(phone_number, 'تایید', visit_id)     # TODO: UNcomment this function
                 paying_url = ''
-                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)
+                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)     # TODO: UNcomment this function
+                message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
+                url = "http://127.0.0.1:8000/service/visits/payment/"
+                # send_verification_code(message, phone_number, url)
                 return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
 
             elif action == 'reject':
                 visit.status = 'rejected'
                 visit.save()
+                # visiting_user = visit.user
+                # real_user: User = User.objects.filter(user=visiting_user).first()
+                # send_visit_notification(visit.user.pk, 'نوبت شما به علت نبود وقت رد شد.') # TODO: Uncomment the notification function
                 phone_number = visit.user.phone_number
-                sms_for_result_of_appointment(phone_number, 'رد', visit_id)
+                sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
+                message = "نوبت شما به علت نبود وقت رد شد."
+                url = ""
+                # send_verification_code(message, phone_number, url)
                 return Response({'message': 'Visit rejected and user notified.'}, status=status.HTTP_200_OK)
 
-        # اگر سریالایزر معتبر نباشد
-        return Response({
-            'error': 'Invalid data',
-            'details': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-
-    # def post(self, request, visit_id):
-    #     visit = get_object_or_404(VisitingTimeModel, id=visit_id, status__in=['waiting for confirmation', 'waiting for deposit', 'confirmed'])
-    #     user_id = request.user.pk
-    #     user = request.user
-    #     supservice_price = UserServicesModel.objects.filter(supservice=visit.service, artist=visit.artist).first().suggested_price
-    #     if (visit.artist is None or visit.artist.artist is None) and (visit.saloon is None or visit.saloon.saloon is None):
-    #         return Response({'error': 'This visit does not have an associated artist or saloon.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    #     artist_pk = visit.artist.artist.pk if visit.artist and visit.artist.artist else None
-    #     saloon_pk = visit.saloon.saloon.pk if visit.saloon and visit.saloon.saloon else None
-
-    #     if not (user_id == artist_pk or user_id == saloon_pk):
-    #         return Response({'error': 'You do not have permission to confirm or reject this visit.'}, status=status.HTTP_403_FORBIDDEN)
-
-    #     serializer = VisitingTimeSerializerPostNew(data=request.data)
-    #     if serializer.is_valid():
-    #         action = serializer.validated_data.get('action')
-    #         suggested_time = serializer.validated_data.get('suggested_time', '1 1')
-    #         exact_time = serializer.validated_data.get('exact_time', '1 1')
-    #         exact_time_str = str(exact_time)
-    #         if action == 'confirm':
-    #             suggested_date, suggested_hour = exact_time_str.split(' ') 
-
-    #         if action == 'confirm':
-    #             if not exact_time:
-    #                 return Response({'error': 'Exact time is required for confirmation.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    #             visit.status = 'waiting for deposit'
-    #             visit.exact_time = exact_time
-    #             visit.suggested_time = suggested_time
-    #             visit.suggested_hour = suggested_hour
-    #             visit.suggested_date = suggested_date
-    #             visit.confirmation_time = timezone.now()
-    #             visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
-    #             visit.price = supservice_price
-    #             visit.save()
-    #             # visiting_user = visit.user
-    #             # real_user: User = User.objects.filter(user=visiting_user).first()
-    #             # phone_number = real_user.phone_number
-    #             # send_visit_notification(visit.user.pk, 'نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید.') # TODO: Uncomment the notification function
-    #             phone_number = visit.user.phone_number
-    #             sms_for_result_of_appointment(phone_number, 'تایید', visit_id)     # TODO: UNcomment this function
-    #             paying_url = ''
-    #             sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)     # TODO: UNcomment this function
-    #             message = "نوبت شما تایید شد برای پرداخت بیعانه 40 دقیقه وقت دارید."
-    #             url = "http://127.0.0.1:8000/service/visits/payment/"
-    #             # send_verification_code(message, phone_number, url)
-    #             return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
-
-    #         elif action == 'reject':
-    #             visit.status = 'rejected'
-    #             visit.save()
-    #             # visiting_user = visit.user
-    #             # real_user: User = User.objects.filter(user=visiting_user).first()
-    #             # send_visit_notification(visit.user.pk, 'نوبت شما به علت نبود وقت رد شد.') # TODO: Uncomment the notification function
-    #             phone_number = visit.user.phone_number
-    #             sms_for_result_of_appointment(phone_number, 'رد', visit_id)     # TODO: UNcomment this function
-    #             message = "نوبت شما به علت نبود وقت رد شد."
-    #             url = ""
-    #             # send_verification_code(message, phone_number, url)
-    #             return Response({'message': 'Visit rejected and user notified.'}, status=status.HTTP_200_OK)
-
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserVisitAPIView(APIView):
