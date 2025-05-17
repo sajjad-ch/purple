@@ -342,7 +342,7 @@ class ArtistVisitingTimeSerializerPost(serializers.ModelSerializer):
 
 class VisitingTimeSerializerPostNew(serializers.ModelSerializer):
     action = serializers.ChoiceField(choices=[('confirm', 'Confirm'), ('reject', 'Reject')])
-    exact_time = serializers.DateTimeField(required=False)
+    exact_time = serializers.DateTimeField(required=False, input_formats=['%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', 'iso-8601'])
 
     class Meta:
         model = VisitingTimeModel
