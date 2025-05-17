@@ -242,6 +242,7 @@ class SliderModel(models.Model):
     slider_text = models.CharField(max_length=100, verbose_name='متن اسلایدر')
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    url_slider = models.URLField(null=True, blank=True, max_length=256)
 
 
     class Meta:
