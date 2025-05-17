@@ -1334,18 +1334,23 @@ class PostConfirmVisitAPIView(APIView):
             suggested_time = serializer.validated_data.get('suggested_time', '1 1')
             exact_time = serializer.validated_data.get('exact_time', '1 1')
             exact_time_str = str(exact_time)
-            
+
             try:
                 # جدا کردن بخش تاریخ و زمان
-                date_part, time_part = exact_time_str.split(' ')
+                date_part, time_part = exact_time_str.strip().split(' ')
                 j_year, j_month, j_day = map(int, date_part.split('-'))
                 hour, minute = map(int, time_part.split(':'))
 
+                # بررسی معتبر بودن تاریخ شمسی
+                if not is_valid_jalali_date(j_year, j_month, j_day):
+                    return Response({'error': 'تاریخ شمسی وارد شده معتبر نیست.'}, status=status.HTTP_400_BAD_REQUEST)
+
                 # تبدیل به datetime میلادی
                 jdt = jdatetime.datetime(j_year, j_month, j_day, hour, minute)
-                exact_time = jdt.togregorian()  # نوع datetime.datetime میلادی
+                exact_time = jdt.togregorian()  # datetime.datetime میلادی
+                suggested_date = jdatetime.date(j_year, j_month, j_day)
 
-            except Exception as e:
+            except ValueError as e:
                 return Response({'error': f'فرمت تاریخ یا ساعت نادرست است: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
             
             if action == 'confirm':

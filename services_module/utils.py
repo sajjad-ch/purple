@@ -4,6 +4,15 @@ from asgiref.sync import async_to_sync
 import requests
 import json
 
+import jdatetime
+
+def is_valid_jalali_date(year, month, day):
+    try:
+        jdatetime.date(year, month, day)
+        return True
+    except ValueError:
+        return False
+
 def random_code():
     number_list = [x for x in range(10)]
     code = []
