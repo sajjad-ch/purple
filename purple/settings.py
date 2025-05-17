@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'account_module',
     'services_module',
     'ChatAPI',
+    'analyze_module',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
 ]

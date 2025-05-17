@@ -343,6 +343,13 @@ class VisitingTimeSerializerPostNew(serializers.ModelSerializer):
         model = VisitingTimeModel
         fields = ['action', 'exact_time', 'price', 'suggested_time']
 
+    def validate(self, data):
+        action = data.get('action')
+        exact_time = data.get('exact_time')
+        if action == 'confirm' and not exact_time:
+            raise serializers.ValidationError({"exact_time": "This field is required when confirming a visit."})
+        return data
+
 
 class VisitingTimeSerializerGetNew(serializers.ModelSerializer):
 
