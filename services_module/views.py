@@ -1354,38 +1354,16 @@ class PostConfirmVisitAPIView(APIView):
                 if not exact_time:
                     logger.warning(f"[Visit {visit_id}] Exact time missing for confirmation | User: {request.user}")
                     return Response({'error': 'Exact time is required for confirmation.'}, status=status.HTTP_400_BAD_REQUEST)
-                try:
-                    # تبدیل تاریخ شمسی به میلادی
-                    jalali_date, jalali_time = exact_time_str.split(' ')
-                    year, month, day = map(int, jalali_date.split('-'))
-                    hour, minute = map(int, jalali_time.split(':'))
-                    
-                    from persiantools.jdatetime import JalaliDate
-                    gregorian_date = JalaliDate(year, month, day).to_gregorian()
-                    
-                    exact_time = datetime.datetime(
-                        year=gregorian_date.year,
-                        month=gregorian_date.month,
-                        day=gregorian_date.day,
-                        hour=hour,
-                        minute=minute
-                    )
-                    visit.status = 'waiting for deposit'
-                    visit.exact_time = exact_time
-                    visit.suggested_time = suggested_time
-                    visit.suggested_hour = suggested_hour
-                    visit.suggested_date = suggested_date
-                    visit.confirmation_time = timezone.now()
-                    visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
-                    visit.price = supservice_price
-                    visit.save()
-                except Exception as e:
-                    logger.error(f"Error parsing date: {str(e)}")
-                    return Response(
-                        {'error': f'Invalid date format: {str(e)}'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
 
+                visit.status = 'waiting for deposit'
+                visit.exact_time = exact_time
+                visit.suggested_time = suggested_time
+                visit.suggested_hour = suggested_hour
+                visit.suggested_date = suggested_date
+                visit.confirmation_time = timezone.now()
+                visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
+                visit.price = supservice_price
+                visit.save()
 
                 phone_number = visit.user.phone_number
                 # sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
