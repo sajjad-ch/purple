@@ -1115,8 +1115,8 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             # phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            sms_for_new_visiting_time_saloon(saloon_real.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
-            sms_for_new_visiting_time_artist(artist_real.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
+            # sms_for_new_visiting_time_saloon(saloon_real.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
+            # sms_for_new_visiting_time_artist(artist_real.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
             return Response(serializer.data, status=status.HTTP_201_CREATED)        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1344,6 +1344,7 @@ class PostConfirmVisitAPIView(APIView):
             action = serializer.validated_data.get('action')
             suggested_time = serializer.validated_data.get('suggested_time', '1 1')
             exact_time = serializer.validated_data.get('exact_time', '1 1')
+            logger.info(f'{exact_time}')
             exact_time_str = str(exact_time)
 
             if action == 'confirm':
@@ -1365,9 +1366,9 @@ class PostConfirmVisitAPIView(APIView):
                 visit.save()
 
                 phone_number = visit.user.phone_number
-                sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
+                # sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
                 paying_url = ''
-                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)
+                # sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)
 
                 logger.info(f"[Visit {visit_id}] Visit confirmed by user {request.user}")
                 return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
@@ -1377,7 +1378,7 @@ class PostConfirmVisitAPIView(APIView):
                 visit.save()
 
                 phone_number = visit.user.phone_number
-                sms_for_result_of_appointment(phone_number, 'رد', visit_id)
+                # sms_for_result_of_appointment(phone_number, 'رد', visit_id)
 
                 logger.info(f"[Visit {visit_id}] Visit rejected by user {request.user}")
                 return Response({'message': 'Visit rejected and user notified.'}, status=status.HTTP_200_OK)
@@ -1525,8 +1526,8 @@ class PaymentHandlingAPIView(APIView):
         # send_visit_notification(visit.user.pk, 'بیعانه پرداخت شد.')
         # send_visit_notification(visit.saloon.saloon.pk, 'بیعانه پرداخت شد.')
         # send_visit_notification(visit.artist.artist.pk, 'بیعانه پرداخت شد.')
-        sms_for_deposit_paid(visit.saloon.saloon.phone_number, visit.user.first_name, visit_id)
-        sms_for_deposit_paid(visit.artist.artist.phone_number, visit.user.first_name, visit_id)
+        # sms_for_deposit_paid(visit.saloon.saloon.phone_number, visit.user.first_name, visit_id)
+        # sms_for_deposit_paid(visit.artist.artist.phone_number, visit.user.first_name, visit_id)
         message = "بیعانه پرداخت شد."
         if visit.saloon:
             phone_number = visit.saloon.saloon.phone_number
@@ -1565,7 +1566,7 @@ class PayingDepositAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = f"http://127.0.0.1:8000/service/visits/{visit_id}/payment/"
-        sms_for_deposit_paid(phone_number, customer=visit.user.first_name, appointmet_id=visit.id)
+        # sms_for_deposit_paid(phone_number, customer=visit.user.first_name, appointmet_id=visit.id)
         return Response({'message': 'Payment received. Visiting time confirmed.'}, status=status.HTTP_200_OK)
 
 
