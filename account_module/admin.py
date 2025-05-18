@@ -14,7 +14,7 @@ from django.contrib.auth.admin import UserAdmin
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('phone_number', 'username', 'is_active', 'status', 'last_login')
+    list_display = ('phone_number', 'username', 'is_active', 'status', 'last_login', 'key')
     search_fields = ('phone_number', 'username', 'first_name', 'last_name')
     list_filter = ('is_active', 'status')
     readonly_fields = ('last_login', 'total_active_time', 'code_generated_at')
