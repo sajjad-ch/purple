@@ -72,7 +72,7 @@ class NormalUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NormalUserModel
-        fields = ['interests', 'following_count']
+        fields = ['interests', 'following_count', 'get_visits_count']
 
     def get_following_count(self, obj):
         return obj.get_following_count()
