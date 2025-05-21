@@ -1510,7 +1510,7 @@ class GradeNotificationAPIView(APIView):
 
 class ChangeConfirmedToCompleted(APIView):
     def get(self, request):
-        current_time = jdatetime.datetime.now().togregorian()
+        current_time = jdatetime.datetime.now()
         current_time = timezone.make_aware(current_time)
 
         user = request.user
