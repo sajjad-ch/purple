@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from account_module.models import ArtistModel, SaloonModel, User
-from .models import PostModel, StoryModel, VisitingTimeModel, WalletModel, \
-    DiscountModel, RankModel, SliderModel, ServiceModel, UserServicesModel, HighlightModel, SupServiceModel, TagsModel, LikeModel
+from .models import *
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -552,4 +551,10 @@ class ManageArtistTeamSerializer(serializers.Serializer):
 class TagsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = TagsModel
+        fields = "__all__"
+
+    
+class SavedPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavedPost
         fields = "__all__"

@@ -57,6 +57,19 @@ class PostModel(models.Model):
         return f"{self.user} created a post on {self.created.date()}"
 
 
+class SavedPost(models.Model):
+    post = models.ForeignKey(PostModel, on_delete=models.CASCADE, verbose_name='پست ذخیره شده')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
+    saved_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ذخیره شده')
+
+    class Meta:
+        verbose_name = 'پست ذخیره شده'
+        verbose_name_plural = 'پست های ذخیره شده'
+
+    def __str__(self):
+        return f'{self.post.user} دخیره شده توسط {self.user.first_name} {self.user.last_name}'
+
+
 class TagsModel(models.Model):
     tag_name = models.CharField(max_length=128, verbose_name='نام تگ')
 
@@ -75,6 +88,7 @@ class StoryModel(models.Model):
     duration = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='گذشته از')
     reply = models.CharField(max_length=255, null=True, blank=True)
     saloon = models.ForeignKey(SaloonModel, on_delete=models.CASCADE, null=True, blank=True)
+    thumbnail = models.ImageField(upload_to='story-thumbnail/', verbose_name='پیش نمایش استوری', null=True, blank=True)
     
 
     class Meta:
@@ -94,6 +108,7 @@ class HighlightModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     text = models.TextField(verbose_name='توضیحات متن', null=True, blank=True)
     saloon = models.ForeignKey(SaloonModel, on_delete=models.CASCADE, null=True, blank=True)
+    thumbnail = models.ImageField(upload_to='highligh-thumbnail/', verbose_name='پیش نمایش هایلایت', null=True, blank=True)
 
     class Meta:
         verbose_name = 'هایلایت'

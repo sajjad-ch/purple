@@ -37,6 +37,9 @@ class AccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+cities = (
+    ('سمنان', 'سمنان'),
+)
 
 class User(AbstractUser):
     username = models.CharField(unique=True, max_length=10, verbose_name='کد ملی', null=True, blank=True)
@@ -47,7 +50,7 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='Images/', default='avatar.jpg', null=True, blank=True)
     last_login = models.DateTimeField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
-    city = models.CharField(max_length=128, null=True, blank=True)
+    city = models.CharField(choices=cities, default='سمنان', max_length=128, null=True, blank=True)
     birth_date = jmodels.jDateField(verbose_name='تاریخ تولد', null=True, blank=True)
     public_key = models.TextField(blank=True, null=True)
     status = models.CharField(choices=[('online', 'online'), ('offline', 'offline')], max_length=10, default='offline', blank=True, null=True, verbose_name='آنلاین / آفلاین (0/1)')

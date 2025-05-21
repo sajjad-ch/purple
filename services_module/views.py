@@ -9,6 +9,7 @@ from operator import itemgetter
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now, timedelta
 from django.db.models import Sum, Q
+from django.http import HttpRequest
 from account_module.serializers import SaloonProfileSerializer, ArtistProfileSerializer
 from account_module.utils import send_verification_code
 from .serializers import *
@@ -1740,3 +1741,34 @@ class TagView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class SavedPostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: HttpRequest):
+        user = request.user
+        user_saved_post = SavedPost.objects.filter(user=user).all().order_by('saved_at')
+        if user_saved_post:
+            serializer = SavedPostSerializer(user_saved_post, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(message={'There is no saved post for this user'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def post(self, request: HttpRequest):
+        user = request.user
+        serializer: SavedPostSerializer = SavedPostSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request: HttpRequest):
+        user = request.user
+        post_id = request.data.get('post_id')
+        post = SavedPost.objects.filter(user=user, post=post_id).first()
+        if post:
+            post.delete()
+            return Response(message={'info': 'the post is unsaved.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response(message={'error': 'There is no such post.'}, status=status.HTTP_404_NOT_FOUND)
+
