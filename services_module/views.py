@@ -1354,8 +1354,8 @@ class PostConfirmVisitAPIView(APIView):
                 if not exact_time:
                     logger.warning(f"[Visit {visit_id}] Exact time missing for confirmation | User: {request.user}")
                     return Response({'error': 'Exact time is required for confirmation.'}, status=status.HTTP_400_BAD_REQUEST)
-
-                visit.status = 'waiting for deposit'
+                if visit.status != 'confirmed':
+                    visit.status = 'waiting for deposit'
                 visit.exact_time = exact_time
                 visit.suggested_time = suggested_time
                 visit.suggested_hour = suggested_hour
