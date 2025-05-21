@@ -1525,9 +1525,9 @@ class ChangeConfirmedToCompleted(APIView):
 
                     if timezone.is_naive(visit_end_time):
                         visit_end_time = timezone.make_aware(visit_end_time)
-                    logger.info(f'end time: {visit_end_time}')
-                    logger.info(f'current time: {current_time}')
-                    logger.info(f'exact time: {visit.exact_time}')
+                    logger.info(f'end time: {visit_end_time}, type:{type(visit_end_time)}')
+                    logger.info(f'current time: {current_time}, type: {current_time}')
+                    logger.info(f'exact time: {visit.exact_time}, type: {visit.exact_time}')
                     if visit_end_time <= current_time:
                         visit.status = 'completed'
                         visit.save()
