@@ -68,6 +68,7 @@ class FollowSerializer(serializers.Serializer):
 
 class NormalUserSerializer(serializers.ModelSerializer):
     following_count = serializers.SerializerMethodField()
+    visits_count = serializers.SerializerMethodField()
 
     class Meta:
         model = NormalUserModel
@@ -75,6 +76,15 @@ class NormalUserSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, obj):
         return obj.get_following_count()
+    
+    def get_visits_count(self, obj:NormalUserModel):
+        visit_count = VisitingTimeModel.objects.filter(user=obj.normal_user).count()
+        if visit_count:
+            return visit_count
+        else:
+            return 0
+    
+    # TODO: get the saved post
 
 
 class SaloonSerializer(serializers.ModelSerializer):

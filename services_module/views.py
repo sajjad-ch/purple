@@ -1520,12 +1520,15 @@ class ChangeConfirmedToCompleted(APIView):
                 service_obj = UserServicesModel.objects.filter(supservice=visit.service).first()
                 if service_obj:
                     service_time = service_obj.suggested_time
-                    visit_end_time = visit.exact_time + timedelta(minutes=service_time)
+                    days = abs(current_time.day - visit.exact_time.day)
+                    visit_end_time = visit.exact_time + timedelta(days=days, minutes=service_time)
 
                     if timezone.is_naive(visit_end_time):
                         visit_end_time = timezone.make_aware(visit_end_time)
-
-                    if visit_end_time < current_time:
+                    logger.info(f'end time: {visit_end_time}')
+                    logger.info(f'current time: {current_time}')
+                    logger.info(f'exact time: {visit.exact_time}')
+                    if visit_end_time <= current_time:
                         visit.status = 'completed'
                         visit.save()
 
