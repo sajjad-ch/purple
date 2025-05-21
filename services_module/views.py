@@ -1521,17 +1521,10 @@ class ChangeConfirmedToCompleted(APIView):
                 if service_obj:
                     service_time = service_obj.suggested_time
                     days = abs(int(current_time.day) - int(visit.exact_time.day))
-                    logger.info(f'end time: {str(current_time.day)}, type:{type(current_time.day)}')
-                    logger.info(f'end time: {str(visit.exact_time.day)}, type:{type(visit.exact_time.day)}')
-                    logger.info(f'end time: {str(days)}, type:{type(days)}')
-
                     visit_end_time = visit.exact_time + timedelta(days=days, minutes=service_time)
 
                     if timezone.is_naive(visit_end_time):
                         visit_end_time = timezone.make_aware(visit_end_time)
-                    logger.info(f'end time: {str(visit_end_time)}, type:{type(visit_end_time)}')
-                    logger.info(f'current time: {str(current_time)}, type: {type(current_time)}')
-                    logger.info(f'exact time: {str(visit.exact_time)}, type: {type(visit.exact_time)}')
                     if visit_end_time <= current_time:
                         visit.status = 'completed'
                         visit.save()
