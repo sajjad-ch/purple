@@ -1520,7 +1520,11 @@ class ChangeConfirmedToCompleted(APIView):
                 service_obj = UserServicesModel.objects.filter(supservice=visit.service).first()
                 if service_obj:
                     service_time = service_obj.suggested_time
-                    days = abs(current_time.day - visit.exact_time.day)
+                    days = abs(int(current_time.day) - int(visit.exact_time.day))
+                    logger.info(f'end time: {str(current_time.day)}, type:{type(current_time.day)}')
+                    logger.info(f'end time: {str(visit.exact_time.day)}, type:{type(visit.exact_time.day)}')
+                    logger.info(f'end time: {str(days)}, type:{type(days)}')
+
                     visit_end_time = visit.exact_time + timedelta(days=days, minutes=service_time)
 
                     if timezone.is_naive(visit_end_time):
