@@ -452,39 +452,7 @@ class PostAPIView(APIView):
 
         serializer = PostSerializerPost(data=request.data, context={'request': request})
         if serializer.is_valid():
-            post_content = serializer.validated_data['post_content']
-            file_extension = str(post_content.name).split('.')[-1].lower()
-
-            if file_extension in ('png', 'jpg', 'jpeg'):
-                image = Image.open(post_content)
-                width, height = image.size
-            elif file_extension in ('mp4', 'mpeg', 'mpg'):
-                try:
-                    # Create a temporary file
-                    with tempfile.NamedTemporaryFile(delete=False, suffix='.' + file_extension) as temp_file:
-                        for chunk in post_content.chunks():
-                            temp_file.write(chunk)
-                        temp_file_path = temp_file.name
-
-                    # Use VideoFileClip to check the duration and size
-                    clip = VideoFileClip(temp_file_path)
-                    duration = clip.duration
-                    width, height = clip.size
-                    clip.close()
-
-                    # Remove the temporary file
-                    os.remove(temp_file_path)
-
-                    if duration > 60:
-                        return Response({'error': 'Video duration should be less than 60 seconds.'},
-                                        status=status.HTTP_400_BAD_REQUEST)
-                except Exception as e:
-                    return Response({'error': f'An error occurred while processing the video: {str(e)}'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            serializer.save(user=user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1666,7 +1634,7 @@ class FilterArtistAPIView(APIView):
             service = serializer.data.get('service')
             if artist_name and service:
                 artists_ids = UserServicesModel.objects.filter(supservice__service__service_name_en=service).values_list('artist', flat=True).distinct()
-                artists = ArtistModel.objects.filter(artist__first_name__icontains=artist_name, id__in=artists_ids).distinct()
+                artists = ArtistModel.objects.filter(Q(artist__first_name__icontains=artist_name) | Q(artist__last_name__icontains=artist_name), id__in=artists_ids).distinct()
                 artist_serializer = ArtistVisitsSerializer(artists, many=True, context={'request': request})
                 return Response(artist_serializer.data, status=status.HTTP_200_OK)
             elif artist_name and service == None:
@@ -1772,3 +1740,14 @@ class SavedPostView(APIView):
             return Response(message={'info': 'the post is unsaved.'}, status=status.HTTP_204_NO_CONTENT)
         return Response(message={'error': 'There is no such post.'}, status=status.HTTP_404_NOT_FOUND)
 
+
+class CheckSavedThePostByUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        user = request.user
+        saved_post = SavedPost.objects.filter(user=user, post=post_id).exists()
+        if saved_post:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)    

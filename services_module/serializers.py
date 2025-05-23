@@ -24,15 +24,22 @@ class ServiceSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(path)
 
 
+class PostSliderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostSliderModel
+        fields = ['media_file']
+
+
 class PostSerializerGet(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
     saloon_profile_picture_post = serializers.SerializerMethodField()
+    media = PostSliderSerializer(source='media.all', many=True, read_only=True)
 
     class Meta:
         model = PostModel
-        fields = ['id', 'post_content', 'caption', 'user', 'name', 'profile_picture', 'likes', 'saloon_profile_picture_post']
+        fields = ['id', 'post_content', 'caption', 'user', 'name', 'profile_picture', 'likes', 'saloon_profile_picture_post', 'media']
     
     def get_profile_picture(self, obj):
         profile_picture = obj.user.profile_picture.url
@@ -50,17 +57,30 @@ class PostSerializerGet(serializers.ModelSerializer):
 
     def get_likes(self, obj):
         return LikeModel.objects.filter(post=obj).count()
-        
 
 
 class PostSerializerPost(serializers.ModelSerializer):
+    media = serializers.ListField(
+        child=serializers.FileField(),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = PostModel
-        fields = ['post_content', 'caption', 'saloon']
+        fields = ['media', 'caption', 'saloon']
 
-        def create(self, validated_data):
-            validated_data['user'] = self.context['request'].user
-            return super().create(validated_data)
+    def create(self, validated_data):
+        media_files = validated_data.pop('media')
+        user = self.context['request'].user
+        post = PostModel.objects.create(user=user, **validated_data)
+        if len(media_files) > 5:
+            raise serializers.ValidationError("You can upload up to 5 media files per post.")
+
+        for file in media_files:
+            PostSliderModel.objects.create(post=post, media_file=file)
+
+        return post
 
 
 class StorySerializerGet(serializers.ModelSerializer):
@@ -107,7 +127,7 @@ class HighlightSerializerGet(serializers.ModelSerializer):
     saloon_profile_picture_highlight = serializers.SerializerMethodField()
     class Meta:
         model = HighlightModel
-        fields = ['highlight_content', 'user', 'created', 'text', 'saloon_profile_picture_highlight']
+        fields = ['user', 'created', 'text', 'saloon_profile_picture_highlight']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -121,7 +141,7 @@ class HighlightSerializerGet(serializers.ModelSerializer):
 class HighlightSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = HighlightModel
-        fields = ['highlight_content', 'text', 'saloon']
+        fields = ['text', 'saloon']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -557,4 +577,10 @@ class TagsModelSerializer(serializers.ModelSerializer):
 class SavedPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedPost
-        fields = "__all__"
+        exclude = ['saved_at']
+
+
+class PostSliderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HighlightSliderModel
+        exclude = ['created_at']

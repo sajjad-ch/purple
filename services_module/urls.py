@@ -25,6 +25,7 @@ urlpatterns = [
 
     # Saved Post
     path('saved_post/', SavedPostView.as_view(), name='saved-post'),
+    path('check_post_saved/<int:post_id>/', CheckSavedThePostByUser.as_view(), name='check-post-saved-by-user'),
 
     # Certificate URLs
     path('certificates/', CertificateAPIView.as_view(), name='certificate-list-create'),

@@ -5,6 +5,7 @@ from .utils import random_code
 from account_module.models import ArtistModel, SaloonModel
 from django.core.validators import MaxValueValidator, MinValueValidator 
 from django_jalali.db import models as jmodels
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -41,7 +42,6 @@ discounts = (
 
 class PostModel(models.Model):
     user = models.ForeignKey(User, verbose_name='کاربر', on_delete=models.CASCADE, related_name='posts')
-    post_content = models.FileField(upload_to='posts/', verbose_name='محتوای پست')
     caption = models.TextField(blank=True, verbose_name='توضیحات متن')
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     likes = models.PositiveIntegerField(default=0, verbose_name='تعداد لایک ها')
@@ -55,6 +55,24 @@ class PostModel(models.Model):
 
     def __str__(self):
         return f"{self.user} created a post on {self.created.date()}"
+    
+
+class PostSliderModel(models.Model):
+    post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name='media')
+    media_file = models.FileField(upload_to='posts/media/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'اسلاید پست'
+        verbose_name_plural = 'اسلاید های پست'
+
+    def __str__(self):
+        return f'{self.post.user} {self.post.created}'
+    
+    def save(self, *args, **kwargs):
+        if self.post.media.count() >= 5:
+            raise ValidationError("Each post can have up to 5 media files only.")
+        super().save(*args, **kwargs)
 
 
 class SavedPost(models.Model):
@@ -104,7 +122,6 @@ class StoryModel(models.Model):
 
 class HighlightModel(models.Model):
     user = models.ForeignKey(User, verbose_name='کاربر', on_delete=models.CASCADE)
-    highlight_content = models.FileField(upload_to='highlights/', verbose_name='محتوای هایلایت')
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     text = models.TextField(verbose_name='توضیحات متن', null=True, blank=True)
     saloon = models.ForeignKey(SaloonModel, on_delete=models.CASCADE, null=True, blank=True)
@@ -116,6 +133,17 @@ class HighlightModel(models.Model):
 
     def __str__(self):
         return f"{self.user} created a highlight on {self.created.date()}"
+
+
+class HighlightSliderModel(models.Model):
+    highlight = models.ForeignKey(HighlightModel, verbose_name='هایلایت', on_delete=models.CASCADE)
+    media = models.FileField(upload_to='highlights/media/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'اسلاید هایلایت'
+        verbose_name_plural = 'اسلاید های هایلایت'
+
 
 
 class ServiceModel(models.Model):
