@@ -32,7 +32,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class PostSliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostSliderModel
-        fields = ['id', 'media_file']
+        excluse = ['created_at']
 
 
 class PostSerializerGet(serializers.ModelSerializer):
@@ -65,20 +65,16 @@ class PostSerializerGet(serializers.ModelSerializer):
 
 
 class PostSerializerPost(serializers.ModelSerializer):
-    media = serializers.ListField(
-        child=serializers.FileField(),
-        write_only=True,
-        required=False
-    )
+    media = serializers.ImageField()
 
     class Meta:
         model = PostModel
-        fields = ['media', 'caption', 'saloon']
+        fields = ['id', 'media', 'caption', 'saloon']
 
     def create(self, validated_data):
         media_files = validated_data.pop('media')
         if media_files:
-            first_media_file = media_files[0]
+            first_media_file = media_files
             file_name = str(first_media_file)
             first_media_extension = file_name.split('.')[-1].lower()
             # if first_media_extension in ['jpg', 'jpeg', 'png']:
@@ -99,18 +95,14 @@ class PostSerializerPost(serializers.ModelSerializer):
                     buffer.seek(0)
 
                     thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
-                    validated_data['thumbnail'] = thumbnail_file
                 finally:
                     clip.close()
                     os.remove(temp_path) 
 
         user = self.context['request'].user
         post = PostModel.objects.create(user=user, **validated_data)
-        if len(media_files) > 5:
-            raise serializers.ValidationError("You can upload up to 5 media files per post.")
 
-        for file in media_files:
-            PostSliderModel.objects.create(post=post, media_file=file)
+        PostSliderModel.objects.create(post=post, media_file=media_files, thumbnail=thumbnail_file, position=1)
 
         return post
 
@@ -170,12 +162,19 @@ class HighlightSerializerGet(serializers.ModelSerializer):
             return obj.saloon.saloon_profile_picture.url
 
 
+class HighlightSliderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HighlightSliderModel
+        exclude = ['created_at']
+
+
 class HighlightSerializerPost(serializers.ModelSerializer):
     highlight_media = serializers.FileField()
+    media = HighlightSliderSerializer(source='media.all', many=True, read_only=True)
 
     class Meta:
         model = HighlightModel
-        fields = ['text', 'saloon', 'highlight_media', 'thumbnail']
+        fields = ['text', 'saloon', 'highlight_media', 'thumbnail', 'media']
 
     def create(self, validated_data):
         highligh_media = validated_data.pop('highlight_media')
@@ -209,41 +208,64 @@ class HighlightSerializerPost(serializers.ModelSerializer):
         user = self.context['request'].user
         highlight = HighlightModel.objects.create(user=user, **validated_data)
         if highligh_media:
-            HighlightSliderModel.objects.create(highlight=highlight, media=highligh_media)
+            file_name = str(highligh_media)
+            first_media_extension = file_name.split('.')[-1].lower()
+            if first_media_extension in ['jpg', 'jpeg', 'png']:
+                validated_data['thumbnail'] = highligh_media
+            elif first_media_extension in ['mp4', 'mov', 'avi']:
+                temp_path = f'/tmp/{file_name}'
+                with open(temp_path, 'wb+') as temp_file:
+                    for chunk in highligh_media.chunks():
+                        temp_file.write(chunk)
+
+                try:
+                    clip = VideoFileClip(temp_path)
+                    frame = clip.get_frame(3.0)
+                    image = Image.fromarray(frame)
+
+                    buffer = io.BytesIO()
+                    image.save(buffer, format='JPEG')
+                    buffer.seek(0)
+
+                    thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
+                finally:
+                    clip.close()
+                    os.remove(temp_path)
+            HighlightSliderModel.objects.create(highlight=highlight, media=highligh_media, thumbnail=thumbnail_file, position=1)
 
         return highlight
     
-    def update(self, instance, validated_data):
-        new_highlight = validated_data.get('highlight_media')
-        if new_highlight:
-            HighlightSliderModel.objects.create(highlight=instance, media=new_highlight)
-            if instance.thumbnail is None:
-                file_name = str(new_highlight)
-                first_media_extension = file_name.split('.')[-1].lower()
-                if first_media_extension in ['jpg', 'jpeg', 'png']:
-                    validated_data['thumbnail'] = new_highlight
-                elif first_media_extension in ['mp4', 'mov', 'avi']:
-                    temp_path = f'/tmp/{file_name}'
-                    with open(temp_path, 'wb+') as temp_file:
-                        for chunk in new_highlight.chunks():
-                            temp_file.write(chunk)
+    # def update(self, instance, validated_data):
+    #     new_highlight = validated_data.get('highlight_media')
+    #     if new_highlight:
+    #         HighlightSliderModel.objects.create(highlight=instance, media=new_highlight)
+    #         if instance.thumbnail is None:
+    #             file_name = str(new_highlight)
+    #             first_media_extension = file_name.split('.')[-1].lower()
+    #             if first_media_extension in ['jpg', 'jpeg', 'png']:
+    #                 validated_data['thumbnail'] = new_highlight
+    #             elif first_media_extension in ['mp4', 'mov', 'avi']:
+    #                 temp_path = f'/tmp/{file_name}'
+    #                 with open(temp_path, 'wb+') as temp_file:
+    #                     for chunk in new_highlight.chunks():
+    #                         temp_file.write(chunk)
 
-                    try:
-                        clip = VideoFileClip(temp_path)
-                        frame = clip.get_frame(3.0)
-                        image = Image.fromarray(frame)
+    #                 try:
+    #                     clip = VideoFileClip(temp_path)
+    #                     frame = clip.get_frame(3.0)
+    #                     image = Image.fromarray(frame)
 
-                        buffer = io.BytesIO()
-                        image.save(buffer, format='JPEG')
-                        buffer.seek(0)
+    #                     buffer = io.BytesIO()
+    #                     image.save(buffer, format='JPEG')
+    #                     buffer.seek(0)
 
-                        thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
-                        validated_data['thumbnail'] = thumbnail_file
-                    finally:
-                        clip.close()
-                        os.remove(temp_path)
-            instance.save()
-        return instance
+    #                     thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
+    #                     validated_data['thumbnail'] = thumbnail_file
+    #                 finally:
+    #                     clip.close()
+    #                     os.remove(temp_path)
+    #         instance.save()
+    #     return instance
 
 
 class ArtistVisitsSerializer(serializers.ModelSerializer):
@@ -676,9 +698,3 @@ class SavedPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedPost
         exclude = ['saved_at']
-
-
-class PostSliderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HighlightSliderModel
-        exclude = ['created_at']

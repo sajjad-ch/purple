@@ -486,6 +486,43 @@ class PostAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class AddMediaPostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: HttpRequest):
+        user = request.user
+        serializer = PostSliderSerializer(request.data, partial=True)
+        if serializer.is_valid():
+            media_file = serializer.validated_data.get('media')
+            if media_file:
+                first_media_file = media_file
+                file_name = str(first_media_file)
+                first_media_extension = file_name.split('.')[-1].lower()
+                if first_media_extension in ['mp4', 'mov', 'avi']:
+                    temp_path = f'/tmp/{file_name}'
+                    with open(temp_path, 'wb+') as temp_file:
+                        for chunk in first_media_file.chunks():
+                            temp_file.write(chunk)
+
+                    try:
+                        clip = VideoFileClip(temp_path)
+                        frame = clip.get_frame(3.0)
+                        image = Image.fromarray(frame)
+
+                        buffer = io.BytesIO()
+                        image.save(buffer, format='JPEG')
+                        buffer.seek(0)
+
+                        thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
+                    finally:
+                        clip.close()
+                        os.remove(temp_path) 
+                serializer.save(thumbnail=thumbnail_file)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(message={'error': 'There is no file.'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
 class UpdateMediaPostView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -831,7 +868,43 @@ class HighlightAPIView(APIView):
 
         deleted_highlight.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
+class AddMediaHighlightView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: HttpRequest):
+        user = request.user
+        serializer = HighlightSliderSerializer(request.data, partial=True)
+        if serializer.is_valid():
+            media_file = serializer.validated_data.get('media_file')
+            if media_file:
+                first_media_file = media_file
+                file_name = str(first_media_file)
+                first_media_extension = file_name.split('.')[-1].lower()
+                if first_media_extension in ['mp4', 'mov', 'avi']:
+                    temp_path = f'/tmp/{file_name}'
+                    with open(temp_path, 'wb+') as temp_file:
+                        for chunk in first_media_file.chunks():
+                            temp_file.write(chunk)
+
+                    try:
+                        clip = VideoFileClip(temp_path)
+                        frame = clip.get_frame(3.0)
+                        image = Image.fromarray(frame)
+
+                        buffer = io.BytesIO()
+                        image.save(buffer, format='JPEG')
+                        buffer.seek(0)
+
+                        thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
+                    finally:
+                        clip.close()
+                        os.remove(temp_path) 
+                serializer.save(thumbnail=thumbnail_file)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(message={'error': 'There is no file.'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DeleteHighlighMediaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -1778,4 +1851,20 @@ class CheckSavedThePostByUser(APIView):
         if saved_post:
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)    
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class LastMediaThumbnailView(APIView):
+    def get(self, request: HttpRequest, highlight_id):
+        try:
+            highlight = HighlightModel.objects.get(pk=highlight_id)
+        except HighlightModel.DoesNotExist:
+            return Response(message={'error': 'There is no such highlight'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        last_slider = HighlightSliderModel.objects.filter(highlight=highlight).all().order_by('-created_at').first()
+
+        if not last_slider or not last_slider.thumbnail:
+            return Response({'error': 'No thumbnail available'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({'thumbnail_url': request.build_absolute_uri(last_slider.thumbnail.url)}, status=status.HTTP_200_OK)
+

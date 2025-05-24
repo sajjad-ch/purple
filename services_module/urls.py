@@ -22,6 +22,7 @@ urlpatterns = [
     path('posts/<int:pk>/', PostAPIView.as_view(), name='post-detail-update-delete'),
     path('profile_posts/<int:user_id>/', ProfilePostAPIView.as_view(), name='profile-post'),
     path('posts/posts-likes/<int:post_id>/', ReturnLikeAPIView.as_view(), name='post-likes'),
+    path('add_media/', AddMediaPostView.as_view(), name='add_media'),
     path('post_media_update/<int:media_id>/', UpdateMediaPostView.as_view(), name='media-update'),
     path('post_media_delete/<int:media_id>/', DeleteMediaPostView.as_view(), name='media-delete'),
 
@@ -43,6 +44,7 @@ urlpatterns = [
     path('highlights/', HighlightAPIView.as_view(), name='highlight-list-create'),
     path('highlights/<int:pk>/', HighlightAPIView.as_view(), name='highlight-detail-update-delete'),
     path('highlight_media_delete/<int:media_id>/', DeleteHighlighMediaView.as_view(), name='media-delete'),
+    path('add_media/', AddMediaHighlightView.as_view(), name='add_media'),
 
     # Like URLs
     path('posts/<int:post_id>/like/', LikeAPIView.as_view(), name='like-post'),
