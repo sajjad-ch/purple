@@ -29,8 +29,8 @@ class Message(models.Model):
 
 class RequestVisitNotification(models.Model):
     message = models.CharField(max_length=128, verbose_name='متن اعلان')
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='فرستنده اعلان', related_name='sent_notifications')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='گیرنده اعلان', related_name='received_notifications')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='فرستنده اعلان', related_name='sent_notifications', null=True)
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='گیرنده اعلان', related_name='received_notifications', blank=True)
     timestamp = jmodels.jDateTimeField(auto_now_add=True)
     seen = models.BooleanField(default=False, verbose_name='دیده شده')
     # TODO: Do not forget the migration
