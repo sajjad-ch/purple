@@ -906,6 +906,25 @@ class AddMediaHighlightView(APIView):
             return Response(message={'error': 'There is no file.'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class UpdateMediaHighlightView(APIView):
+    def post(self, request: HttpRequest, media_id):
+        user = request.user
+        try:
+            highlight_slider = HighlightSliderModel.objects.get(pk=media_id)
+        except HighlightSliderModel.DoesNotExist:
+            return Response(message={'error': 'Slider not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if user != highlight_slider.highlight.user:
+            return Response({'error': 'You do not have permission to edit this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = HighlightSliderSerializer(highlight_slider, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class DeleteHighlighMediaView(APIView):
     permission_classes = [IsAuthenticated]
 
