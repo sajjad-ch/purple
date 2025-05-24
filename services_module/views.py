@@ -486,6 +486,46 @@ class PostAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class UpdateMediaPostView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request: HttpRequest, media_id):
+        user = request.user
+        try:
+            updated_media = PostSliderModel.objects.filter(id=media_id).first()
+        except PostSliderModel.DoesNotExist:
+            return Response({'error': 'Media not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if updated_media.media.user != user:
+            return Response({'error': 'You do not have permission to edit this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer: PostSliderSerializer = PostSliderSerializer(updated_media, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteMediaPostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request: HttpRequest, media_id):
+        user = request.user
+        try:
+            deleted_media = PostSliderModel.objects.filter(id=media_id).first()
+        except PostSliderModel.DoesNotExist:
+            return Response({'error': 'Media not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if deleted_media.media.user != user:
+            return Response({'error': 'You do not have permission to edit this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        deleted_media.delete()
+
+        return Response({'message': 'Media deleted.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+
 class ProfilePostAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -744,6 +784,8 @@ class StoryAPIView(APIView):
 
 
 class HighlightAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         user = request.user
         if not hasattr(user, 'artist') and not hasattr(user, 'saloon'):
@@ -758,38 +800,6 @@ class HighlightAPIView(APIView):
             return Response({'error': 'Only artists and saloons can create Highlight.'}, status=status.HTTP_403_FORBIDDEN)
         highlight_serializer: HighlightSerializerPost = HighlightSerializerPost(data=request.data, context={'request': request})
         if highlight_serializer.is_valid():
-            highlight_content = highlight_serializer.validated_data['highlight_content']
-
-            file_extension = str(highlight_content.name).split('.')[-1].lower()
-
-            if file_extension in ('png', 'jpg', 'jpeg'):
-                image = Image.open(highlight_content)
-                width, height = image.size
-            elif file_extension in ('mp4', 'mpeg', 'mpg'):
-                try:
-                    # Create a temporary file
-                    with tempfile.NamedTemporaryFile(delete=False, suffix='.' + file_extension) as temp_file:
-                        for chunk in highlight_content.chunks():
-                            temp_file.write(chunk)
-                        temp_file_path = temp_file.name
-
-                    # Use VideoFileClip to check the duration and size
-                    clip = VideoFileClip(temp_file_path)
-                    duration = clip.duration
-                    width, height = clip.size
-                    clip.close()
-
-                    # Remove the temporary file
-                    os.remove(temp_file_path)
-
-                    if duration > 60:
-                        return Response({'error': 'Video duration should be less than 10 seconds.'},
-                                        status=status.HTTP_400_BAD_REQUEST)
-                except Exception as e:
-                    return Response({'error': f'An error occurred while processing the video: {str(e)}'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
             highlight_serializer.save(user=user)
             return Response(highlight_serializer.data, status=status.HTTP_201_CREATED)
         return Response(highlight_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -821,6 +831,24 @@ class HighlightAPIView(APIView):
 
         deleted_highlight.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class DeleteHighlighMediaView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request: HttpRequest, media_id):
+        user = request.user
+        try:
+            deleted_media = HighlightSliderModel.objects.filter(id=media_id).first()
+        except HighlightSliderModel.DoesNotExist:
+            return Response({'error': 'Media not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if deleted_media.media.user != user:
+            return Response({'error': 'You do not have permission to edit this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        deleted_media.delete()
+
+        return Response({'message': 'Media deleted.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class ReturnLikeAPIView(APIView):

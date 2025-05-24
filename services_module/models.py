@@ -48,6 +48,7 @@ class PostModel(models.Model):
     tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها', null=True, blank=True)
     is_certificate = models.BooleanField(default=False, verbose_name='گواهی نامه')
     saloon = models.ForeignKey(SaloonModel, on_delete=models.CASCADE, null=True, blank=True)
+    thumbnail = models.ImageField(upload_to='post-thumbnail/', verbose_name='پیش نمایش پست', null=True, blank=True)
 
     class Meta:
         verbose_name = 'پست'
@@ -106,7 +107,6 @@ class StoryModel(models.Model):
     duration = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='گذشته از')
     reply = models.CharField(max_length=255, null=True, blank=True)
     saloon = models.ForeignKey(SaloonModel, on_delete=models.CASCADE, null=True, blank=True)
-    thumbnail = models.ImageField(upload_to='story-thumbnail/', verbose_name='پیش نمایش استوری', null=True, blank=True)
     
 
     class Meta:
