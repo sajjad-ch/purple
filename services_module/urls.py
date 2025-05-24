@@ -44,7 +44,7 @@ urlpatterns = [
     path('highlights/', HighlightAPIView.as_view(), name='highlight-list-create'),
     path('highlights/<int:pk>/', HighlightAPIView.as_view(), name='highlight-detail-update-delete'),
     path('highlight_media_delete/<int:media_id>/', DeleteHighlighMediaView.as_view(), name='media-delete'),
-    path('add_media/', AddMediaHighlightView.as_view(), name='add_media'),
+    path('add_highlight_media/', AddMediaHighlightView.as_view(), name='add_media'),
 
     # Like URLs
     path('posts/<int:post_id>/like/', LikeAPIView.as_view(), name='like-post'),
