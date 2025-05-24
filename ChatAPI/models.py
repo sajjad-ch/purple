@@ -7,10 +7,10 @@ from django_jalali.db import models as jmodels
 
 class Conversation(models.Model):
     initiator = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_starter"
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="convo_starter"
     )
     receiver = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_participant"
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="convo_participant"
     )
     start_time = models.DateTimeField(auto_now_add=True)
 
