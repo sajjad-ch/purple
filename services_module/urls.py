@@ -78,6 +78,8 @@ urlpatterns = [
     path('visits/change-states/confirmed-to-complete/', ChangeConfirmedToCompleted.as_view(), name='confirmed-to-complete'),
     path('visits/change-states/waiting-for-deposit-to-rejected-sa/', ChangeWaitingForDepositToRejectedByArtistOrSaloon.as_view(), name='waiting-for-deposit-to-rejected-sa'),
     path('visits/change-states/waiting-for-deposit-to-rejected-user/', ChangeWaitingForDepositToRejectedByUser.as_view(), name='waiting-for-deposit-to-rejected-user'),
+    path('visits/change-states/waiting-for-confirmation-to-rejected-sa/', ChangeWaitingForConfirmationToRejectedByArtistOrSaloon.as_view(), name='waiting-for-confirmation-to-rejected-sa'),
+    path('visits/change-states/waiting-for-confirmation-to-rejected-user/', ChangeWaitingForConfirmationToRejectedByUser.as_view(), name='waiting-for-confirmation-to-rejected-user'),
 
 
     # Payment Notification URL

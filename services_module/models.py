@@ -226,6 +226,7 @@ class VisitingTimeModel(models.Model):
     price = models.IntegerField(verbose_name='قیمت بیعانه', null=True, blank=True)
     rank = models.ForeignKey(RankModel, on_delete=models.CASCADE, verbose_name='امتیاز دهی', null=True, blank=True)
     text = models.TextField(verbose_name='متن نظردهی', null=True, blank=True)
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='زمان ساخت نوبت', null=True, blank=True)
 
     class Meta:
         verbose_name = 'نوبت دهی'

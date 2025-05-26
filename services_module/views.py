@@ -877,7 +877,7 @@ class AddMediaHighlightView(APIView):
         user = request.user
         serializer = HighlightSliderSerializer(request.data, partial=True)
         if serializer.is_valid():
-            media_file = serializer.validated_data.get('media_file')
+            media_file = serializer.validated_data.get('media')
             if media_file:
                 first_media_file = media_file
                 file_name = str(first_media_file)
@@ -1656,7 +1656,12 @@ class ChangeWaitingForDepositToRejectedByArtistOrSaloon(APIView):
                 if timezone.is_naive(visit.payment_due_time):
                     visit.payment_due_time = timezone.make_aware(visit.payment_due_time)
 
-                if visit.payment_due_time < current_time:
+                payment_due_gregorian = visit.payment_due_time.togregorian()
+
+                if timezone.is_naive(payment_due_gregorian):
+                    payment_due_gregorian = timezone.make_aware(payment_due_gregorian)
+
+                if payment_due_gregorian < current_time:
                     visit.status = 'rejected'
                     visit.save()
 
@@ -1678,11 +1683,64 @@ class ChangeWaitingForDepositToRejectedByUser(APIView):
             for visit in visits:
                 if timezone.is_naive(visit.payment_due_time):
                     visit.payment_due_time = timezone.make_aware(visit.payment_due_time)
+                
+                payment_due_gregorian = visit.payment_due_time.togregorian()
 
-                if visit.payment_due_time < current_time:
+                if timezone.is_naive(payment_due_gregorian):
+                    payment_due_gregorian = timezone.make_aware(payment_due_gregorian)
+
+
+                if payment_due_gregorian < current_time:
                     visit.status = 'rejected'
                     visit.save()
 
+            return Response({'message': 'Visits status changed.'}, status=status.HTTP_200_OK)
+
+        return Response({'message': 'No matching visits found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class waiting-for-confirmation-to-rejected-sa(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: HttpRequest):
+        user = request.user
+        current_time = jdatetime.datetime.now()
+
+        visits = VisitingTimeModel.objects.filter(user=user, status='waiting for confirmation')
+        
+        if visits.exists():
+            for visit in visits:
+                maximum_time_for_confirmation = visit.created_at + timedelta(hours=8)
+                if current_time > maximum_time_for_confirmation:
+                    visit.status = 'rejected'
+                    visit.save()
+        
+            return Response({'message': 'Visits status changed.'}, status=status.HTTP_200_OK)
+
+        return Response({'message': 'No matching visits found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangeWaitingForConfirmationToRejectedByArtistOrSaloon(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: HttpRequest):
+        user = request.user
+        current_time = jdatetime.datetime.now()
+        
+        if hasattr(user, 'saloon'):
+            visits = VisitingTimeModel.objects.filter(saloon=user.saloon.pk, status='waiting for confirmation')
+        elif hasattr(user, 'artist'):
+            visits = VisitingTimeModel.objects.filter(artist=user.artist.pk, status='waiting for confirmation')
+        else:
+            return Response({'message': 'User type not recognized.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if visits.exists():
+            for visit in visits:
+                maximum_time_for_confirmation = visit.created_at + timedelta(hours=8)
+                if current_time > maximum_time_for_confirmation:
+                    visit.status = 'rejected'
+                    visit.save()
+        
             return Response({'message': 'Visits status changed.'}, status=status.HTTP_200_OK)
 
         return Response({'message': 'No matching visits found.'}, status=status.HTTP_400_BAD_REQUEST)

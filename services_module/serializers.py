@@ -147,11 +147,19 @@ class StorySerializerPost(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class HighlightSliderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HighlightSliderModel
+        fields = "__all__"
+
+
 class HighlightSerializerGet(serializers.ModelSerializer):
     saloon_profile_picture_highlight = serializers.SerializerMethodField()
+    media = HighlightSliderSerializer(source='media.all', many=True, read_only=True)
+
     class Meta:
         model = HighlightModel
-        fields = ['user', 'created', 'text', 'saloon_profile_picture_highlight']
+        fields = ['user', 'created', 'text', 'saloon_profile_picture_highlight', 'media']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -162,19 +170,12 @@ class HighlightSerializerGet(serializers.ModelSerializer):
             return obj.saloon.saloon_profile_picture.url
 
 
-class HighlightSliderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HighlightSliderModel
-        exclude = ['created_at']
-
-
 class HighlightSerializerPost(serializers.ModelSerializer):
     highlight_media = serializers.FileField()
-    media = HighlightSliderSerializer(source='media.all', many=True, read_only=True)
 
     class Meta:
         model = HighlightModel
-        fields = ['text', 'saloon', 'highlight_media', 'thumbnail', 'media']
+        fields = ['text', 'saloon', 'highlight_media', 'thumbnail']
 
     def create(self, validated_data):
         highligh_media = validated_data.pop('highlight_media')
