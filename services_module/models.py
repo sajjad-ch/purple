@@ -61,7 +61,7 @@ class PostSliderModel(models.Model):
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name='media')
     media_file = models.FileField(upload_to='posts/media/')
     created_at = models.DateTimeField(auto_now_add=True)
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveIntegerField(default=1, verbose_name='جایگاه')
     thumbnail = models.ImageField(upload_to='post-thumbnail/', verbose_name='پیش نمایش پست', null=True, blank=True)
 
     class Meta:
@@ -141,7 +141,7 @@ class HighlightSliderModel(models.Model):
     media = models.FileField(upload_to='highlights/media/')
     created_at = models.DateTimeField(auto_now_add=True)
     thumbnail = models.ImageField(upload_to='highligh-slider-thumbnail/', verbose_name='پیش نمایش هایلایت', null=True, blank=True)
-    position = models.PositiveIntegerField(default=1)
+    position = models.PositiveIntegerField(default=1, verbose_name='جایگاه')
 
     class Meta:
         verbose_name = 'اسلاید هایلایت'
