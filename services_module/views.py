@@ -875,13 +875,14 @@ class AddMediaHighlightView(APIView):
 
     def post(self, request: HttpRequest):
         user = request.user
-        serializer = HighlightSliderSerializer(request.data, partial=True)
+        serializer = HighlightSliderSerializer(data=request.data)
         if serializer.is_valid():
             media_file = serializer.validated_data.get('media')
             if media_file:
                 first_media_file = media_file
                 file_name = str(first_media_file)
                 first_media_extension = file_name.split('.')[-1].lower()
+                thumbnail_file = None
                 if first_media_extension in ['mp4', 'mov', 'avi']:
                     temp_path = f'/tmp/{file_name}'
                     with open(temp_path, 'wb+') as temp_file:
@@ -896,12 +897,14 @@ class AddMediaHighlightView(APIView):
                         buffer = io.BytesIO()
                         image.save(buffer, format='JPEG')
                         buffer.seek(0)
-
                         thumbnail_file = ContentFile(buffer.read(), name='thumbnail.jpg')
                     finally:
                         clip.close()
-                        os.remove(temp_path) 
-                serializer.save(thumbnail=thumbnail_file)
+                        os.remove(temp_path)
+                if thumbnail_file: 
+                    serializer.save(thumbnail=thumbnail_file)
+                else:
+                    serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(message={'error': 'There is no file.'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

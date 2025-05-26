@@ -45,7 +45,7 @@ class PostModel(models.Model):
     caption = models.TextField(blank=True, verbose_name='توضیحات متن')
     created = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در')
     likes = models.PositiveIntegerField(default=0, verbose_name='تعداد لایک ها')
-    tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها', null=True, blank=True)
+    tag = models.ManyToManyField('services_module.TagsModel', verbose_name='تگ ها', blank=True)
     is_certificate = models.BooleanField(default=False, verbose_name='گواهی نامه')
     saloon = models.ForeignKey(SaloonModel, on_delete=models.CASCADE, null=True, blank=True)
 

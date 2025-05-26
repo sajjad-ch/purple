@@ -232,9 +232,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 
-STATICFILES_DIRS = [
-    BASE_DIR / "build/web",
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / "build/web",
+# ]
 # CORS_ALLOWED_HOSTS = ['http://5.75.202.75:8000', '*']
 # CORS_ALLOW_ALL_ORIGIN = True
 
