@@ -1450,6 +1450,20 @@ class PostConfirmVisitAPIView(APIView):
                 visit.suggested_hour = suggested_hour
                 visit.suggested_date = suggested_date
                 visit.confirmation_time = timezone.now()
+                midnight = jdatetime.datetime(visit.confirmation_time.year, visit.confirmation_time.month, visit.confirmation_time.day, 00, 10, 00)
+                if visit.confirmation_time > midnight:
+                    noon = jdatetime.datetime(visit.confirmation_time.year, visit.confirmation_time.month, visit.confirmation_time.day, 12, 00, 00)
+                    time_left = noon - timezone.now()
+                    visit.payment_due_time = timezone.now() + timezone.timedelta(hours=time_left.hour, minutes=time_left.minute, seconds=time_left.second)
+                    visit.save()
+                    phone_number = visit.user.phone_number
+                    # sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
+                    paying_url = ''
+                    # sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)
+
+                    logger.info(f"[Visit {visit_id}] Visit confirmed by user {request.user}")
+                    return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
+                
                 visit.payment_due_time = timezone.now() + timezone.timedelta(minutes=40)
                 visit.price = supservice_price
                 visit.save()

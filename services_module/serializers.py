@@ -32,7 +32,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class PostSliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostSliderModel
-        excluse = ['created_at']
+        exclude = ['created_at']
 
 
 class PostSerializerGet(serializers.ModelSerializer):
