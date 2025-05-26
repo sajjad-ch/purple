@@ -1699,7 +1699,7 @@ class ChangeWaitingForDepositToRejectedByUser(APIView):
         return Response({'message': 'No matching visits found.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class waiting-for-confirmation-to-rejected-sa(APIView):
+class ChangeWaitingForConfirmationToRejectedByUser(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request: HttpRequest):
