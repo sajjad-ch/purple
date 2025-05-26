@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "channels",
     'django_celery_beat',
     "django_jalali",
+    'drf_spectacular',
     
     # local
     'account_module',
@@ -140,6 +141,7 @@ else:
         }
     }
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     

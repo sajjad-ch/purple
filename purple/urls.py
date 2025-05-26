@@ -24,6 +24,11 @@ from rest_framework.authtoken.views import obtain_auth_token
 from django.http import HttpResponse
 from django.views.generic.base import RedirectView
 from django.views.generic import TemplateView
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 
 def home(request):
     return render(request, 'index.html')
@@ -50,6 +55,15 @@ urlpatterns = [
     # Favicon
     path('favicon.ico', serve, {'document_root': settings.BASE_DIR / 'frontend/', 'path': 'favicon.ico'}),
 
+    # API schema generation endpoint
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+
+    # Swagger UI
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+
+    # Redoc UI (optional)
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    
     # Static & media
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
