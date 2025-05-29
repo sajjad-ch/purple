@@ -291,7 +291,8 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
     active = serializers.SerializerMethodField()
     supservices = serializers.SerializerMethodField()
     phone_number_for_chat = serializers.SerializerMethodField()
-    location = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -391,11 +392,15 @@ class ArtistProfileSerializer(serializers.ModelSerializer):
         return [{"rank": visit.rank.rank, "text": visit.text} for visit in visits if visit.rank is not None]
 
 
-    def get_location(self, obj):
+    def get_latitude(self, obj):
         saloon: SaloonModel = SaloonModel.objects.filter(id=obj.saloon_artists.id).first()
         latitude = saloon.latitude
+        return latitude
+
+    def get_longitude(self, obj):
+        saloon: SaloonModel = SaloonModel.objects.filter(id=obj.saloon_artists.id).first()
         longitude = saloon.longitude
-        return {'latitude': latitude, 'longitude': longitude}
+        return longitude
     
 
 class NormalUserUpdateSerializer(serializers.ModelSerializer):
