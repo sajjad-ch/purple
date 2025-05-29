@@ -168,7 +168,7 @@ class HighlightSerializerGet(serializers.ModelSerializer):
 
     class Meta:
         model = HighlightModel
-        fields = ['id', 'user', 'created', 'text', 'saloon_profile_picture_highlight', 'media']
+        fields = ['id', 'user', 'created', 'text', 'thumbnail', 'saloon_profile_picture_highlight', 'media']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
