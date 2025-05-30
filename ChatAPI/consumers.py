@@ -175,6 +175,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {"type": "chat_message", **text_data_json},
             )
 
+            message_type = text_data_json.get('type')
+            if message_type == "chat_message":
+                await self.chat_message(text_data_json)
+            
+
             recipient_group = f"user_{recipient.id}"
             await self.channel_layer.group_send(
                 recipient_group,
