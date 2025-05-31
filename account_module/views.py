@@ -157,7 +157,7 @@ class LogoutView(APIView):
 
 
 class ViewSaloonProfile(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
         saloon = SaloonModel.objects.filter(pk=user_id).first()
@@ -168,7 +168,7 @@ class ViewSaloonProfile(APIView):
 
 
 class ViewArtistProfile(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
         artist = ArtistModel.objects.filter(pk=user_id).first()
