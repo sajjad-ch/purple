@@ -4,9 +4,21 @@ from rest_framework import serializers
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    reply_to = serializers.SerializerMethodField()
+
     class Meta:
         model = Message
         exclude = ['conversation_id']
+
+    def get_reply_to(self, obj: Message):
+        if obj.reply_to:
+            return {
+                "id": obj.reply_to.id,
+                "text": obj.reply_to.text,
+                "sender": obj.reply_to.sender.id,
+                "created_at": obj.reply_to.created_at.isoformat()
+            }
+        return None
 
 
 class ConversationListSerializer(serializers.ModelSerializer):

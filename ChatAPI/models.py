@@ -14,6 +14,13 @@ class Conversation(models.Model):
     )
     start_time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.initiator} have a conversation with {self.receiver}'
+    
+    class Meta:
+        verbose_name = 'مکالمه'
+        verbose_name_plural = 'مکالمات'
+
 
 class Message(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
@@ -22,9 +29,16 @@ class Message(models.Model):
     attachment = models.FileField(blank=True)
     conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = jmodels.jDateTimeField(auto_now_add=True)
+    is_edited = models.BooleanField(default=False)
+    reply_to = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name='replies')
 
     class Meta:
+        verbose_name = 'پیام'
+        verbose_name_plural = 'پیام ها'
         ordering = ('-timestamp',)
+
+    def __str__(self):
+        return f'{self.sender} - {self.text[:20]}' 
 
 
 class RequestVisitNotification(models.Model):
