@@ -286,7 +286,7 @@ class LikeModel(models.Model):
 
 class SliderModel(models.Model):
     slider_picture = models.FileField(upload_to='slider_images/', verbose_name='تصویر اسلایدر')
-    slider_text = models.CharField(max_length=100, verbose_name='متن اسلایدر')
+    slider_text = models.CharField(max_length=100, verbose_name='متن اسلایدر', null=True, blank=True)
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     url_slider = models.URLField(null=True, blank=True, max_length=256)
