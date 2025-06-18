@@ -65,7 +65,7 @@ def send_message():
 
 
 
-def sms_for_new_visiting_time_saloon(phone_number, saloon_name):
+def sms_for_new_visiting_time_saloon(phone_number, saloon_name, date, customer):
     url = "https://api.sms.ir/v1/send/verify"
     if phone_number[0] == '0':
         new_phone_number = phone_number[1:]
@@ -78,6 +78,14 @@ def sms_for_new_visiting_time_saloon(phone_number, saloon_name):
             {
                 "name": "SALOON",
                 "value": str(saloon_name)
+            },
+            {
+                "name": "DATE",
+                "value": str(date)
+            },
+            {
+                "name": "CUSTOMER",
+                "value": str(customer)
             }
         ]
     }
@@ -95,7 +103,7 @@ def sms_for_new_visiting_time_saloon(phone_number, saloon_name):
 
 
 
-def sms_for_new_visiting_time_artist(phone_number, artist_name):
+def sms_for_new_visiting_time_artist(phone_number, artist_name, date, customer):
     url = "https://api.sms.ir/v1/send/verify"
     if phone_number[0] == '0':
         new_phone_number = phone_number[1:]
@@ -108,6 +116,14 @@ def sms_for_new_visiting_time_artist(phone_number, artist_name):
             {
                 "name": "ARTIST",
                 "value": str(artist_name)
+            },
+            {
+                "name": "DATE",
+                "value": str(date)
+            },
+            {
+                "name": "CUSTOMER",
+                "value": str(customer)
             }
         ]
     }
@@ -125,7 +141,7 @@ def sms_for_new_visiting_time_artist(phone_number, artist_name):
     print(res.text)
 
 
-def sms_for_result_of_appointment(phone_number, result, appointment_id):
+def sms_for_result_of_appointment(phone_number, result, appointment_id, date, saloon, artist, customer):
     url = "https://api.sms.ir/v1/send/verify"
     if phone_number[0] == '0':
         new_phone_number = phone_number[1:]
@@ -142,7 +158,23 @@ def sms_for_result_of_appointment(phone_number, result, appointment_id):
             {
                 "name": "APPOINTMENTID",
                 "value": str(appointment_id)
-            }
+            },
+                        {
+                "name": "ARTIST",
+                "value": str(artist)
+            },
+                        {
+                "name": "DATE",
+                "value": str(date)
+            },
+            {
+                "name": "CUSTOMER",
+                "value": str(customer)
+            },
+                        {
+                "name": "SALOON",
+                "value": str(saloon)
+            },
         ]
     }
 
@@ -159,7 +191,7 @@ def sms_for_result_of_appointment(phone_number, result, appointment_id):
     print(res.text)
 
 
-def sms_for_reminding_deposit(phone_number, paying_url, saloon, artist, appointmet_id):
+def sms_for_reminding_deposit(phone_number, paying_url, saloon, artist, appointmet_id, customer, date):
     url = "https://api.sms.ir/v1/send/verify"
     if phone_number[0] == '0':
         new_phone_number = phone_number[1:]
@@ -184,7 +216,15 @@ def sms_for_reminding_deposit(phone_number, paying_url, saloon, artist, appointm
             {
                 "name": "APPOINTMENTID",
                 "value": str(appointmet_id)
-            }
+            },
+            {
+                "name": "CUSTOMER",
+                "value": str(customer)
+            },
+            {
+                "name": "DATE",
+                "value": str(date)
+            },
         ]
     }
 
@@ -202,7 +242,7 @@ def sms_for_reminding_deposit(phone_number, paying_url, saloon, artist, appointm
 
 
 
-def sms_for_deposit_paid(phone_number, customer, appointmet_id):
+def sms_for_deposit_paid(phone_number, customer, appointmet_id, visit_date):
     url = "https://api.sms.ir/v1/send/verify"
     if phone_number[0] == '0':
         new_phone_number = phone_number[1:]
@@ -219,6 +259,40 @@ def sms_for_deposit_paid(phone_number, customer, appointmet_id):
             {
                 "name": "APPOINTMENTID",
                 "value": str(appointmet_id)
+            },
+            {
+                "name": "DATE",
+                "value": str(visit_date)
+            },
+        ]
+    }
+
+    res = requests.post(
+        url=url,
+        headers={
+            'Content-Type': 'application/json',
+            'Accept': 'text/plain',
+            'x-api-key': 'sOFaP4ySGKroLlvf1S7TMFSbkupKrA9D9x6nfvHITo9mfcOB'
+        },
+        data=json.dumps(body)
+    )
+
+    print(res.text)
+
+
+def sms_for_unregistered_user(phone_number, customer):
+    url = "https://api.sms.ir/v1/send/verify"
+    if phone_number[0] == '0':
+        new_phone_number = phone_number[1:]
+    else:
+        new_phone_number = phone_number
+    body = {
+        "mobile": str(new_phone_number),
+        "templateId": 302725,
+        "parameters": [
+            {
+                "name": "CUSTOMER",
+                "value": str(customer)
             },
         ]
     }

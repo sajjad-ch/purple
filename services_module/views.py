@@ -304,6 +304,7 @@ class HandingVisitingView(APIView):
                         serializer.validated_data['confirmation_time'] = jdatetime.datetime.now()
                         serializer.validated_data['payment_due_time'] = jdatetime.datetime.now() + timedelta(minutes=40)
                         serializer.save()
+                        sms_for_unregistered_user(phone_number=customer.phone_number, customer=customer.first_name + ' ' + customer.last_name)
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
                     else:
                         exact_time = str(serializer.validated_data.get('exact_time'))
@@ -320,6 +321,7 @@ class HandingVisitingView(APIView):
                         serializer.validated_data['price'] = user_service.suggested_price
                         serializer.validated_data['confirmation_time'] = jdatetime.datetime.now()
                         serializer.validated_data['payment_due_time'] = jdatetime.datetime.now() + timedelta(minutes=40)
+                        sms_for_unregistered_user(phone_number=unregistered_user.phone_number, customer=unregistered_user.name)
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -820,6 +822,17 @@ class StoryAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class GetUserStoriesAPIView(APIView):
+    def get(self, request:HttpRequest, user_id):
+        stories = StoryModel.objects.filter(user_id=user_id).all()
+        if stories:
+            serializer = StorySerializerGet(stories, many=True)
+            if serializer.is_valid():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'The user doesn\'t have any story.'}, status=status.HTTP_404_NOT_FOUND)
+
+
 class HighlightAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1171,9 +1184,11 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
-    def post(self, request, user_id):
+    def post(self, request: HttpRequest, user_id):
         user = request.user
         data = request.data.copy()
+        visit_date_time = data['suggested_hour']
+        visit_date_data = data['suggested_date']
         data['user'] = user.id
         data['saloon'] = user_id
         saloon = json.loads(request.data.get('saloon'))
@@ -1207,8 +1222,10 @@ class RequestVisitingTimeSaloonAPIView(APIView):
             message = "یک نوبت جدید برای شما ارسال شد."
             # phone_number = visit.saloon.saloon.phone_number
             url = "http://127.0.0.1:8000/service/visits/"
-            # sms_for_new_visiting_time_saloon(saloon_real.saloon.phone_number, saloon_real.saloon.first_name) # TODO: Uncomment the notification function  
-            # sms_for_new_visiting_time_artist(artist_real.artist.phone_number, artist_real.artist.first_name)   # TODO: Uncomment the notification function              
+            sms_for_new_visiting_time_saloon(saloon_real.saloon.phone_number, saloon_real.saloon.first_name,
+                                              visit_date_data + ' ' + visit_date_time, user.first_name + ' ' + user.last_name) # TODO: Uncomment the notification function  
+            sms_for_new_visiting_time_artist(artist_real.artist.phone_number, artist_real.artist.first_name,
+                                              visit_date_data + ' ' + visit_date_time, user.first_name + ' ' + user.last_name)   # TODO: Uncomment the notification function              
             return Response(serializer.data, status=status.HTTP_201_CREATED)        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1460,9 +1477,13 @@ class PostConfirmVisitAPIView(APIView):
                     visit.payment_due_time = timezone.now() + timezone.timedelta(hours=time_left.hour, minutes=time_left.minute, seconds=time_left.second)
                     visit.save()
                     phone_number = visit.user.phone_number
-                    # sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
+                    sms_for_result_of_appointment(phone_number, 'تایید', visit_id, visit.exact_time, visit.saloon.name,
+                                                   visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name,
+                                                     visit.user.first_name + ' ' + visit.user.last_name)
                     paying_url = ''
-                    # sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)
+                    sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.name, 
+                                              visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name ,
+                                                visit_id, visit.user.first_name + ' ' + visit.user.last_name, visit.exact_time)
 
                     logger.info(f"[Visit {visit_id}] Visit confirmed by user {request.user}")
                     return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
@@ -1472,10 +1493,12 @@ class PostConfirmVisitAPIView(APIView):
                 visit.save()
 
                 phone_number = visit.user.phone_number
-                # sms_for_result_of_appointment(phone_number, 'تایید', visit_id)
+                sms_for_result_of_appointment(phone_number, 'تایید', visit_id, visit.exact_time, visit.saloon.name,
+                                                visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name, visit.user)                
                 paying_url = ''
-                # sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.saloon.first_name, visit.artist.artist.first_name, visit_id)
-
+                sms_for_reminding_deposit(phone_number, paying_url, visit.saloon.name, 
+                                            visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name,
+                                            visit_id, visit.user.first_name + ' ' + visit.user.last_name)
                 logger.info(f"[Visit {visit_id}] Visit confirmed by user {request.user}")
                 return Response({'message': 'Visit confirmed and user notified.'}, status=status.HTTP_200_OK)
 
@@ -1484,8 +1507,8 @@ class PostConfirmVisitAPIView(APIView):
                 visit.save()
 
                 phone_number = visit.user.phone_number
-                # sms_for_result_of_appointment(phone_number, 'رد', visit_id)
-
+                sms_for_result_of_appointment(phone_number, 'رد', visit_id, visit.exact_time, visit.saloon.name,
+                                                visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name, visit.user)
                 logger.info(f"[Visit {visit_id}] Visit rejected by user {request.user}")
                 return Response({'message': 'Visit rejected and user notified.'}, status=status.HTTP_200_OK)
 
@@ -1546,8 +1569,8 @@ class PaymentHandlingAPIView(APIView):
         # send_visit_notification(visit.user.pk, 'بیعانه پرداخت شد.')
         # send_visit_notification(visit.saloon.saloon.pk, 'بیعانه پرداخت شد.')
         # send_visit_notification(visit.artist.artist.pk, 'بیعانه پرداخت شد.')
-        # sms_for_deposit_paid(visit.saloon.saloon.phone_number, visit.user.first_name, visit_id)
-        # sms_for_deposit_paid(visit.artist.artist.phone_number, visit.user.first_name, visit_id)
+        sms_for_deposit_paid(visit.saloon.saloon.phone_number, visit.user.first_name, visit_id, visit.exact_time)
+        sms_for_deposit_paid(visit.artist.artist.phone_number, visit.user.first_name, visit_id, visit.exact_time)
         message = "بیعانه پرداخت شد."
         if visit.saloon:
             phone_number = visit.saloon.saloon.phone_number
@@ -1586,7 +1609,7 @@ class PayingDepositAPIView(APIView):
         else:
             phone_number = visit.artist.artist.phone_number
         url = f"http://127.0.0.1:8000/service/visits/{visit_id}/payment/"
-        # sms_for_deposit_paid(phone_number, customer=visit.user.first_name, appointmet_id=visit.id)
+        sms_for_deposit_paid(phone_number, customer=visit.user.first_name, appointmet_id=visit.id, visit_date=visit.exact_time)
         return Response({'message': 'Payment received. Visiting time confirmed.'}, status=status.HTTP_200_OK)
 
 
@@ -1962,3 +1985,14 @@ class LastMediaThumbnailView(APIView):
         
         return Response({'thumbnail_url': request.build_absolute_uri(last_slider.thumbnail.url)}, status=status.HTTP_200_OK)
 
+
+class GetCommentsForUser(APIView):
+    def get(self, request: HttpRequest, user_id):
+        user = request.user
+        commented_visits = VisitingTimeModel.objects.filter(user_id=user_id, rank__isnull=False).all()
+        if commented_visits:
+            serializer = CommentsSerializer(commented_visits)
+            if serializer.is_valid():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'The user doesn\'t have any comments for any visiting time'}, status=status.HTTP_404_NOT_FOUND)

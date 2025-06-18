@@ -718,3 +718,9 @@ class SavedPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedPost
         exclude = ['saved_at']
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VisitingTimeModel
+        fields = ["rank", "text", "user", "artist", "saloon", "service"]

@@ -39,6 +39,7 @@ urlpatterns = [
     # Story URLs
     path('stories/', StoryAPIView.as_view(), name='story-list-create'),
     path('stories/<int:pk>/', StoryAPIView.as_view(), name='story-detail-update-delete'),
+    path('stories/user_stories/<int:user_id>/', GetUserStoriesAPIView.as_view(), name='user-stories'),
 
     # Highlight  URLs
     path('highlights/', HighlightAPIView.as_view(), name='highlight-list-create'),
@@ -90,6 +91,7 @@ urlpatterns = [
     path('visits/<int:visit_id>/grade/', GradeNotificationAPIView.as_view(), name='grade-notification'),
     path('visits/grade/', GradingAPIView.as_view(), name='grading'),
     path('visits/grade/<int:visit_id>/', GradingAPIView.as_view(), name='grading-post'),
+    path('visits/user_comments/<int:user_id>/', GetCommentsForUser.as_view(), name='user-comments'),
 
     # filtering Saloon and Artist
     path('filter/saloon/', FilterSaloonAPIView.as_view(), name='filter-saloon'),
