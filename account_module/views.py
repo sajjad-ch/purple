@@ -12,6 +12,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from analyze_module.models import MonitoringUser
 from rest_framework.decorators import api_view
 import json, os
 from dotenv import load_dotenv
@@ -160,7 +161,11 @@ class ViewSaloonProfile(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
-        saloon = SaloonModel.objects.filter(pk=user_id).first()
+        saloon = SaloonModel.objects.filter(pk=user_id).select_related('saloon').first()
+        monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=saloon.saloon)
+        monitored_user.profile_visit_number += 1
+        monitored_user.profile_picture_visit_number += 1
+        monitored_user.save()
         if saloon:
             serializer = SaloonProfileSerializer(saloon, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -171,7 +176,11 @@ class ViewArtistProfile(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
-        artist = ArtistModel.objects.filter(pk=user_id).first()
+        artist = ArtistModel.objects.filter(pk=user_id).select_related('artist').first()
+        monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=artist.artist)
+        monitored_user.profile_visit_number += 1
+        monitored_user.profile_picture_visit_number += 1
+        monitored_user.save()
         if artist:
             serializer = ArtistProfileSerializer(artist, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)

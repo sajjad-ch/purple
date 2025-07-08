@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, reverse
-from .models import Conversation
+from .models import Conversation, Message
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from account_module.models import User
 from .serializers import ConversationListSerializer, ConversationSerializer
 from django.db.models import Q
+from analyze_module.models import MonitoringUser
+from django.http import HttpRequest
+from django.db.models import Count
 # TODO: install Redis
 # Create your views here.
 
@@ -45,7 +48,28 @@ def get_conversation(request, convo_id):
     
 
 @api_view(['GET'])
-def conversations(request):
-    conversation_list = Conversation.objects.filter(Q(initiator=request.user) | Q(receiver=request.user)).reverse()
+def conversations(request: HttpRequest):
+    if MonitoringUser.objects.filter(user=request.user).exists():
+        monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=request.user)
+
+    conversation_list = Conversation.objects.filter(Q(initiator=request.user) | Q(receiver=request.user))
+
+    conversation_list_count = conversation_list.count()
+    monitored_user.conversation_number = conversation_list_count
+
+    message_count = Message.objects.filter(sender=request.user)
+
+    all_messages_count = message_count.count()
+    monitored_user.message_number = all_messages_count
+
+    media_messages_count = message_count.filter(attachment__isnull=False).count()
+    monitored_user.media_message_number = media_messages_count
+
+    text_messages_count = all_messages_count - media_messages_count
+    monitored_user.text_message_number = text_messages_count
+
+    monitored_user.save()    
     serializer = ConversationListSerializer(instance=conversation_list, many=True, context={'request': request})
     return Response(serializer.data)
+
+

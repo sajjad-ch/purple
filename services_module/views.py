@@ -27,6 +27,7 @@ from rest_framework.pagination import LimitOffsetPagination
 import jdatetime
 from datetime import timedelta
 from .utils import *
+from analyze_module.models import MonitoringUser
 # Create your views here.
 
 
@@ -34,7 +35,11 @@ from .utils import *
 class SliderView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request: HttpRequest):
+        if MonitoringUser.objects.filter(user=request.user).exists():
+            monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=request.user)
+            monitored_user.user_presence_start = datetime.now()
+            monitored_user.save()
         sliders = SliderModel.objects.filter(is_active=True).all()
         if sliders:
             serializer = SliderSeralizer(sliders, many=True)
@@ -789,6 +794,17 @@ class StoryAPIView(APIView):
             else:
                 return Response({'error': 'Unsupported file type.'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(user=user, duration_time=duration)
+            story_count = StoryModel.objects.filter(user=user).count()
+            monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=user)
+            if story_count == 0:
+                monitored_user.no_story = True
+                monitored_user.save()
+            elif story_count == 1:
+                monitored_user.one_story = True
+                monitored_user.save()
+            elif story_count > 1:
+                monitored_user.more_than_one_story = True
+                monitored_user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1476,6 +1492,11 @@ class PostConfirmVisitAPIView(APIView):
                     time_left = noon - timezone.now()
                     visit.payment_due_time = timezone.now() + timezone.timedelta(hours=time_left.hour, minutes=time_left.minute, seconds=time_left.second)
                     visit.save()
+                    monitored_user_visit_count: MonitoringUser = MonitoringUser.objects.filter(user=visit.user).count()
+                    monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=visit.user)
+                    if monitored_user_visit_count > 1 and not monitored_user.second_appointment:
+                        monitored_user.second_appointment = True
+                        monitored_user.save()
                     phone_number = visit.user.phone_number
                     sms_for_result_of_appointment(phone_number, 'تایید', visit_id, visit.exact_time, visit.saloon.name,
                                                    visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name,
@@ -1505,7 +1526,9 @@ class PostConfirmVisitAPIView(APIView):
             elif action == 'reject':
                 visit.status = 'rejected'
                 visit.save()
-
+                monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=request.user)
+                monitored_user.canceled_visiting_time += 1
+                monitored_user.save()
                 phone_number = visit.user.phone_number
                 sms_for_result_of_appointment(phone_number, 'رد', visit_id, visit.exact_time, visit.saloon.name,
                                                 visit.artist.artist.first_name + ' ' + visit.artist.artist.last_name, visit.user)
@@ -1549,6 +1572,9 @@ class PaymentHandlingAPIView(APIView):
         if timezone.now() > visit.payment_due_time:
             visit.status = 'deleted'
             visit.save()
+            monitored_user: MonitoringUser = MonitoringUser.objects.filter(user=request.user)
+            monitored_user.canceled_visiting_time += 1
+            monitored_user.save()
             return Response({'message': 'Visit deleted due to payment timeout.'}, status=status.HTTP_200_OK)
         if serializer.is_valid():
             discount_code = serializer.validated_data['discount_code']
