@@ -24,6 +24,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from django.http import HttpResponse
 from django.views.generic.base import RedirectView
 from django.views.generic import TemplateView
+from .views import ProtectMediaView
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -65,7 +66,9 @@ urlpatterns = [
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     
     # Static & media
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    # re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', ProtectMediaView.as_view()),
+
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
 
     # Flutter assets (e.g. /assets/**)
