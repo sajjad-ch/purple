@@ -128,7 +128,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'first_name', 'last_name', 'username', 'phone_number', 'age', 'profile_picture',
-            'normal_user', 'saloon', 'artist', 'average_ranks', 'posts', 'city', 'birth_date'
+            'normal_user', 'saloon', 'artist', 'average_ranks', 'posts', 'city', 'birth_date', 'province', 'new_username'
         ]
 
 
@@ -428,7 +428,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'age', 'profile_picture', 'normal_user', 'saloon', 'artist', 'city', 'birth_date']
+        fields = ['first_name', 'last_name', 'username', 'age', 'profile_picture', 'normal_user', 'saloon', 'artist', 'city', 'birth_date', 'province', 'new_username']
 
     def update(self, instance, validated_data):
         # Update User fields
@@ -439,6 +439,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         instance.city = validated_data.get('city', instance.city)
         instance.birth_date = validated_data.get('birth_date', instance.birth_date)
         instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
+        instance.province = validated_data.get('province', instance.province)
+        instance.new_username = validated_data.get('new_username', instance.new_username)
         instance.save()
 
         # Update NormalUserModel fields if exists

@@ -19,15 +19,15 @@ from decouple import config
 from cryptography.hazmat.primitives import serialization
 
 # Load keys from .env
-SERVER_PUBLIC_KEY = config("SERVER_PUBLIC_KEY").replace("\\n", "\n")
-SERVER_PRIVATE_KEY = config("SERVER_PRIVATE_KEY").replace("\\n", "\n")
+# SERVER_PUBLIC_KEY = config("SERVER_PUBLIC_KEY").replace("\\n", "\n")
+# SERVER_PRIVATE_KEY = config("SERVER_PRIVATE_KEY").replace("\\n", "\n")
 
-# Deserialize keys
-server_public_key = serialization.load_pem_public_key(SERVER_PUBLIC_KEY.encode())
-server_private_key = serialization.load_pem_private_key(
-    SERVER_PRIVATE_KEY.encode(),
-    password=None,
-)
+# # Deserialize keys
+# server_public_key = serialization.load_pem_public_key(SERVER_PUBLIC_KEY.encode())
+# server_private_key = serialization.load_pem_private_key(
+#     SERVER_PRIVATE_KEY.encode(),
+#     password=None,
+# )
 
 import base64
 
