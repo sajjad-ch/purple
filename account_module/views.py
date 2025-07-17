@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
@@ -305,7 +306,7 @@ from django.contrib.auth.models import AnonymousUser
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 
 @api_view(['POST'])
-def verify_authenticattion(request, token):
+def verify_authenticattion(request: HttpRequest, token):
     if request.method == 'POST':
         try:
             # Decode the token
@@ -318,3 +319,36 @@ def verify_authenticattion(request, token):
             return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_provinces(request: HttpRequest):
+    if request.method == 'GET':
+        try:
+            with open('File.json', 'r', encoding='UTF-8') as f:
+                file = json.load(f)
+                data = {}
+                for i in range(len(file)):
+                    data.update({f'{i}': file[i]["province"]})
+                return Response(data, status=status.HTTP_200_OK)
+        except FileNotFoundError:
+            return Response({'message': 'File Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+@api_view(['POST'])
+def get_cities(requset: HttpRequest):
+    if requset.method == 'POST':
+        province = requset.data['province']
+        try:
+            with open('File.json', 'r', encoding='UTF-8') as f:
+                file = json.load(f)
+                data = {}
+                for i in range(len(file)):
+                    if file[i]['province'] == province:
+                        data.update({'cities': file[i]["cities"]})
+                        break
+                else:
+                    return Response({'message': 'There is no such province.'}, status=status.HTTP_404_NOT_FOUND)
+                return Response(data, status=status.HTTP_200_OK)
+        except FileNotFoundError:
+            return Response({'message': 'File Not Found'}, status=status.HTTP_404_NOT_FOUND)
