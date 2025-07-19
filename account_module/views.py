@@ -111,6 +111,7 @@ class ProfileView(APIView):
                 return Response(serializer.data)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'User is anonymous.'}, status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request):
         phone_number = request.data.get('phone_number')
